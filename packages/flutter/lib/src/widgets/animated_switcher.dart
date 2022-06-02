@@ -271,28 +271,28 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
 
     // If the transition builder changed, then update all of the previous
     // transitions.
-    if (widget.transitionBuilder != oldWidget.transitionBuilder) {
+    if (widget().transitionBuilder != oldWidget.transitionBuilder) {
       _outgoingEntries.forEach(_updateTransitionForEntry);
       if (_currentEntry != null)
         _updateTransitionForEntry(_currentEntry!);
       _markChildWidgetCacheAsDirty();
     }
 
-    final bool hasNewChild = widget.child != null;
+    final bool hasNewChild = widget().child != null;
     final bool hasOldChild = _currentEntry != null;
     if (hasNewChild != hasOldChild ||
-        hasNewChild && !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
+        hasNewChild && !Widget.canUpdate(widget().child!, _currentEntry!.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
       _addEntryForNewChild(animate: true);
     } else if (_currentEntry != null) {
       assert(hasOldChild && hasNewChild);
-      assert(Widget.canUpdate(widget.child!, _currentEntry!.widgetChild));
+      assert(Widget.canUpdate(widget().child!, _currentEntry!.widgetChild));
       // Child has been updated. Make sure we update the child widget and
       // transition in _currentEntry even though we're not going to start a new
       // animation, but keep the key from the previous transition so that we
       // update the transition instead of replacing it.
-      _currentEntry!.widgetChild = widget.child!;
+      _currentEntry!.widgetChild = widget().child!;
       _updateTransitionForEntry(_currentEntry!); // uses entry.widgetChild
       _markChildWidgetCacheAsDirty();
     }
@@ -308,23 +308,23 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
       _markChildWidgetCacheAsDirty();
       _currentEntry = null;
     }
-    if (widget.child == null)
+    if (widget().child == null)
       return;
     final AnimationController controller = AnimationController(
-      duration: widget.duration,
-      reverseDuration: widget.reverseDuration,
+      duration: widget().duration,
+      reverseDuration: widget().reverseDuration,
       vsync: this,
     );
     final Animation<double> animation = CurvedAnimation(
       parent: controller,
-      curve: widget.switchInCurve,
-      reverseCurve: widget.switchOutCurve,
+      curve: widget().switchInCurve,
+      reverseCurve: widget().switchOutCurve,
     );
     _currentEntry = _newEntry(
-      child: widget.child!,
+      child: widget().child!,
       controller: controller,
       animation: animation,
-      builder: widget.transitionBuilder,
+      builder: widget().transitionBuilder,
     );
     if (animate) {
       controller.forward();
@@ -367,7 +367,7 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
   void _updateTransitionForEntry(_ChildEntry entry) {
     entry.transition = KeyedSubtree(
       key: entry.transition.key,
-      child: widget.transitionBuilder(entry.widgetChild, entry.animation),
+      child: widget().transitionBuilder(entry.widgetChild, entry.animation),
     );
   }
 
@@ -391,6 +391,6 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
   @override
   Widget build(BuildContext context) {
     _rebuildOutgoingWidgetsIfNeeded();
-    return widget.layoutBuilder(_currentEntry?.transition, _outgoingWidgets!);
+    return widget().layoutBuilder(_currentEntry?.transition, _outgoingWidgets!);
   }
 }

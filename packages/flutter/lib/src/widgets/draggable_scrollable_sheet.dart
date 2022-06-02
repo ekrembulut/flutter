@@ -579,36 +579,36 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
   void initState() {
     super.initState();
     _extent = _DraggableSheetExtent(
-      minSize: widget.minChildSize,
-      maxSize: widget.maxChildSize,
-      snap: widget.snap,
+      minSize: widget().minChildSize,
+      maxSize: widget().maxChildSize,
+      snap: widget().snap,
       snapSizes: _impliedSnapSizes(),
-      initialSize: widget.initialChildSize,
+      initialSize: widget().initialChildSize,
       onSizeChanged: _setExtent,
     );
     _scrollController = _DraggableScrollableSheetScrollController(extent: _extent);
-    widget.controller?._attach(_scrollController);
+    widget().controller?._attach(_scrollController);
   }
 
   List<double> _impliedSnapSizes() {
-    for (int index = 0; index < (widget.snapSizes?.length ?? 0); index += 1) {
-      final double snapSize = widget.snapSizes![index];
-      assert(snapSize >= widget.minChildSize && snapSize <= widget.maxChildSize,
+    for (int index = 0; index < (widget().snapSizes?.length ?? 0); index += 1) {
+      final double snapSize = widget().snapSizes![index];
+      assert(snapSize >= widget().minChildSize && snapSize <= widget().maxChildSize,
         '${_snapSizeErrorMessage(index)}\nSnap sizes must be between `minChildSize` and `maxChildSize`. ');
-      assert(index == 0 || snapSize > widget.snapSizes![index - 1],
+      assert(index == 0 || snapSize > widget().snapSizes![index - 1],
         '${_snapSizeErrorMessage(index)}\nSnap sizes must be in ascending order. ');
     }
     // Ensure the snap sizes start and end with the min and max child sizes.
-    if (widget.snapSizes == null || widget.snapSizes!.isEmpty) {
+    if (widget().snapSizes == null || widget().snapSizes!.isEmpty) {
       return <double>[
-        widget.minChildSize,
-        widget.maxChildSize,
+        widget().minChildSize,
+        widget().maxChildSize,
       ];
     }
     return <double>[
-      if (widget.snapSizes!.first != widget.minChildSize) widget.minChildSize,
-      ...widget.snapSizes!,
-      if (widget.snapSizes!.last != widget.maxChildSize) widget.maxChildSize,
+      if (widget().snapSizes!.first != widget().minChildSize) widget().minChildSize,
+      ...widget().snapSizes!,
+      if (widget().snapSizes!.last != widget().maxChildSize) widget().maxChildSize,
     ];
   }
 
@@ -636,20 +636,20 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        _extent.availablePixels = widget.maxChildSize * constraints.biggest.height;
+        _extent.availablePixels = widget().maxChildSize * constraints.biggest.height;
         final Widget sheet = FractionallySizedBox(
           heightFactor: _extent.currentSize,
           alignment: Alignment.bottomCenter,
-          child: widget.builder(context, _scrollController),
+          child: widget().builder(context, _scrollController),
         );
-        return widget.expand ? SizedBox.expand(child: sheet) : sheet;
+        return widget().expand ? SizedBox.expand(child: sheet) : sheet;
       },
     );
   }
 
   @override
   void dispose() {
-    widget.controller?._detach();
+    widget().controller?._detach();
     _scrollController.dispose();
     _extent.dispose();
     super.dispose();
@@ -659,11 +659,11 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
     final _DraggableSheetExtent previousExtent = _extent;
     _extent.dispose();
     _extent = _extent.copyWith(
-      minSize: widget.minChildSize,
-      maxSize: widget.maxChildSize,
-      snap: widget.snap,
+      minSize: widget().minChildSize,
+      maxSize: widget().maxChildSize,
+      snap: widget().snap,
       snapSizes: _impliedSnapSizes(),
-      initialSize: widget.initialChildSize,
+      initialSize: widget().initialChildSize,
       onSizeChanged: _setExtent,
     );
     // Modify the existing scroll controller instead of replacing it so that
@@ -671,8 +671,8 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
     _scrollController.extent = _extent;
     // If an external facing controller was provided, let it know that the
     // extent has been replaced.
-    widget.controller?._onExtentReplaced(previousExtent);
-    if (widget.snap) {
+    widget().controller?._onExtentReplaced(previousExtent);
+    if (widget().snap) {
       // Trigger a snap in case snap or snapSizes has changed. We put this in a
       // post frame callback so that `build` can update `_extent.availablePixels`
       // before this runs-we can't use the previous extent's available pixels as
@@ -684,16 +684,16 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
   }
 
   String _snapSizeErrorMessage(int invalidIndex) {
-    final List<String> snapSizesWithIndicator = widget.snapSizes!.asMap().keys.map(
+    final List<String> snapSizesWithIndicator = widget().snapSizes!.asMap().keys.map(
       (int index) {
-        final String snapSizeString = widget.snapSizes![index].toString();
+        final String snapSizeString = widget().snapSizes![index].toString();
         if (index == invalidIndex) {
           return '>>> $snapSizeString <<<';
         }
         return snapSizeString;
       },
     ).toList();
-    return "Invalid snapSize '${widget.snapSizes![invalidIndex]}' at index $invalidIndex of:\n"
+    return "Invalid snapSize '${widget().snapSizes![invalidIndex]}' at index $invalidIndex of:\n"
         '  $snapSizesWithIndicator';
   }
 }

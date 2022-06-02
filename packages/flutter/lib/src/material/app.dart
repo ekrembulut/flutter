@@ -827,7 +827,7 @@ class MaterialScrollBehavior extends ScrollBehavior {
 class _MaterialAppState extends State<MaterialApp> {
   late HeroController _heroController;
 
-  bool get _usesRouter => widget.routerDelegate != null;
+  bool get _usesRouter => widget().routerDelegate != null;
 
   @override
   void initState() {
@@ -842,8 +842,8 @@ class _MaterialAppState extends State<MaterialApp> {
   // _MaterialLocalizationsDelegate.
   Iterable<LocalizationsDelegate<dynamic>> get _localizationsDelegates {
     return <LocalizationsDelegate<dynamic>>[
-      if (widget.localizationsDelegates != null)
-        ...widget.localizationsDelegates!,
+      if (widget().localizationsDelegates != null)
+        ...widget().localizationsDelegates!,
       DefaultMaterialLocalizations.delegate,
       DefaultCupertinoLocalizations.delegate,
     ];
@@ -859,27 +859,27 @@ class _MaterialAppState extends State<MaterialApp> {
 
   Widget _materialBuilder(BuildContext context, Widget? child) {
     // Resolve which theme to use based on brightness and high contrast.
-    final ThemeMode mode = widget.themeMode ?? ThemeMode.system;
+    final ThemeMode mode = widget().themeMode ?? ThemeMode.system;
     final Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
     final bool useDarkTheme = mode == ThemeMode.dark
       || (mode == ThemeMode.system && platformBrightness == ui.Brightness.dark);
     final bool highContrast = MediaQuery.highContrastOf(context);
     ThemeData? theme;
 
-    if (useDarkTheme && highContrast && widget.highContrastDarkTheme != null) {
-      theme = widget.highContrastDarkTheme;
-    } else if (useDarkTheme && widget.darkTheme != null) {
-      theme = widget.darkTheme;
-    } else if (highContrast && widget.highContrastTheme != null) {
-      theme = widget.highContrastTheme;
+    if (useDarkTheme && highContrast && widget().highContrastDarkTheme != null) {
+      theme = widget().highContrastDarkTheme;
+    } else if (useDarkTheme && widget().darkTheme != null) {
+      theme = widget().darkTheme;
+    } else if (highContrast && widget().highContrastTheme != null) {
+      theme = widget().highContrastTheme;
     }
-    theme ??= widget.theme ?? ThemeData.light();
+    theme ??= widget().theme ?? ThemeData.light();
 
     return ScaffoldMessenger(
-      key: widget.scaffoldMessengerKey,
+      key: widget().scaffoldMessengerKey,
       child: AnimatedTheme(
         data: theme,
-        child: widget.builder != null
+        child: widget().builder != null
           ? Builder(
               builder: (BuildContext context) {
                 // Why are we surrounding a builder with a builder?
@@ -893,7 +893,7 @@ class _MaterialAppState extends State<MaterialApp> {
                 // surround widget.builder with yet another builder so that
                 // a context separates them and Theme.of() correctly
                 // resolves to the theme we passed to AnimatedTheme.
-                return widget.builder!(context, child);
+                return widget().builder!(context, child);
               },
             )
           : child ?? const SizedBox.shrink(),
@@ -909,70 +909,70 @@ class _MaterialAppState extends State<MaterialApp> {
     // Android's switcher UI.
     //
     // blue is the primary color of the default theme.
-    final Color materialColor = widget.color ?? widget.theme?.primaryColor ?? Colors.blue;
+    final Color materialColor = widget().color ?? widget().theme?.primaryColor ?? Colors.blue;
     if (_usesRouter) {
       return WidgetsApp.router(
         key: GlobalObjectKey(this),
-        routeInformationProvider: widget.routeInformationProvider,
-        routeInformationParser: widget.routeInformationParser!,
-        routerDelegate: widget.routerDelegate!,
-        backButtonDispatcher: widget.backButtonDispatcher,
+        routeInformationProvider: widget().routeInformationProvider,
+        routeInformationParser: widget().routeInformationParser!,
+        routerDelegate: widget().routerDelegate!,
+        backButtonDispatcher: widget().backButtonDispatcher,
         builder: _materialBuilder,
-        title: widget.title,
-        onGenerateTitle: widget.onGenerateTitle,
+        title: widget().title,
+        onGenerateTitle: widget().onGenerateTitle,
         textStyle: _errorTextStyle,
         color: materialColor,
-        locale: widget.locale,
+        locale: widget().locale,
         localizationsDelegates: _localizationsDelegates,
-        localeResolutionCallback: widget.localeResolutionCallback,
-        localeListResolutionCallback: widget.localeListResolutionCallback,
-        supportedLocales: widget.supportedLocales,
-        showPerformanceOverlay: widget.showPerformanceOverlay,
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-        showSemanticsDebugger: widget.showSemanticsDebugger,
-        debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
+        localeResolutionCallback: widget().localeResolutionCallback,
+        localeListResolutionCallback: widget().localeListResolutionCallback,
+        supportedLocales: widget().supportedLocales,
+        showPerformanceOverlay: widget().showPerformanceOverlay,
+        checkerboardRasterCacheImages: widget().checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: widget().checkerboardOffscreenLayers,
+        showSemanticsDebugger: widget().showSemanticsDebugger,
+        debugShowCheckedModeBanner: widget().debugShowCheckedModeBanner,
         inspectorSelectButtonBuilder: _inspectorSelectButtonBuilder,
-        shortcuts: widget.shortcuts,
-        actions: widget.actions,
-        restorationScopeId: widget.restorationScopeId,
-        useInheritedMediaQuery: widget.useInheritedMediaQuery,
+        shortcuts: widget().shortcuts,
+        actions: widget().actions,
+        restorationScopeId: widget().restorationScopeId,
+        useInheritedMediaQuery: widget().useInheritedMediaQuery,
       );
     }
 
     return WidgetsApp(
       key: GlobalObjectKey(this),
-      navigatorKey: widget.navigatorKey,
-      navigatorObservers: widget.navigatorObservers!,
+      navigatorKey: widget().navigatorKey,
+      navigatorObservers: widget().navigatorObservers!,
       pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) {
         return MaterialPageRoute<T>(settings: settings, builder: builder);
       },
-      home: widget.home,
-      routes: widget.routes!,
-      initialRoute: widget.initialRoute,
-      onGenerateRoute: widget.onGenerateRoute,
-      onGenerateInitialRoutes: widget.onGenerateInitialRoutes,
-      onUnknownRoute: widget.onUnknownRoute,
+      home: widget().home,
+      routes: widget().routes!,
+      initialRoute: widget().initialRoute,
+      onGenerateRoute: widget().onGenerateRoute,
+      onGenerateInitialRoutes: widget().onGenerateInitialRoutes,
+      onUnknownRoute: widget().onUnknownRoute,
       builder: _materialBuilder,
-      title: widget.title,
-      onGenerateTitle: widget.onGenerateTitle,
+      title: widget().title,
+      onGenerateTitle: widget().onGenerateTitle,
       textStyle: _errorTextStyle,
       color: materialColor,
-      locale: widget.locale,
+      locale: widget().locale,
       localizationsDelegates: _localizationsDelegates,
-      localeResolutionCallback: widget.localeResolutionCallback,
-      localeListResolutionCallback: widget.localeListResolutionCallback,
-      supportedLocales: widget.supportedLocales,
-      showPerformanceOverlay: widget.showPerformanceOverlay,
-      checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-      checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-      showSemanticsDebugger: widget.showSemanticsDebugger,
-      debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
+      localeResolutionCallback: widget().localeResolutionCallback,
+      localeListResolutionCallback: widget().localeListResolutionCallback,
+      supportedLocales: widget().supportedLocales,
+      showPerformanceOverlay: widget().showPerformanceOverlay,
+      checkerboardRasterCacheImages: widget().checkerboardRasterCacheImages,
+      checkerboardOffscreenLayers: widget().checkerboardOffscreenLayers,
+      showSemanticsDebugger: widget().showSemanticsDebugger,
+      debugShowCheckedModeBanner: widget().debugShowCheckedModeBanner,
       inspectorSelectButtonBuilder: _inspectorSelectButtonBuilder,
-      shortcuts: widget.shortcuts,
-      actions: widget.actions,
-      restorationScopeId: widget.restorationScopeId,
-      useInheritedMediaQuery: widget.useInheritedMediaQuery,
+      shortcuts: widget().shortcuts,
+      actions: widget().actions,
+      restorationScopeId: widget().restorationScopeId,
+      useInheritedMediaQuery: widget().useInheritedMediaQuery,
     );
   }
 
@@ -989,7 +989,7 @@ class _MaterialAppState extends State<MaterialApp> {
       child: result,
     );
     assert(() {
-      if (widget.debugShowMaterialGrid) {
+      if (widget().debugShowMaterialGrid) {
         result = GridPaper(
           color: const Color(0xE0F9BBE0),
           interval: 8.0,
@@ -1001,7 +1001,7 @@ class _MaterialAppState extends State<MaterialApp> {
     }());
 
     return ScrollConfiguration(
-      behavior: widget.scrollBehavior ?? const MaterialScrollBehavior(),
+      behavior: widget().scrollBehavior ?? const MaterialScrollBehavior(),
       child: HeroControllerScope(
         controller: _heroController,
         child: result,

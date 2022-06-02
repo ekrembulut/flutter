@@ -383,23 +383,23 @@ class NestedScrollViewState extends State<NestedScrollView> {
     super.initState();
     _coordinator = _NestedScrollCoordinator(
       this,
-      widget.controller,
+      widget().controller,
       _handleHasScrolledBodyChanged,
-      widget.floatHeaderSlivers,
+      widget().floatHeaderSlivers,
     );
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _coordinator!.setParent(widget.controller);
+    _coordinator!.setParent(widget().controller);
   }
 
   @override
   void didUpdateWidget(NestedScrollView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller)
-      _coordinator!.setParent(widget.controller);
+    if (oldWidget.controller != widget().controller)
+      _coordinator!.setParent(widget().controller);
   }
 
   @override
@@ -428,8 +428,8 @@ class NestedScrollViewState extends State<NestedScrollView> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollPhysics scrollPhysics = widget.physics?.applyTo(const ClampingScrollPhysics())
-      ?? widget.scrollBehavior?.getScrollPhysics(context).applyTo(const ClampingScrollPhysics())
+    final ScrollPhysics scrollPhysics = widget().physics?.applyTo(const ClampingScrollPhysics())
+      ?? widget().scrollBehavior?.getScrollPhysics(context).applyTo(const ClampingScrollPhysics())
       ?? const ClampingScrollPhysics();
 
     return _InheritedNestedScrollView(
@@ -438,20 +438,20 @@ class NestedScrollViewState extends State<NestedScrollView> {
         builder: (BuildContext context) {
           _lastHasScrolledBody = _coordinator!.hasScrolledBody;
           return _NestedScrollViewCustomScrollView(
-            dragStartBehavior: widget.dragStartBehavior,
-            scrollDirection: widget.scrollDirection,
-            reverse: widget.reverse,
+            dragStartBehavior: widget().dragStartBehavior,
+            scrollDirection: widget().scrollDirection,
+            reverse: widget().reverse,
             physics: scrollPhysics,
-            scrollBehavior: widget.scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            scrollBehavior: widget().scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
             controller: _coordinator!._outerController,
-            slivers: widget._buildSlivers(
+            slivers: widget()._buildSlivers(
               context,
               _coordinator!._innerController,
               _lastHasScrolledBody!,
             ),
             handle: _absorberHandle,
-            clipBehavior: widget.clipBehavior,
-            restorationId: widget.restorationId,
+            clipBehavior: widget().clipBehavior,
+            restorationId: widget().restorationId,
           );
         },
       ),

@@ -174,7 +174,7 @@ class _TextSelectionToolbarOverflowableState extends State<_TextSelectionToolbar
   void didUpdateWidget(_TextSelectionToolbarOverflowable oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If the children are changing at all, the current page should be reset.
-    if (!listEquals(widget.children, oldWidget.children)) {
+    if (!listEquals(widget().children, oldWidget.children)) {
       _reset();
     }
   }
@@ -192,8 +192,8 @@ class _TextSelectionToolbarOverflowableState extends State<_TextSelectionToolbar
         // This duration was eyeballed on a Pixel 2 emulator running Android
         // API 28.
         duration: const Duration(milliseconds: 140),
-        child: widget.toolbarBuilder(context, _TextSelectionToolbarItemsLayout(
-          isAbove: widget.isAbove,
+        child: widget().toolbarBuilder(context, _TextSelectionToolbarItemsLayout(
+          isAbove: widget().isAbove,
           overflowOpen: _overflowOpen,
           children: <Widget>[
             // TODO(justinmc): This overflow button should have its own slot in
@@ -213,7 +213,7 @@ class _TextSelectionToolbarOverflowableState extends State<_TextSelectionToolbar
                   ? localizations.backButtonTooltip
                   : localizations.moreButtonTooltip,
             ),
-            ...widget.children,
+            ...widget().children,
           ],
         )),
       ),

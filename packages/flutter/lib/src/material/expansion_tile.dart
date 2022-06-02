@@ -296,7 +296,7 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
     _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
-    _isExpanded = PageStorage.of(context)?.readState(context) as bool? ?? widget.initiallyExpanded;
+    _isExpanded = PageStorage.of(context)?.readState(context) as bool? ?? widget().initiallyExpanded;
     if (_isExpanded)
       _controller.value = 1.0;
   }
@@ -323,7 +323,7 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
       }
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
-    widget.onExpansionChanged?.call(_isExpanded);
+    widget().onExpansionChanged?.call(_isExpanded);
   }
 
   // Platform or null affinity defaults to trailing.
@@ -345,13 +345,13 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
   }
 
   Widget? _buildLeadingIcon(BuildContext context) {
-    if (_effectiveAffinity(widget.controlAffinity) != ListTileControlAffinity.leading)
+    if (_effectiveAffinity(widget().controlAffinity) != ListTileControlAffinity.leading)
       return null;
     return _buildIcon(context);
   }
 
   Widget? _buildTrailingIcon(BuildContext context) {
-    if (_effectiveAffinity(widget.controlAffinity) != ListTileControlAffinity.trailing)
+    if (_effectiveAffinity(widget().controlAffinity) != ListTileControlAffinity.trailing)
       return null;
     return _buildIcon(context);
   }
@@ -376,16 +376,16 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
             textColor: _headerColor.value,
             child: ListTile(
               onTap: _handleTap,
-              contentPadding: widget.tilePadding ?? expansionTileTheme.tilePadding,
-              leading: widget.leading ?? _buildLeadingIcon(context),
-              title: widget.title,
-              subtitle: widget.subtitle,
-              trailing: widget.trailing ?? _buildTrailingIcon(context),
+              contentPadding: widget().tilePadding ?? expansionTileTheme.tilePadding,
+              leading: widget().leading ?? _buildLeadingIcon(context),
+              title: widget().title,
+              subtitle: widget().subtitle,
+              trailing: widget().trailing ?? _buildTrailingIcon(context),
             ),
           ),
           ClipRect(
             child: Align(
-              alignment: widget.expandedAlignment
+              alignment: widget().expandedAlignment
                 ?? expansionTileTheme.expandedAlignment
                 ?? Alignment.center,
               heightFactor: _heightFactor.value,
@@ -404,18 +404,18 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
     final ColorScheme colorScheme = theme.colorScheme;
     _borderColorTween.end = theme.dividerColor;
     _headerColorTween
-      ..begin = widget.collapsedTextColor
+      ..begin = widget().collapsedTextColor
         ?? expansionTileTheme.collapsedTextColor
         ?? theme.textTheme.subtitle1!.color
-      ..end = widget.textColor ?? expansionTileTheme.textColor ?? colorScheme.primary;
+      ..end = widget().textColor ?? expansionTileTheme.textColor ?? colorScheme.primary;
     _iconColorTween
-      ..begin = widget.collapsedIconColor
+      ..begin = widget().collapsedIconColor
         ?? expansionTileTheme.collapsedIconColor
         ?? theme.unselectedWidgetColor
-      ..end = widget.iconColor ?? expansionTileTheme.iconColor ?? colorScheme.primary;
+      ..end = widget().iconColor ?? expansionTileTheme.iconColor ?? colorScheme.primary;
     _backgroundColorTween
-      ..begin = widget.collapsedBackgroundColor ?? expansionTileTheme.collapsedBackgroundColor
-      ..end = widget.backgroundColor ?? expansionTileTheme.backgroundColor;
+      ..begin = widget().collapsedBackgroundColor ?? expansionTileTheme.collapsedBackgroundColor
+      ..end = widget().backgroundColor ?? expansionTileTheme.backgroundColor;
     super.didChangeDependencies();
   }
 
@@ -423,17 +423,17 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
   Widget build(BuildContext context) {
     final ExpansionTileThemeData expansionTileTheme = ExpansionTileTheme.of(context);
     final bool closed = !_isExpanded && _controller.isDismissed;
-    final bool shouldRemoveChildren = closed && !widget.maintainState;
+    final bool shouldRemoveChildren = closed && !widget().maintainState;
 
     final Widget result = Offstage(
       offstage: closed,
       child: TickerMode(
         enabled: !closed,
         child: Padding(
-          padding: widget.childrenPadding ?? expansionTileTheme.childrenPadding ?? EdgeInsets.zero,
+          padding: widget().childrenPadding ?? expansionTileTheme.childrenPadding ?? EdgeInsets.zero,
           child: Column(
-            crossAxisAlignment: widget.expandedCrossAxisAlignment ?? CrossAxisAlignment.center,
-            children: widget.children,
+            crossAxisAlignment: widget().expandedCrossAxisAlignment ?? CrossAxisAlignment.center,
+            children: widget().children,
           ),
         ),
       ),

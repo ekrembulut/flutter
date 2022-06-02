@@ -31,21 +31,21 @@ class _StatusTransitionState extends State<StatusTransitionWidget> {
   @override
   void initState() {
     super.initState();
-    widget.animation.addStatusListener(_animationStatusChanged);
+    widget().animation.addStatusListener(_animationStatusChanged);
   }
 
   @override
   void didUpdateWidget(StatusTransitionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animation != oldWidget.animation) {
+    if (widget().animation != oldWidget.animation) {
       oldWidget.animation.removeStatusListener(_animationStatusChanged);
-      widget.animation.addStatusListener(_animationStatusChanged);
+      widget().animation.addStatusListener(_animationStatusChanged);
     }
   }
 
   @override
   void dispose() {
-    widget.animation.removeStatusListener(_animationStatusChanged);
+    widget().animation.removeStatusListener(_animationStatusChanged);
     super.dispose();
   }
 
@@ -57,6 +57,6 @@ class _StatusTransitionState extends State<StatusTransitionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.build(context);
+    return widget().build(context);
   }
 }

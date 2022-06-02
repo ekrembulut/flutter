@@ -637,7 +637,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
   void _handleDragStart(DragStartDetails details) {
     assert(mounted);
     assert(_backGestureController == null);
-    _backGestureController = widget.onStartPopGesture();
+    _backGestureController = widget().onStartPopGesture();
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
@@ -662,7 +662,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (widget.enabledCallback())
+    if (widget().enabledCallback())
       _recognizer.addPointer(event);
   }
 
@@ -687,7 +687,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
-        widget.child,
+        widget().child,
         PositionedDirectional(
           start: 0.0,
           width: dragAreaWidth,

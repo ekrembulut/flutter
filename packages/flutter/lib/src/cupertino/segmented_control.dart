@@ -192,22 +192,22 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
   bool _updateColors() {
     assert(mounted, 'This should only be called after didUpdateDependencies');
     bool changed = false;
-    final Color selectedColor = widget.selectedColor ?? CupertinoTheme.of(context).primaryColor;
+    final Color selectedColor = widget().selectedColor ?? CupertinoTheme.of(context).primaryColor;
     if (_selectedColor != selectedColor) {
       changed = true;
       _selectedColor = selectedColor;
     }
-    final Color unselectedColor = widget.unselectedColor ?? CupertinoTheme.of(context).primaryContrastingColor;
+    final Color unselectedColor = widget().unselectedColor ?? CupertinoTheme.of(context).primaryContrastingColor;
     if (_unselectedColor != unselectedColor) {
       changed = true;
       _unselectedColor = unselectedColor;
     }
-    final Color borderColor = widget.borderColor ?? CupertinoTheme.of(context).primaryColor;
+    final Color borderColor = widget().borderColor ?? CupertinoTheme.of(context).primaryColor;
     if (_borderColor != borderColor) {
       changed = true;
       _borderColor = borderColor;
     }
-    final Color pressedColor = widget.pressedColor ?? CupertinoTheme.of(context).primaryColor.withOpacity(0.2);
+    final Color pressedColor = widget().pressedColor ?? CupertinoTheme.of(context).primaryColor.withOpacity(0.2);
     if (_pressedColor != pressedColor) {
       changed = true;
       _pressedColor = pressedColor;
@@ -236,9 +236,9 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
     _selectionControllers.clear();
     _childTweens.clear();
 
-    for (final T key in widget.children.keys) {
+    for (final T key in widget().children.keys) {
       final AnimationController animationController = createAnimationController();
-      if (widget.groupValue == key) {
+      if (widget().groupValue == key) {
         _childTweens.add(_reverseBackgroundColorTween);
         animationController.value = 1.0;
       } else {
@@ -261,14 +261,14 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
   void didUpdateWidget(CupertinoSegmentedControl<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (_updateColors() || oldWidget.children.length != widget.children.length) {
+    if (_updateColors() || oldWidget.children.length != widget().children.length) {
       _updateAnimationControllers();
     }
 
-    if (oldWidget.groupValue != widget.groupValue) {
+    if (oldWidget.groupValue != widget().groupValue) {
       int index = 0;
-      for (final T key in widget.children.keys) {
-        if (widget.groupValue == key) {
+      for (final T key in widget().children.keys) {
+        if (widget().groupValue == key) {
           _childTweens[index] = _forwardBackgroundColorTween;
           _selectionControllers[index].forward();
         } else {
@@ -290,7 +290,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
 
 
   void _onTapDown(T currentKey) {
-    if (_pressedKey == null && currentKey != widget.groupValue) {
+    if (_pressedKey == null && currentKey != widget().groupValue) {
       setState(() {
         _pressedKey = currentKey;
       });
@@ -306,8 +306,8 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
   void _onTap(T currentKey) {
     if (currentKey != _pressedKey)
       return;
-    if (currentKey != widget.groupValue) {
-      widget.onValueChanged(currentKey);
+    if (currentKey != widget().groupValue) {
+      widget().onValueChanged(currentKey);
     }
     _pressedKey = null;
   }
@@ -315,7 +315,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
   Color? getTextColor(int index, T currentKey) {
     if (_selectionControllers[index].isAnimating)
       return _textColorTween.evaluate(_selectionControllers[index]);
-    if (widget.groupValue == currentKey)
+    if (widget().groupValue == currentKey)
       return _unselectedColor;
     return _selectedColor;
   }
@@ -323,7 +323,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
   Color? getBackgroundColor(int index, T currentKey) {
     if (_selectionControllers[index].isAnimating)
       return _childTweens[index].evaluate(_selectionControllers[index]);
-    if (widget.groupValue == currentKey)
+    if (widget().groupValue == currentKey)
       return _selectedColor;
     if (_pressedKey == currentKey)
       return _pressedColor;
@@ -337,8 +337,8 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
     int index = 0;
     int? selectedIndex;
     int? pressedIndex;
-    for (final T currentKey in widget.children.keys) {
-      selectedIndex = (widget.groupValue == currentKey) ? index : selectedIndex;
+    for (final T currentKey in widget().children.keys) {
+      selectedIndex = (widget().groupValue == currentKey) ? index : selectedIndex;
       pressedIndex = (_pressedKey == currentKey) ? index : pressedIndex;
 
       final TextStyle textStyle = DefaultTextStyle.of(context).style.copyWith(
@@ -349,7 +349,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
       );
 
       Widget child = Center(
-        child: widget.children[currentKey],
+        child: widget().children[currentKey],
       );
 
       child = MouseRegion(
@@ -370,7 +370,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
               child: Semantics(
                 button: true,
                 inMutuallyExclusiveGroup: true,
-                selected: widget.groupValue == currentKey,
+                selected: widget().groupValue == currentKey,
                 child: child,
               ),
             ),
@@ -392,7 +392,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
     );
 
     return Padding(
-      padding: widget.padding ?? _kHorizontalItemPadding,
+      padding: widget().padding ?? _kHorizontalItemPadding,
       child: UnconstrainedBox(
         constrainedAxis: Axis.horizontal,
         child: box,

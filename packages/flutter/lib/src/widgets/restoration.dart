@@ -99,7 +99,7 @@ class RestorationScope extends StatefulWidget {
 
 class _RestorationScopeState extends State<RestorationScope> with RestorationMixin {
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -111,7 +111,7 @@ class _RestorationScopeState extends State<RestorationScope> with RestorationMix
   Widget build(BuildContext context) {
     return UnmanagedRestorationScope(
       bucket: bucket, // `bucket` is provided by the RestorationMixin.
-      child: widget.child,
+      child: widget().child,
     );
   }
 }
@@ -255,7 +255,7 @@ class _RootRestorationScopeState extends State<RootRestorationScope> {
     super.didChangeDependencies();
     _ancestorBucket = RestorationScope.of(context);
     _loadRootBucketIfNecessary();
-    _okToRenderBlankContainer ??= widget.restorationId != null && _needsRootBucketInserted;
+    _okToRenderBlankContainer ??= widget().restorationId != null && _needsRootBucketInserted;
   }
 
   @override
@@ -267,7 +267,7 @@ class _RootRestorationScopeState extends State<RootRestorationScope> {
   bool get _needsRootBucketInserted => _ancestorBucket == null;
 
   bool get _isWaitingForRootBucket {
-    return widget.restorationId != null && _needsRootBucketInserted && !_rootBucketValid;
+    return widget().restorationId != null && _needsRootBucketInserted && !_rootBucketValid;
   }
 
   bool _isLoadingRootBucket = false;
@@ -316,8 +316,8 @@ class _RootRestorationScopeState extends State<RootRestorationScope> {
     return UnmanagedRestorationScope(
       bucket: _ancestorBucket ?? _rootBucket,
       child: RestorationScope(
-        restorationId: widget.restorationId,
-        child: widget.child,
+        restorationId: widget().restorationId,
+        child: widget().child,
       ),
     );
   }

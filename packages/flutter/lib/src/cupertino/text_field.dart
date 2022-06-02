@@ -115,7 +115,7 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder extends TextSelectionGe
     }
     super.onSingleTapUp(details);
     _state._requestKeyboard();
-    _state.widget.onTap?.call();
+    _state.widget().onTap?.call();
   }
 
   @override
@@ -826,12 +826,12 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
   final GlobalKey _clearGlobalKey = GlobalKey();
 
   RestorableTextEditingController? _controller;
-  TextEditingController get _effectiveController => widget.controller ?? _controller!.value;
+  TextEditingController get _effectiveController => widget().controller ?? _controller!.value;
 
   FocusNode? _focusNode;
-  FocusNode get _effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
+  FocusNode get _effectiveFocusNode => widget().focusNode ?? (_focusNode ??= FocusNode());
 
-  MaxLengthEnforcement get _effectiveMaxLengthEnforcement => widget.maxLengthEnforcement
+  MaxLengthEnforcement get _effectiveMaxLengthEnforcement => widget().maxLengthEnforcement
     ?? LengthLimitingTextInputFormatter.getDefaultMaxLengthEnforcement();
 
   bool _showSelectionHandles = false;
@@ -846,36 +846,36 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
   final GlobalKey<EditableTextState> editableTextKey = GlobalKey<EditableTextState>();
 
   @override
-  bool get selectionEnabled => widget.selectionEnabled;
+  bool get selectionEnabled => widget().selectionEnabled;
   // End of API for TextSelectionGestureDetectorBuilderDelegate.
 
   @override
   void initState() {
     super.initState();
     _selectionGestureDetectorBuilder = _CupertinoTextFieldSelectionGestureDetectorBuilder(state: this);
-    if (widget.controller == null) {
+    if (widget().controller == null) {
       _createLocalController();
     }
-    _effectiveFocusNode.canRequestFocus = widget.enabled ?? true;
+    _effectiveFocusNode.canRequestFocus = widget().enabled ?? true;
     _effectiveFocusNode.addListener(_handleFocusChanged);
   }
 
   @override
   void didUpdateWidget(CupertinoTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller == null && oldWidget.controller != null) {
+    if (widget().controller == null && oldWidget.controller != null) {
       _createLocalController(oldWidget.controller!.value);
-    } else if (widget.controller != null && oldWidget.controller == null) {
+    } else if (widget().controller != null && oldWidget.controller == null) {
       unregisterFromRestoration(_controller!);
       _controller!.dispose();
       _controller = null;
     }
 
-    if (widget.focusNode != oldWidget.focusNode) {
+    if (widget().focusNode != oldWidget.focusNode) {
       (oldWidget.focusNode ?? _focusNode)?.removeListener(_handleFocusChanged);
-      (widget.focusNode ?? _focusNode)?.addListener(_handleFocusChanged);
+      (widget().focusNode ?? _focusNode)?.addListener(_handleFocusChanged);
     }
-    _effectiveFocusNode.canRequestFocus = widget.enabled ?? true;
+    _effectiveFocusNode.canRequestFocus = widget().enabled ?? true;
   }
 
   @override
@@ -902,7 +902,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
   }
 
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 
   @override
   void dispose() {
@@ -994,40 +994,40 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
   }
 
   bool _showPrefixWidget(TextEditingValue text) {
-    return widget.prefix != null && _shouldShowAttachment(
-      attachment: widget.prefixMode,
+    return widget().prefix != null && _shouldShowAttachment(
+      attachment: widget().prefixMode,
       hasText: text.text.isNotEmpty,
     );
   }
 
   bool _showSuffixWidget(TextEditingValue text) {
-    return widget.suffix != null && _shouldShowAttachment(
-      attachment: widget.suffixMode,
+    return widget().suffix != null && _shouldShowAttachment(
+      attachment: widget().suffixMode,
       hasText: text.text.isNotEmpty,
     );
   }
 
   bool _showClearButton(TextEditingValue text) {
     return _shouldShowAttachment(
-      attachment: widget.clearButtonMode,
+      attachment: widget().clearButtonMode,
       hasText: text.text.isNotEmpty,
     );
   }
 
   // True if any surrounding decoration widgets will be shown.
   bool get _hasDecoration {
-    return widget.placeholder != null ||
-      widget.clearButtonMode != OverlayVisibilityMode.never ||
-      widget.prefix != null ||
-      widget.suffix != null;
+    return widget().placeholder != null ||
+      widget().clearButtonMode != OverlayVisibilityMode.never ||
+      widget().prefix != null ||
+      widget().suffix != null;
   }
 
   // Provide default behavior if widget.textAlignVertical is not set.
   // CupertinoTextField has top alignment by default, unless it has decoration
   // like a prefix or suffix, in which case it's aligned to the center.
   TextAlignVertical get _textAlignVertical {
-    if (widget.textAlignVertical != null) {
-      return widget.textAlignVertical!;
+    if (widget().textAlignVertical != null) {
+      return widget().textAlignVertical!;
     }
     return _hasDecoration ? TextAlignVertical.center : TextAlignVertical.top;
   }
@@ -1050,23 +1050,23 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
         return Row(children: <Widget>[
           // Insert a prefix at the front if the prefix visibility mode matches
           // the current text state.
-          if (_showPrefixWidget(text!)) widget.prefix!,
+          if (_showPrefixWidget(text!)) widget().prefix!,
           // In the middle part, stack the placeholder on top of the main EditableText
           // if needed.
           Expanded(
             child: Stack(
               children: <Widget>[
-                if (widget.placeholder != null && text.text.isEmpty)
+                if (widget().placeholder != null && text.text.isEmpty)
                   SizedBox(
                     width: double.infinity,
                     child: Padding(
-                      padding: widget.padding,
+                      padding: widget().padding,
                       child: Text(
-                        widget.placeholder!,
-                        maxLines: widget.maxLines,
+                        widget().placeholder!,
+                        maxLines: widget().maxLines,
                         overflow: TextOverflow.ellipsis,
                         style: placeholderStyle,
-                        textAlign: widget.textAlign,
+                        textAlign: widget().textAlign,
                       ),
                     ),
                   ),
@@ -1076,18 +1076,18 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
           ),
           // First add the explicit suffix if the suffix visibility mode matches.
           if (_showSuffixWidget(text))
-            widget.suffix!
+            widget().suffix!
           // Otherwise, try to show a clear button if its visibility mode matches.
           else if (_showClearButton(text))
             GestureDetector(
               key: _clearGlobalKey,
-              onTap: widget.enabled ?? true ? () {
+              onTap: widget().enabled ?? true ? () {
                 // Special handle onChanged for ClearButton
                 // Also call onChanged when the clear button is tapped.
                 final bool textChanged = _effectiveController.text.isNotEmpty;
                 _effectiveController.clear();
-                if (widget.onChanged != null && textChanged)
-                  widget.onChanged!(_effectiveController.text);
+                if (widget().onChanged != null && textChanged)
+                  widget().onChanged!(_effectiveController.text);
               } : null,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
@@ -1111,13 +1111,13 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints = widget.autofillHints?.toList(growable: false);
+    final List<String>? autofillHints = widget().autofillHints?.toList(growable: false);
     final AutofillConfiguration autofillConfiguration = autofillHints != null
       ? AutofillConfiguration(
           uniqueIdentifier: autofillId,
           autofillHints: autofillHints,
           currentEditingValue: _effectiveController.value,
-          hintText: widget.placeholder,
+          hintText: widget().placeholder,
         )
       : AutofillConfiguration.disabled;
 
@@ -1131,7 +1131,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
     assert(debugCheckHasDirectionality(context));
     final TextEditingController controller = _effectiveController;
 
-    TextSelectionControls? textSelectionControls = widget.selectionControls;
+    TextSelectionControls? textSelectionControls = widget().selectionControls;
     VoidCallback? handleDidGainAccessibilityFocus;
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
@@ -1153,39 +1153,39 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
         break;
     }
 
-    final bool enabled = widget.enabled ?? true;
+    final bool enabled = widget().enabled ?? true;
     final Offset cursorOffset = Offset(_iOSHorizontalCursorOffsetPixels / MediaQuery.of(context).devicePixelRatio, 0);
     final List<TextInputFormatter> formatters = <TextInputFormatter>[
-      ...?widget.inputFormatters,
-      if (widget.maxLength != null)
+      ...?widget().inputFormatters,
+      if (widget().maxLength != null)
         LengthLimitingTextInputFormatter(
-          widget.maxLength,
+          widget().maxLength,
           maxLengthEnforcement: _effectiveMaxLengthEnforcement,
         ),
     ];
     final CupertinoThemeData themeData = CupertinoTheme.of(context);
 
-    final TextStyle? resolvedStyle = widget.style?.copyWith(
-      color: CupertinoDynamicColor.maybeResolve(widget.style?.color, context),
-      backgroundColor: CupertinoDynamicColor.maybeResolve(widget.style?.backgroundColor, context),
+    final TextStyle? resolvedStyle = widget().style?.copyWith(
+      color: CupertinoDynamicColor.maybeResolve(widget().style?.color, context),
+      backgroundColor: CupertinoDynamicColor.maybeResolve(widget().style?.backgroundColor, context),
     );
 
     final TextStyle textStyle = themeData.textTheme.textStyle.merge(resolvedStyle);
 
-    final TextStyle? resolvedPlaceholderStyle = widget.placeholderStyle?.copyWith(
-      color: CupertinoDynamicColor.maybeResolve(widget.placeholderStyle?.color, context),
-      backgroundColor: CupertinoDynamicColor.maybeResolve(widget.placeholderStyle?.backgroundColor, context),
+    final TextStyle? resolvedPlaceholderStyle = widget().placeholderStyle?.copyWith(
+      color: CupertinoDynamicColor.maybeResolve(widget().placeholderStyle?.color, context),
+      backgroundColor: CupertinoDynamicColor.maybeResolve(widget().placeholderStyle?.backgroundColor, context),
     );
 
     final TextStyle placeholderStyle = textStyle.merge(resolvedPlaceholderStyle);
 
-    final Brightness keyboardAppearance = widget.keyboardAppearance ?? CupertinoTheme.brightnessOf(context);
-    final Color cursorColor = CupertinoDynamicColor.maybeResolve(widget.cursorColor, context) ?? themeData.primaryColor;
+    final Brightness keyboardAppearance = widget().keyboardAppearance ?? CupertinoTheme.brightnessOf(context);
+    final Color cursorColor = CupertinoDynamicColor.maybeResolve(widget().cursorColor, context) ?? themeData.primaryColor;
     final Color disabledColor = CupertinoDynamicColor.resolve(_kDisabledBackground, context);
 
-    final Color? decorationColor = CupertinoDynamicColor.maybeResolve(widget.decoration?.color, context);
+    final Color? decorationColor = CupertinoDynamicColor.maybeResolve(widget().decoration?.color, context);
 
-    final BoxBorder? border = widget.decoration?.border;
+    final BoxBorder? border = widget().decoration?.border;
     Border? resolvedBorder = border as Border?;
     if (border is Border) {
       BorderSide resolveBorderSide(BorderSide side) {
@@ -1203,7 +1203,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
         );
     }
 
-    final BoxDecoration? effectiveDecoration = widget.decoration?.copyWith(
+    final BoxDecoration? effectiveDecoration = widget().decoration?.copyWith(
       border: resolvedBorder,
       color: enabled ? decorationColor : disabledColor,
     );
@@ -1211,67 +1211,67 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
     final Color selectionColor = CupertinoTheme.of(context).primaryColor.withOpacity(0.2);
 
     final Widget paddedEditable = Padding(
-      padding: widget.padding,
+      padding: widget().padding,
       child: RepaintBoundary(
         child: UnmanagedRestorationScope(
           bucket: bucket,
           child: EditableText(
             key: editableTextKey,
             controller: controller,
-            readOnly: widget.readOnly,
-            toolbarOptions: widget.toolbarOptions,
-            showCursor: widget.showCursor,
+            readOnly: widget().readOnly,
+            toolbarOptions: widget().toolbarOptions,
+            showCursor: widget().showCursor,
             showSelectionHandles: _showSelectionHandles,
             focusNode: _effectiveFocusNode,
-            keyboardType: widget.keyboardType,
-            textInputAction: widget.textInputAction,
-            textCapitalization: widget.textCapitalization,
+            keyboardType: widget().keyboardType,
+            textInputAction: widget().textInputAction,
+            textCapitalization: widget().textCapitalization,
             style: textStyle,
-            strutStyle: widget.strutStyle,
-            textAlign: widget.textAlign,
-            textDirection: widget.textDirection,
-            autofocus: widget.autofocus,
-            obscuringCharacter: widget.obscuringCharacter,
-            obscureText: widget.obscureText,
-            autocorrect: widget.autocorrect,
-            smartDashesType: widget.smartDashesType,
-            smartQuotesType: widget.smartQuotesType,
-            enableSuggestions: widget.enableSuggestions,
-            maxLines: widget.maxLines,
-            minLines: widget.minLines,
-            expands: widget.expands,
+            strutStyle: widget().strutStyle,
+            textAlign: widget().textAlign,
+            textDirection: widget().textDirection,
+            autofocus: widget().autofocus,
+            obscuringCharacter: widget().obscuringCharacter,
+            obscureText: widget().obscureText,
+            autocorrect: widget().autocorrect,
+            smartDashesType: widget().smartDashesType,
+            smartQuotesType: widget().smartQuotesType,
+            enableSuggestions: widget().enableSuggestions,
+            maxLines: widget().maxLines,
+            minLines: widget().minLines,
+            expands: widget().expands,
             // Only show the selection highlight when the text field is focused.
             selectionColor: _effectiveFocusNode.hasFocus ? selectionColor : null,
-            selectionControls: widget.selectionEnabled
+            selectionControls: widget().selectionEnabled
               ? textSelectionControls : null,
-            onChanged: widget.onChanged,
+            onChanged: widget().onChanged,
             onSelectionChanged: _handleSelectionChanged,
-            onEditingComplete: widget.onEditingComplete,
-            onSubmitted: widget.onSubmitted,
+            onEditingComplete: widget().onEditingComplete,
+            onSubmitted: widget().onSubmitted,
             inputFormatters: formatters,
             rendererIgnoresPointer: true,
-            cursorWidth: widget.cursorWidth,
-            cursorHeight: widget.cursorHeight,
-            cursorRadius: widget.cursorRadius,
+            cursorWidth: widget().cursorWidth,
+            cursorHeight: widget().cursorHeight,
+            cursorRadius: widget().cursorRadius,
             cursorColor: cursorColor,
             cursorOpacityAnimates: true,
             cursorOffset: cursorOffset,
             paintCursorAboveText: true,
             autocorrectionTextRectColor: selectionColor,
             backgroundCursorColor: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            selectionHeightStyle: widget.selectionHeightStyle,
-            selectionWidthStyle: widget.selectionWidthStyle,
-            scrollPadding: widget.scrollPadding,
+            selectionHeightStyle: widget().selectionHeightStyle,
+            selectionWidthStyle: widget().selectionWidthStyle,
+            scrollPadding: widget().scrollPadding,
             keyboardAppearance: keyboardAppearance,
-            dragStartBehavior: widget.dragStartBehavior,
-            scrollController: widget.scrollController,
-            scrollPhysics: widget.scrollPhysics,
-            enableInteractiveSelection: widget.enableInteractiveSelection,
+            dragStartBehavior: widget().dragStartBehavior,
+            scrollController: widget().scrollController,
+            scrollPhysics: widget().scrollPhysics,
+            enableInteractiveSelection: widget().enableInteractiveSelection,
             autofillClient: this,
-            clipBehavior: widget.clipBehavior,
+            clipBehavior: widget().clipBehavior,
             restorationId: 'editable',
-            scribbleEnabled: widget.scribbleEnabled,
-            enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+            scribbleEnabled: widget().scribbleEnabled,
+            enableIMEPersonalizedLearning: widget().enableIMEPersonalizedLearning,
           ),
         ),
       ),
@@ -1279,7 +1279,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField> with Restoratio
 
     return Semantics(
       enabled: enabled,
-      onTap: !enabled || widget.readOnly ? null : () {
+      onTap: !enabled || widget().readOnly ? null : () {
         if (!controller.selection.isValid) {
           controller.selection = TextSelection.collapsed(offset: controller.text.length);
         }

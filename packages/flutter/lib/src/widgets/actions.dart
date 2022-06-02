@@ -430,27 +430,27 @@ class _ActionListenerState extends State<ActionListener> {
   @override
   void initState() {
     super.initState();
-    widget.action.addActionListener(widget.listener);
+    widget().action.addActionListener(widget().listener);
   }
 
   @override
   void didUpdateWidget(ActionListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.action == widget.action && oldWidget.listener == widget.listener) {
+    if (oldWidget.action == widget().action && oldWidget.listener == widget().listener) {
       return;
     }
     oldWidget.action.removeActionListener(oldWidget.listener);
-    widget.action.addActionListener(widget.listener);
+    widget().action.addActionListener(widget().listener);
   }
 
   @override
   void dispose() {
-    widget.action.removeActionListener(widget.listener);
+    widget().action.removeActionListener(widget().listener);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) => widget().child;
 }
 
 /// An abstract [Action] subclass that adds an optional [BuildContext] to the
@@ -961,7 +961,7 @@ class _ActionsState extends State<Actions> {
   }
 
   void _updateActionListeners() {
-    final Set<Action<Intent>> widgetActions = widget.actions.values.toSet();
+    final Set<Action<Intent>> widgetActions = widget().actions.values.toSet();
     final Set<Action<Intent>> removedActions = listenedActions!.difference(widgetActions);
     final Set<Action<Intent>> addedActions = widgetActions.difference(listenedActions!);
 
@@ -992,10 +992,10 @@ class _ActionsState extends State<Actions> {
   @override
   Widget build(BuildContext context) {
     return _ActionsMarker(
-      actions: widget.actions,
-      dispatcher: widget.dispatcher,
+      actions: widget().actions,
+      dispatcher: widget().dispatcher,
       rebuildKey: rebuildKey,
-      child: widget.child,
+      child: widget().child,
     );
   }
 }
@@ -1201,7 +1201,7 @@ class _FocusableActionDetectorState extends State<FocusableActionDetector> {
       _mayTriggerCallback(task: () {
         _focused = focused;
       });
-      widget.onFocusChange?.call(_focused);
+      widget().onFocusChange?.call(_focused);
     }
   }
 
@@ -1231,26 +1231,26 @@ class _FocusableActionDetectorState extends State<FocusableActionDetector> {
     }
 
     assert(SchedulerBinding.instance.schedulerPhase != SchedulerPhase.persistentCallbacks);
-    final FocusableActionDetector oldTarget = oldWidget ?? widget;
+    final FocusableActionDetector oldTarget = oldWidget ?? widget();
     final bool didShowHoverHighlight = shouldShowHoverHighlight(oldTarget);
     final bool didShowFocusHighlight = shouldShowFocusHighlight(oldTarget);
     if (task != null) {
       task();
     }
-    final bool doShowHoverHighlight = shouldShowHoverHighlight(widget);
-    final bool doShowFocusHighlight = shouldShowFocusHighlight(widget);
+    final bool doShowHoverHighlight = shouldShowHoverHighlight(widget());
+    final bool doShowFocusHighlight = shouldShowFocusHighlight(widget());
     if (didShowFocusHighlight != doShowFocusHighlight) {
-      widget.onShowFocusHighlight?.call(doShowFocusHighlight);
+      widget().onShowFocusHighlight?.call(doShowFocusHighlight);
     }
     if (didShowHoverHighlight != doShowHoverHighlight) {
-      widget.onShowHoverHighlight?.call(doShowHoverHighlight);
+      widget().onShowHoverHighlight?.call(doShowHoverHighlight);
     }
   }
 
   @override
   void didUpdateWidget(FocusableActionDetector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.enabled != oldWidget.enabled) {
+    if (widget().enabled != oldWidget.enabled) {
       SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
         _mayTriggerCallback(oldWidget: oldWidget);
       });
@@ -1261,7 +1261,7 @@ class _FocusableActionDetectorState extends State<FocusableActionDetector> {
     final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
-        return widget.enabled;
+        return widget().enabled;
       case NavigationMode.directional:
         return true;
     }
@@ -1280,22 +1280,22 @@ class _FocusableActionDetectorState extends State<FocusableActionDetector> {
       key: _mouseRegionKey,
       onEnter: _handleMouseEnter,
       onExit: _handleMouseExit,
-      cursor: widget.mouseCursor,
+      cursor: widget().mouseCursor,
       child: Focus(
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
-        descendantsAreFocusable: widget.descendantsAreFocusable,
-        descendantsAreTraversable: widget.descendantsAreTraversable,
+        focusNode: widget().focusNode,
+        autofocus: widget().autofocus,
+        descendantsAreFocusable: widget().descendantsAreFocusable,
+        descendantsAreTraversable: widget().descendantsAreTraversable,
         canRequestFocus: _canRequestFocus,
         onFocusChange: _handleFocusChange,
-        child: widget.child,
+        child: widget().child,
       ),
     );
-    if (widget.enabled && widget.actions != null && widget.actions!.isNotEmpty) {
-      child = Actions(actions: widget.actions!, child: child);
+    if (widget().enabled && widget().actions != null && widget().actions!.isNotEmpty) {
+      child = Actions(actions: widget().actions!, child: child);
     }
-    if (widget.enabled && widget.shortcuts != null && widget.shortcuts!.isNotEmpty) {
-      child = Shortcuts(shortcuts: widget.shortcuts!, child: child);
+    if (widget().enabled && widget().shortcuts != null && widget().shortcuts!.isNotEmpty) {
+      child = Shortcuts(shortcuts: widget().shortcuts!, child: child);
     }
     return child;
   }

@@ -104,24 +104,24 @@ class _StreamBuilderBaseState<T, S> extends State<StreamBuilderBase<T, S>> {
   @override
   void initState() {
     super.initState();
-    _summary = widget.initial();
+    _summary = widget().initial();
     _subscribe();
   }
 
   @override
   void didUpdateWidget(StreamBuilderBase<T, S> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.stream != widget.stream) {
+    if (oldWidget.stream != widget().stream) {
       if (_subscription != null) {
         _unsubscribe();
-        _summary = widget.afterDisconnected(_summary);
+        _summary = widget().afterDisconnected(_summary);
       }
       _subscribe();
     }
   }
 
   @override
-  Widget build(BuildContext context) => widget.build(context, _summary);
+  Widget build(BuildContext context) => widget().build(context, _summary);
 
   @override
   void dispose() {
@@ -130,21 +130,21 @@ class _StreamBuilderBaseState<T, S> extends State<StreamBuilderBase<T, S>> {
   }
 
   void _subscribe() {
-    if (widget.stream != null) {
-      _subscription = widget.stream!.listen((T data) {
+    if (widget().stream != null) {
+      _subscription = widget().stream!.listen((T data) {
         setState(() {
-          _summary = widget.afterData(_summary, data);
+          _summary = widget().afterData(_summary, data);
         });
       }, onError: (Object error, StackTrace stackTrace) {
         setState(() {
-          _summary = widget.afterError(_summary, error, stackTrace);
+          _summary = widget().afterError(_summary, error, stackTrace);
         });
       }, onDone: () {
         setState(() {
-          _summary = widget.afterDone(_summary);
+          _summary = widget().afterDone(_summary);
         });
       });
-      _summary = widget.afterConnected(_summary);
+      _summary = widget().afterConnected(_summary);
     }
   }
 
@@ -593,16 +593,16 @@ class _FutureBuilderState<T> extends State<FutureBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    _snapshot = widget.initialData == null
+    _snapshot = widget().initialData == null
         ? AsyncSnapshot<T>.nothing()
-        : AsyncSnapshot<T>.withData(ConnectionState.none, widget.initialData as T);
+        : AsyncSnapshot<T>.withData(ConnectionState.none, widget().initialData as T);
     _subscribe();
   }
 
   @override
   void didUpdateWidget(FutureBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.future != widget.future) {
+    if (oldWidget.future != widget().future) {
       if (_activeCallbackIdentity != null) {
         _unsubscribe();
         _snapshot = _snapshot.inState(ConnectionState.none);
@@ -612,7 +612,7 @@ class _FutureBuilderState<T> extends State<FutureBuilder<T>> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _snapshot);
+  Widget build(BuildContext context) => widget().builder(context, _snapshot);
 
   @override
   void dispose() {
@@ -621,10 +621,10 @@ class _FutureBuilderState<T> extends State<FutureBuilder<T>> {
   }
 
   void _subscribe() {
-    if (widget.future != null) {
+    if (widget().future != null) {
       final Object callbackIdentity = Object();
       _activeCallbackIdentity = callbackIdentity;
-      widget.future!.then<void>((T data) {
+      widget().future!.then<void>((T data) {
         if (_activeCallbackIdentity == callbackIdentity) {
           setState(() {
             _snapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);

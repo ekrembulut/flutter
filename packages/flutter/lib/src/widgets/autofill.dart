@@ -179,7 +179,7 @@ class AutofillGroupState extends State<AutofillGroup> with AutofillScopeMixin {
   Widget build(BuildContext context) {
     return _AutofillScope(
       autofillScopeState: this,
-      child: widget.child,
+      child: widget().child,
     );
   }
 
@@ -187,9 +187,9 @@ class AutofillGroupState extends State<AutofillGroup> with AutofillScopeMixin {
   void dispose() {
     super.dispose();
 
-    if (!_isTopmostAutofillGroup || widget.onDisposeAction == null)
+    if (!_isTopmostAutofillGroup || widget().onDisposeAction == null)
       return;
-    switch (widget.onDisposeAction) {
+    switch (widget().onDisposeAction) {
       case AutofillContextAction.cancel:
         TextInput.finishAutofillContext(shouldSave: false);
         break;
@@ -210,7 +210,7 @@ class _AutofillScope extends InheritedWidget {
 
   final AutofillGroupState? _scope;
 
-  AutofillGroup get client => _scope!.widget;
+  AutofillGroup get client => _scope!.widget();
 
   @override
   bool updateShouldNotify(_AutofillScope old) => _scope != old._scope;

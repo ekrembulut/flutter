@@ -218,7 +218,7 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
   @override
   void initState() {
     super.initState();
-    if (widget.scrollController == null) {
+    if (widget().scrollController == null) {
       _controller = FixedExtentScrollController();
     }
   }
@@ -226,9 +226,9 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
   @override
   void didUpdateWidget(CupertinoPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.scrollController != null && oldWidget.scrollController == null) {
+    if (widget().scrollController != null && oldWidget.scrollController == null) {
       _controller = null;
-    } else if (widget.scrollController == null && oldWidget.scrollController != null) {
+    } else if (widget().scrollController == null && oldWidget.scrollController != null) {
       assert(_controller == null);
       _controller = FixedExtentScrollController();
     }
@@ -262,12 +262,12 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
       HapticFeedback.selectionClick();
     }
 
-    widget.onSelectedItemChanged?.call(index);
+    widget().onSelectedItemChanged?.call(index);
   }
 
   /// Draws the selectionOverlay.
   Widget _buildSelectionOverlay(Widget selectionOverlay) {
-    final double height = widget.itemExtent * widget.magnification;
+    final double height = widget().itemExtent * widget().magnification;
 
     return IgnorePointer(
       child: Center(
@@ -283,7 +283,7 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final Color? resolvedBackgroundColor = CupertinoDynamicColor.maybeResolve(widget.backgroundColor, context);
+    final Color? resolvedBackgroundColor = CupertinoDynamicColor.maybeResolve(widget().backgroundColor, context);
 
     assert(RenderListWheelViewport.defaultPerspective == _kDefaultPerspective);
     final Widget result = DefaultTextStyle(
@@ -292,24 +292,24 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
         children: <Widget>[
           Positioned.fill(
             child: _CupertinoPickerSemantics(
-              scrollController: widget.scrollController ?? _controller!,
+              scrollController: widget().scrollController ?? _controller!,
               child: ListWheelScrollView.useDelegate(
-                controller: widget.scrollController ?? _controller,
+                controller: widget().scrollController ?? _controller,
                 physics: const FixedExtentScrollPhysics(),
-                diameterRatio: widget.diameterRatio,
-                offAxisFraction: widget.offAxisFraction,
-                useMagnifier: widget.useMagnifier,
-                magnification: widget.magnification,
+                diameterRatio: widget().diameterRatio,
+                offAxisFraction: widget().offAxisFraction,
+                useMagnifier: widget().useMagnifier,
+                magnification: widget().magnification,
                 overAndUnderCenterOpacity: _kOverAndUnderCenterOpacity,
-                itemExtent: widget.itemExtent,
-                squeeze: widget.squeeze,
+                itemExtent: widget().itemExtent,
+                squeeze: widget().squeeze,
                 onSelectedItemChanged: _handleSelectedItemChanged,
-                childDelegate: widget.childDelegate,
+                childDelegate: widget().childDelegate,
               ),
             ),
           ),
-          if (widget.selectionOverlay != null)
-            _buildSelectionOverlay(widget.selectionOverlay!),
+          if (widget().selectionOverlay != null)
+            _buildSelectionOverlay(widget().selectionOverlay!),
         ],
       ),
     );

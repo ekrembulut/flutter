@@ -1575,16 +1575,16 @@ class _FocusTraversalGroupState extends State<FocusTraversalGroup> {
   @override
   Widget build(BuildContext context) {
     return _FocusTraversalGroupMarker(
-      policy: widget.policy,
+      policy: widget().policy,
       focusNode: focusNode!,
       child: Focus(
         focusNode: focusNode,
         canRequestFocus: false,
         skipTraversal: true,
         includeSemantics: false,
-        descendantsAreFocusable: widget.descendantsAreFocusable,
-        descendantsAreTraversable: widget.descendantsAreTraversable,
-        child: widget.child,
+        descendantsAreFocusable: widget().descendantsAreFocusable,
+        descendantsAreTraversable: widget().descendantsAreTraversable,
+        child: widget().child,
       ),
     );
   }

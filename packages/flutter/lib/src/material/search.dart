@@ -473,20 +473,20 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   @override
   void initState() {
     super.initState();
-    widget.delegate._queryTextController.addListener(_onQueryChanged);
-    widget.animation.addStatusListener(_onAnimationStatusChanged);
-    widget.delegate._currentBodyNotifier.addListener(_onSearchBodyChanged);
+    widget().delegate._queryTextController.addListener(_onQueryChanged);
+    widget().animation.addStatusListener(_onAnimationStatusChanged);
+    widget().delegate._currentBodyNotifier.addListener(_onSearchBodyChanged);
     focusNode.addListener(_onFocusChanged);
-    widget.delegate._focusNode = focusNode;
+    widget().delegate._focusNode = focusNode;
   }
 
   @override
   void dispose() {
     super.dispose();
-    widget.delegate._queryTextController.removeListener(_onQueryChanged);
-    widget.animation.removeStatusListener(_onAnimationStatusChanged);
-    widget.delegate._currentBodyNotifier.removeListener(_onSearchBodyChanged);
-    widget.delegate._focusNode = null;
+    widget().delegate._queryTextController.removeListener(_onQueryChanged);
+    widget().animation.removeStatusListener(_onAnimationStatusChanged);
+    widget().delegate._currentBodyNotifier.removeListener(_onSearchBodyChanged);
+    widget().delegate._focusNode = null;
     focusNode.dispose();
   }
 
@@ -494,8 +494,8 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
     if (status != AnimationStatus.completed) {
       return;
     }
-    widget.animation.removeStatusListener(_onAnimationStatusChanged);
-    if (widget.delegate._currentBody == _SearchBody.suggestions) {
+    widget().animation.removeStatusListener(_onAnimationStatusChanged);
+    if (widget().delegate._currentBody == _SearchBody.suggestions) {
       focusNode.requestFocus();
     }
   }
@@ -503,19 +503,19 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   @override
   void didUpdateWidget(_SearchPage<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.delegate != oldWidget.delegate) {
+    if (widget().delegate != oldWidget.delegate) {
       oldWidget.delegate._queryTextController.removeListener(_onQueryChanged);
-      widget.delegate._queryTextController.addListener(_onQueryChanged);
+      widget().delegate._queryTextController.addListener(_onQueryChanged);
       oldWidget.delegate._currentBodyNotifier.removeListener(_onSearchBodyChanged);
-      widget.delegate._currentBodyNotifier.addListener(_onSearchBodyChanged);
+      widget().delegate._currentBodyNotifier.addListener(_onSearchBodyChanged);
       oldWidget.delegate._focusNode = null;
-      widget.delegate._focusNode = focusNode;
+      widget().delegate._focusNode = focusNode;
     }
   }
 
   void _onFocusChanged() {
-    if (focusNode.hasFocus && widget.delegate._currentBody != _SearchBody.suggestions) {
-      widget.delegate.showSuggestions(context);
+    if (focusNode.hasFocus && widget().delegate._currentBody != _SearchBody.suggestions) {
+      widget().delegate.showSuggestions(context);
     }
   }
 
@@ -534,21 +534,21 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterialLocalizations(context));
-    final ThemeData theme = widget.delegate.appBarTheme(context);
-    final String searchFieldLabel = widget.delegate.searchFieldLabel
+    final ThemeData theme = widget().delegate.appBarTheme(context);
+    final String searchFieldLabel = widget().delegate.searchFieldLabel
       ?? MaterialLocalizations.of(context).searchFieldLabel;
     Widget? body;
-    switch(widget.delegate._currentBody) {
+    switch(widget().delegate._currentBody) {
       case _SearchBody.suggestions:
         body = KeyedSubtree(
           key: const ValueKey<_SearchBody>(_SearchBody.suggestions),
-          child: widget.delegate.buildSuggestions(context),
+          child: widget().delegate.buildSuggestions(context),
         );
         break;
       case _SearchBody.results:
         body = KeyedSubtree(
           key: const ValueKey<_SearchBody>(_SearchBody.results),
-          child: widget.delegate.buildResults(context),
+          child: widget().delegate.buildResults(context),
         );
         break;
       case null:
@@ -577,20 +577,20 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
         data: theme,
         child: Scaffold(
           appBar: AppBar(
-            leading: widget.delegate.buildLeading(context),
+            leading: widget().delegate.buildLeading(context),
             title: TextField(
-              controller: widget.delegate._queryTextController,
+              controller: widget().delegate._queryTextController,
               focusNode: focusNode,
               style: theme.textTheme.headline6,
-              textInputAction: widget.delegate.textInputAction,
-              keyboardType: widget.delegate.keyboardType,
+              textInputAction: widget().delegate.textInputAction,
+              keyboardType: widget().delegate.keyboardType,
               onSubmitted: (String _) {
-                widget.delegate.showResults(context);
+                widget().delegate.showResults(context);
               },
               decoration: InputDecoration(hintText: searchFieldLabel),
             ),
-            actions: widget.delegate.buildActions(context),
-            bottom: widget.delegate.buildBottom(context),
+            actions: widget().delegate.buildActions(context),
+            bottom: widget().delegate.buildBottom(context),
           ),
           body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),

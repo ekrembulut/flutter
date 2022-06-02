@@ -84,27 +84,27 @@ class _RawKeyboardListenerState extends State<RawKeyboardListener> {
   @override
   void initState() {
     super.initState();
-    widget.focusNode.addListener(_handleFocusChanged);
+    widget().focusNode.addListener(_handleFocusChanged);
   }
 
   @override
   void didUpdateWidget(RawKeyboardListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.focusNode != oldWidget.focusNode) {
+    if (widget().focusNode != oldWidget.focusNode) {
       oldWidget.focusNode.removeListener(_handleFocusChanged);
-      widget.focusNode.addListener(_handleFocusChanged);
+      widget().focusNode.addListener(_handleFocusChanged);
     }
   }
 
   @override
   void dispose() {
-    widget.focusNode.removeListener(_handleFocusChanged);
+    widget().focusNode.removeListener(_handleFocusChanged);
     _detachKeyboardIfAttached();
     super.dispose();
   }
 
   void _handleFocusChanged() {
-    if (widget.focusNode.hasFocus)
+    if (widget().focusNode.hasFocus)
       _attachKeyboardIfDetached();
     else
       _detachKeyboardIfAttached();
@@ -127,16 +127,16 @@ class _RawKeyboardListenerState extends State<RawKeyboardListener> {
   }
 
   void _handleRawKeyEvent(RawKeyEvent event) {
-    widget.onKey?.call(event);
+    widget().onKey?.call(event);
   }
 
   @override
   Widget build(BuildContext context) {
     return Focus(
-      focusNode: widget.focusNode,
-      autofocus: widget.autofocus,
-      includeSemantics: widget.includeSemantics,
-      child: widget.child,
+      focusNode: widget().focusNode,
+      autofocus: widget().autofocus,
+      includeSemantics: widget().includeSemantics,
+      child: widget().child,
     );
   }
 }

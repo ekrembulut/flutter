@@ -448,9 +448,9 @@ class _AndroidViewState extends State<AndroidView> {
       onFocusChange: _onFocusChange,
       child: _AndroidPlatformView(
         controller: _controller,
-        hitTestBehavior: widget.hitTestBehavior,
-        gestureRecognizers: widget.gestureRecognizers ?? _emptyRecognizersSet,
-        clipBehavior: widget.clipBehavior,
+        hitTestBehavior: widget().hitTestBehavior,
+        gestureRecognizers: widget().gestureRecognizers ?? _emptyRecognizersSet,
+        clipBehavior: widget().clipBehavior,
       ),
     );
   }
@@ -487,7 +487,7 @@ class _AndroidViewState extends State<AndroidView> {
     final bool didChangeLayoutDirection = _layoutDirection != newLayoutDirection;
     _layoutDirection = newLayoutDirection;
 
-    if (widget.viewType != oldWidget.viewType) {
+    if (widget().viewType != oldWidget.viewType) {
       _controller.dispose();
       _createNewAndroidView();
       return;
@@ -499,8 +499,8 @@ class _AndroidViewState extends State<AndroidView> {
   }
 
   TextDirection _findLayoutDirection() {
-    assert(widget.layoutDirection != null || debugCheckHasDirectionality(context));
-    return widget.layoutDirection ?? Directionality.of(context);
+    assert(widget().layoutDirection != null || debugCheckHasDirectionality(context));
+    return widget().layoutDirection ?? Directionality.of(context);
   }
 
   @override
@@ -513,16 +513,16 @@ class _AndroidViewState extends State<AndroidView> {
     _id = platformViewsRegistry.getNextPlatformViewId();
     _controller = PlatformViewsService.initAndroidView(
       id: _id!,
-      viewType: widget.viewType,
+      viewType: widget().viewType,
       layoutDirection: _layoutDirection!,
-      creationParams: widget.creationParams,
-      creationParamsCodec: widget.creationParamsCodec,
+      creationParams: widget().creationParams,
+      creationParamsCodec: widget().creationParamsCodec,
       onFocus: () {
         _focusNode!.requestFocus();
       },
     );
-    if (widget.onPlatformViewCreated != null) {
-      _controller.addOnPlatformViewCreatedListener(widget.onPlatformViewCreated!);
+    if (widget().onPlatformViewCreated != null) {
+      _controller.addOnPlatformViewCreatedListener(widget().onPlatformViewCreated!);
     }
   }
 
@@ -576,8 +576,8 @@ class _UiKitViewState extends State<UiKitView> {
     }
     return _UiKitPlatformView(
       controller: _controller!,
-      hitTestBehavior: widget.hitTestBehavior,
-      gestureRecognizers: widget.gestureRecognizers ?? _emptyRecognizersSet,
+      hitTestBehavior: widget().hitTestBehavior,
+      gestureRecognizers: widget().gestureRecognizers ?? _emptyRecognizersSet,
     );
   }
 
@@ -612,7 +612,7 @@ class _UiKitViewState extends State<UiKitView> {
     final bool didChangeLayoutDirection = _layoutDirection != newLayoutDirection;
     _layoutDirection = newLayoutDirection;
 
-    if (widget.viewType != oldWidget.viewType) {
+    if (widget().viewType != oldWidget.viewType) {
       _controller?.dispose();
       _createNewUiKitView();
       return;
@@ -624,8 +624,8 @@ class _UiKitViewState extends State<UiKitView> {
   }
 
   TextDirection _findLayoutDirection() {
-    assert(widget.layoutDirection != null || debugCheckHasDirectionality(context));
-    return widget.layoutDirection ?? Directionality.of(context);
+    assert(widget().layoutDirection != null || debugCheckHasDirectionality(context));
+    return widget().layoutDirection ?? Directionality.of(context);
   }
 
   @override
@@ -638,16 +638,16 @@ class _UiKitViewState extends State<UiKitView> {
     final int id = platformViewsRegistry.getNextPlatformViewId();
     final UiKitViewController controller = await PlatformViewsService.initUiKitView(
       id: id,
-      viewType: widget.viewType,
+      viewType: widget().viewType,
       layoutDirection: _layoutDirection!,
-      creationParams: widget.creationParams,
-      creationParamsCodec: widget.creationParamsCodec,
+      creationParams: widget().creationParams,
+      creationParamsCodec: widget().creationParamsCodec,
     );
     if (!mounted) {
       controller.dispose();
       return;
     }
-    widget.onPlatformViewCreated?.call(id);
+    widget().onPlatformViewCreated?.call(id);
     setState(() { _controller = controller; });
   }
 }
@@ -847,7 +847,7 @@ class _PlatformViewLinkState extends State<PlatformViewLink> {
 
   @override
   Widget build(BuildContext context) {
-    _surface ??= widget._surfaceFactory(context, _controller!);
+    _surface ??= widget()._surfaceFactory(context, _controller!);
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _handleFrameworkFocusChanged,
@@ -866,7 +866,7 @@ class _PlatformViewLinkState extends State<PlatformViewLink> {
   void didUpdateWidget(PlatformViewLink oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.viewType != oldWidget.viewType) {
+    if (widget().viewType != oldWidget.viewType) {
       _controller?.dispose();
       // The _surface has to be recreated as its controller is disposed.
       // Setting _surface to null will trigger its creation in build().
@@ -877,10 +877,10 @@ class _PlatformViewLinkState extends State<PlatformViewLink> {
 
   void _initialize() {
     _id = platformViewsRegistry.getNextPlatformViewId();
-    _controller = widget._onCreatePlatformView(
+    _controller = widget()._onCreatePlatformView(
       PlatformViewCreationParams._(
         id: _id!,
-        viewType: widget.viewType,
+        viewType: widget().viewType,
         onPlatformViewCreated: (_) {},
         onFocusChanged: _handlePlatformFocusChanged,
       ),

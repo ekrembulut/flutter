@@ -149,11 +149,11 @@ class _CupertinoScrollbarState extends RawScrollbarState<CupertinoScrollbar> {
   late AnimationController _thicknessAnimationController;
 
   double get _thickness {
-    return widget.thickness! + _thicknessAnimationController.value * (widget.thicknessWhileDragging - widget.thickness!);
+    return widget().thickness! + _thicknessAnimationController.value * (widget().thicknessWhileDragging - widget().thickness!);
   }
 
   Radius get _radius {
-    return Radius.lerp(widget.radius, widget.radiusWhileDragging, _thicknessAnimationController.value)!;
+    return Radius.lerp(widget().radius, widget().radiusWhileDragging, _thicknessAnimationController.value)!;
   }
 
   @override
@@ -180,7 +180,7 @@ class _CupertinoScrollbarState extends RawScrollbarState<CupertinoScrollbar> {
       ..padding = MediaQuery.of(context).padding
       ..minLength = _kScrollbarMinLength
       ..minOverscrollLength = _kScrollbarMinOverscrollLength
-      ..scrollbarOrientation = widget.scrollbarOrientation;
+      ..scrollbarOrientation = widget().scrollbarOrientation;
   }
 
   double _pressStartAxisPosition = 0.0;

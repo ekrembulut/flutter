@@ -342,8 +342,8 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
   void didUpdateWidget(NavigationRail oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.extended != oldWidget.extended) {
-      if (widget.extended) {
+    if (widget().extended != oldWidget.extended) {
+      if (widget().extended) {
         _extendedController.forward();
       } else {
         _extendedController.reverse();
@@ -351,17 +351,17 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
     }
 
     // No animated segue if the length of the items list changes.
-    if (widget.destinations.length != oldWidget.destinations.length) {
+    if (widget().destinations.length != oldWidget.destinations.length) {
       _resetState();
       return;
     }
 
-    if (widget.selectedIndex != oldWidget.selectedIndex) {
+    if (widget().selectedIndex != oldWidget.selectedIndex) {
       if (oldWidget.selectedIndex != null) {
         _destinationControllers[oldWidget.selectedIndex!].reverse();
       }
-      if (widget.selectedIndex != null) {
-        _destinationControllers[widget.selectedIndex!].forward();
+      if (widget().selectedIndex != null) {
+        _destinationControllers[widget().selectedIndex!].forward();
       }
       return;
     }
@@ -373,18 +373,18 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
     final NavigationRailThemeData defaults = Theme.of(context).useMaterial3 ? _TokenDefaultsM3(context) : _DefaultsM2(context);
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
 
-    final Color backgroundColor = widget.backgroundColor ?? navigationRailTheme.backgroundColor ?? defaults.backgroundColor!;
-    final double elevation = widget.elevation ?? navigationRailTheme.elevation ?? defaults.elevation!;
-    final double minWidth = widget.minWidth ?? navigationRailTheme.minWidth ?? defaults.minWidth!;
-    final double minExtendedWidth = widget.minExtendedWidth ?? navigationRailTheme.minExtendedWidth ?? defaults.minExtendedWidth!;
-    final TextStyle unselectedLabelTextStyle = widget.unselectedLabelTextStyle ?? navigationRailTheme.unselectedLabelTextStyle ?? defaults.unselectedLabelTextStyle!;
-    final TextStyle selectedLabelTextStyle = widget.selectedLabelTextStyle ?? navigationRailTheme.selectedLabelTextStyle ?? defaults.selectedLabelTextStyle!;
-    final IconThemeData unselectedIconTheme = widget.unselectedIconTheme ?? navigationRailTheme.unselectedIconTheme ?? defaults.unselectedIconTheme!;
-    final IconThemeData selectedIconTheme = widget.selectedIconTheme ?? navigationRailTheme.selectedIconTheme ?? defaults.selectedIconTheme!;
-    final double groupAlignment = widget.groupAlignment ?? navigationRailTheme.groupAlignment ?? defaults.groupAlignment!;
-    final NavigationRailLabelType labelType = widget.labelType ?? navigationRailTheme.labelType ?? defaults.labelType!;
-    final bool useIndicator = widget.useIndicator ?? navigationRailTheme.useIndicator ?? defaults.useIndicator!;
-    final Color? indicatorColor = widget.indicatorColor ?? navigationRailTheme.indicatorColor ?? defaults.indicatorColor;
+    final Color backgroundColor = widget().backgroundColor ?? navigationRailTheme.backgroundColor ?? defaults.backgroundColor!;
+    final double elevation = widget().elevation ?? navigationRailTheme.elevation ?? defaults.elevation!;
+    final double minWidth = widget().minWidth ?? navigationRailTheme.minWidth ?? defaults.minWidth!;
+    final double minExtendedWidth = widget().minExtendedWidth ?? navigationRailTheme.minExtendedWidth ?? defaults.minExtendedWidth!;
+    final TextStyle unselectedLabelTextStyle = widget().unselectedLabelTextStyle ?? navigationRailTheme.unselectedLabelTextStyle ?? defaults.unselectedLabelTextStyle!;
+    final TextStyle selectedLabelTextStyle = widget().selectedLabelTextStyle ?? navigationRailTheme.selectedLabelTextStyle ?? defaults.selectedLabelTextStyle!;
+    final IconThemeData unselectedIconTheme = widget().unselectedIconTheme ?? navigationRailTheme.unselectedIconTheme ?? defaults.unselectedIconTheme!;
+    final IconThemeData selectedIconTheme = widget().selectedIconTheme ?? navigationRailTheme.selectedIconTheme ?? defaults.selectedIconTheme!;
+    final double groupAlignment = widget().groupAlignment ?? navigationRailTheme.groupAlignment ?? defaults.groupAlignment!;
+    final NavigationRailLabelType labelType = widget().labelType ?? navigationRailTheme.labelType ?? defaults.labelType!;
+    final bool useIndicator = widget().useIndicator ?? navigationRailTheme.useIndicator ?? defaults.useIndicator!;
+    final Color? indicatorColor = widget().indicatorColor ?? navigationRailTheme.indicatorColor ?? defaults.indicatorColor;
 
     // For backwards compatibility, in M2 the opacity of the unselected icons needs
     // to be set to the default if it isn't in the given theme. This can be removed
@@ -403,9 +403,9 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
           child: Column(
             children: <Widget>[
               _verticalSpacer,
-              if (widget.leading != null)
+              if (widget().leading != null)
                 ...<Widget>[
-                  widget.leading!,
+                  widget().leading!,
                   _verticalSpacer,
                 ],
               Expanded(
@@ -414,32 +414,32 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      for (int i = 0; i < widget.destinations.length; i += 1)
+                      for (int i = 0; i < widget().destinations.length; i += 1)
                         _RailDestination(
                           minWidth: minWidth,
                           minExtendedWidth: minExtendedWidth,
                           extendedTransitionAnimation: _extendedAnimation,
-                          selected: widget.selectedIndex == i,
-                          icon: widget.selectedIndex == i ? widget.destinations[i].selectedIcon : widget.destinations[i].icon,
-                          label: widget.destinations[i].label,
+                          selected: widget().selectedIndex == i,
+                          icon: widget().selectedIndex == i ? widget().destinations[i].selectedIcon : widget().destinations[i].icon,
+                          label: widget().destinations[i].label,
                           destinationAnimation: _destinationAnimations[i],
                           labelType: labelType,
-                          iconTheme: widget.selectedIndex == i ? selectedIconTheme : effectiveUnselectedIconTheme,
-                          labelTextStyle: widget.selectedIndex == i ? selectedLabelTextStyle : unselectedLabelTextStyle,
-                          padding: widget.destinations[i].padding,
+                          iconTheme: widget().selectedIndex == i ? selectedIconTheme : effectiveUnselectedIconTheme,
+                          labelTextStyle: widget().selectedIndex == i ? selectedLabelTextStyle : unselectedLabelTextStyle,
+                          padding: widget().destinations[i].padding,
                           useIndicator: useIndicator,
                           indicatorColor: useIndicator ? indicatorColor : null,
                           onTap: () {
-                            if (widget.onDestinationSelected != null)
-                              widget.onDestinationSelected!(i);
+                            if (widget().onDestinationSelected != null)
+                              widget().onDestinationSelected!(i);
                           },
                           indexLabel: localizations.tabLabel(
                             tabIndex: i + 1,
-                            tabCount: widget.destinations.length,
+                            tabCount: widget().destinations.length,
                           ),
                         ),
-                      if (widget.trailing != null)
-                        widget.trailing!,
+                      if (widget().trailing != null)
+                        widget().trailing!,
                     ],
                   ),
                 ),
@@ -459,20 +459,20 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
   }
 
   void _initControllers() {
-    _destinationControllers = List<AnimationController>.generate(widget.destinations.length, (int index) {
+    _destinationControllers = List<AnimationController>.generate(widget().destinations.length, (int index) {
       return AnimationController(
         duration: kThemeAnimationDuration,
         vsync: this,
       )..addListener(_rebuild);
     });
     _destinationAnimations = _destinationControllers.map((AnimationController controller) => controller.view).toList();
-    if (widget.selectedIndex != null) {
-      _destinationControllers[widget.selectedIndex!].value = 1.0;
+    if (widget().selectedIndex != null) {
+      _destinationControllers[widget().selectedIndex!].value = 1.0;
     }
     _extendedController = AnimationController(
       duration: kThemeAnimationDuration,
       vsync: this,
-      value: widget.extended ? 1.0 : 0.0,
+      value: widget().extended ? 1.0 : 0.0,
     );
     _extendedAnimation = CurvedAnimation(
       parent: _extendedController,

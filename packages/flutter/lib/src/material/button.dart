@@ -320,13 +320,13 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
   @override
   void initState() {
     super.initState();
-    setMaterialState(MaterialState.disabled, !widget.enabled);
+    setMaterialState(MaterialState.disabled, !widget().enabled);
   }
 
   @override
   void didUpdateWidget(RawMaterialButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    setMaterialState(MaterialState.disabled, !widget.enabled);
+    setMaterialState(MaterialState.disabled, !widget().enabled);
     // If the button is disabled while a press gesture is currently ongoing,
     // InkWell makes a call to handleHighlightChanged. This causes an exception
     // because it calls setState in the middle of a build. To preempt this, we
@@ -340,31 +340,31 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
     // These conditionals are in order of precedence, so be careful about
     // reorganizing them.
     if (isDisabled) {
-      return widget.disabledElevation;
+      return widget().disabledElevation;
     }
     if (isPressed) {
-      return widget.highlightElevation;
+      return widget().highlightElevation;
     }
     if (isHovered) {
-      return widget.hoverElevation;
+      return widget().hoverElevation;
     }
     if (isFocused) {
-      return widget.focusElevation;
+      return widget().focusElevation;
     }
-    return widget.elevation;
+    return widget().elevation;
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color? effectiveTextColor = MaterialStateProperty.resolveAs<Color?>(widget.textStyle?.color, materialStates);
-    final ShapeBorder? effectiveShape =  MaterialStateProperty.resolveAs<ShapeBorder?>(widget.shape, materialStates);
-    final Offset densityAdjustment = widget.visualDensity.baseSizeAdjustment;
-    final BoxConstraints effectiveConstraints = widget.visualDensity.effectiveConstraints(widget.constraints);
+    final Color? effectiveTextColor = MaterialStateProperty.resolveAs<Color?>(widget().textStyle?.color, materialStates);
+    final ShapeBorder? effectiveShape =  MaterialStateProperty.resolveAs<ShapeBorder?>(widget().shape, materialStates);
+    final Offset densityAdjustment = widget().visualDensity.baseSizeAdjustment;
+    final BoxConstraints effectiveConstraints = widget().visualDensity.effectiveConstraints(widget().constraints);
     final MouseCursor? effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor?>(
-      widget.mouseCursor ?? MaterialStateMouseCursor.clickable,
+      widget().mouseCursor ?? MaterialStateMouseCursor.clickable,
       materialStates,
     );
-    final EdgeInsetsGeometry padding = widget.padding.add(
+    final EdgeInsetsGeometry padding = widget().padding.add(
       EdgeInsets.only(
         left: densityAdjustment.dx,
         top: densityAdjustment.dy,
@@ -378,28 +378,28 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
       constraints: effectiveConstraints,
       child: Material(
         elevation: _effectiveElevation,
-        textStyle: widget.textStyle?.copyWith(color: effectiveTextColor),
+        textStyle: widget().textStyle?.copyWith(color: effectiveTextColor),
         shape: effectiveShape,
-        color: widget.fillColor,
+        color: widget().fillColor,
         // For compatibility during the M3 migration the default shadow needs to be passed.
         shadowColor: Theme.of(context).useMaterial3 ? Theme.of(context).shadowColor : null,
-        type: widget.fillColor == null ? MaterialType.transparency : MaterialType.button,
-        animationDuration: widget.animationDuration,
-        clipBehavior: widget.clipBehavior,
+        type: widget().fillColor == null ? MaterialType.transparency : MaterialType.button,
+        animationDuration: widget().animationDuration,
+        clipBehavior: widget().clipBehavior,
         child: InkWell(
-          focusNode: widget.focusNode,
-          canRequestFocus: widget.enabled,
+          focusNode: widget().focusNode,
+          canRequestFocus: widget().enabled,
           onFocusChange: updateMaterialState(MaterialState.focused),
-          autofocus: widget.autofocus,
-          onHighlightChanged: updateMaterialState(MaterialState.pressed, onChanged: widget.onHighlightChanged),
-          splashColor: widget.splashColor,
-          highlightColor: widget.highlightColor,
-          focusColor: widget.focusColor,
-          hoverColor: widget.hoverColor,
+          autofocus: widget().autofocus,
+          onHighlightChanged: updateMaterialState(MaterialState.pressed, onChanged: widget().onHighlightChanged),
+          splashColor: widget().splashColor,
+          highlightColor: widget().highlightColor,
+          focusColor: widget().focusColor,
+          hoverColor: widget().hoverColor,
           onHover: updateMaterialState(MaterialState.hovered),
-          onTap: widget.onPressed,
-          onLongPress: widget.onLongPress,
-          enableFeedback: widget.enableFeedback,
+          onTap: widget().onPressed,
+          onLongPress: widget().onLongPress,
+          enableFeedback: widget().enableFeedback,
           customBorder: effectiveShape,
           mouseCursor: effectiveMouseCursor,
           child: IconTheme.merge(
@@ -409,7 +409,7 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
               child: Center(
                 widthFactor: 1.0,
                 heightFactor: 1.0,
-                child: widget.child,
+                child: widget().child,
               ),
             ),
           ),
@@ -417,7 +417,7 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
       ),
     );
     final Size minSize;
-    switch (widget.materialTapTargetSize) {
+    switch (widget().materialTapTargetSize) {
       case MaterialTapTargetSize.padded:
         minSize = Size(
           kMinInteractiveDimension + densityAdjustment.dx,
@@ -434,7 +434,7 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
     return Semantics(
       container: true,
       button: true,
-      enabled: widget.enabled,
+      enabled: widget().enabled,
       child: _InputPadding(
         minSize: minSize,
         child: result,

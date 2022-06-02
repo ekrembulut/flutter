@@ -208,26 +208,26 @@ class _BottomSheetState extends State<BottomSheet> {
     return renderBox.size.height;
   }
 
-  bool get _dismissUnderway => widget.animationController!.status == AnimationStatus.reverse;
+  bool get _dismissUnderway => widget().animationController!.status == AnimationStatus.reverse;
 
   void _handleDragStart(DragStartDetails details) {
-    widget.onDragStart?.call(details);
+    widget().onDragStart?.call(details);
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(
-      widget.enableDrag && widget.animationController != null,
+      widget().enableDrag && widget().animationController != null,
       "'BottomSheet.animationController' can not be null when 'BottomSheet.enableDrag' is true. "
       "Use 'BottomSheet.createAnimationController' to create one, or provide another AnimationController.",
     );
     if (_dismissUnderway)
       return;
-    widget.animationController!.value -= details.primaryDelta! / _childHeight;
+    widget().animationController!.value -= details.primaryDelta! / _childHeight;
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(
-      widget.enableDrag && widget.animationController != null,
+      widget().enableDrag && widget().animationController != null,
       "'BottomSheet.animationController' can not be null when 'BottomSheet.enableDrag' is true. "
       "Use 'BottomSheet.createAnimationController' to create one, or provide another AnimationController.",
     );
@@ -236,33 +236,33 @@ class _BottomSheetState extends State<BottomSheet> {
     bool isClosing = false;
     if (details.velocity.pixelsPerSecond.dy > _minFlingVelocity) {
       final double flingVelocity = -details.velocity.pixelsPerSecond.dy / _childHeight;
-      if (widget.animationController!.value > 0.0) {
-        widget.animationController!.fling(velocity: flingVelocity);
+      if (widget().animationController!.value > 0.0) {
+        widget().animationController!.fling(velocity: flingVelocity);
       }
       if (flingVelocity < 0.0) {
         isClosing = true;
       }
-    } else if (widget.animationController!.value < _closeProgressThreshold) {
-      if (widget.animationController!.value > 0.0)
-        widget.animationController!.fling(velocity: -1.0);
+    } else if (widget().animationController!.value < _closeProgressThreshold) {
+      if (widget().animationController!.value > 0.0)
+        widget().animationController!.fling(velocity: -1.0);
       isClosing = true;
     } else {
-      widget.animationController!.forward();
+      widget().animationController!.forward();
     }
 
-    widget.onDragEnd?.call(
+    widget().onDragEnd?.call(
       details,
       isClosing: isClosing,
     );
 
     if (isClosing) {
-      widget.onClosing();
+      widget().onClosing();
     }
   }
 
   bool extentChanged(DraggableScrollableNotification notification) {
     if (notification.extent == notification.minExtent) {
-      widget.onClosing();
+      widget().onClosing();
     }
     return false;
   }
@@ -270,11 +270,11 @@ class _BottomSheetState extends State<BottomSheet> {
   @override
   Widget build(BuildContext context) {
     final BottomSheetThemeData bottomSheetTheme = Theme.of(context).bottomSheetTheme;
-    final BoxConstraints? constraints = widget.constraints ?? bottomSheetTheme.constraints;
-    final Color? color = widget.backgroundColor ?? bottomSheetTheme.backgroundColor;
-    final double elevation = widget.elevation ?? bottomSheetTheme.elevation ?? 0;
-    final ShapeBorder? shape = widget.shape ?? bottomSheetTheme.shape;
-    final Clip clipBehavior = widget.clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.none;
+    final BoxConstraints? constraints = widget().constraints ?? bottomSheetTheme.constraints;
+    final Color? color = widget().backgroundColor ?? bottomSheetTheme.backgroundColor;
+    final double elevation = widget().elevation ?? bottomSheetTheme.elevation ?? 0;
+    final ShapeBorder? shape = widget().shape ?? bottomSheetTheme.shape;
+    final Clip clipBehavior = widget().clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.none;
 
     Widget bottomSheet = Material(
       key: _childKey,
@@ -284,7 +284,7 @@ class _BottomSheetState extends State<BottomSheet> {
       clipBehavior: clipBehavior,
       child: NotificationListener<DraggableScrollableNotification>(
         onNotification: extentChanged,
-        child: widget.builder(context),
+        child: widget().builder(context),
       ),
     );
 
@@ -299,7 +299,7 @@ class _BottomSheetState extends State<BottomSheet> {
       );
     }
 
-    return !widget.enableDrag ? bottomSheet : GestureDetector(
+    return !widget().enableDrag ? bottomSheet : GestureDetector(
       onVerticalDragStart: _handleDragStart,
       onVerticalDragUpdate: _handleDragUpdate,
       onVerticalDragEnd: _handleDragEnd,
@@ -395,7 +395,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
     // Allow the bottom sheet to animate smoothly from its current position.
     animationCurve = _BottomSheetSuspendedCurve(
-      widget.route!.animation!.value,
+      widget().route!.animation!.value,
       curve: _modalBottomSheetCurve,
     );
   }
@@ -409,21 +409,21 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     final String routeLabel = _getRouteLabel(localizations);
 
     return AnimatedBuilder(
-      animation: widget.route!.animation!,
+      animation: widget().route!.animation!,
       child: BottomSheet(
-        animationController: widget.route!._animationController,
+        animationController: widget().route!._animationController,
         onClosing: () {
-          if (widget.route!.isCurrent) {
+          if (widget().route!.isCurrent) {
             Navigator.pop(context);
           }
         },
-        builder: widget.route!.builder!,
-        backgroundColor: widget.backgroundColor,
-        elevation: widget.elevation,
-        shape: widget.shape,
-        clipBehavior: widget.clipBehavior,
-        constraints: widget.constraints,
-        enableDrag: widget.enableDrag,
+        builder: widget().route!.builder!,
+        backgroundColor: widget().backgroundColor,
+        elevation: widget().elevation,
+        shape: widget().shape,
+        clipBehavior: widget().clipBehavior,
+        constraints: widget().constraints,
+        enableDrag: widget().enableDrag,
         onDragStart: handleDragStart,
         onDragEnd: handleDragEnd,
       ),
@@ -431,7 +431,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         // Disable the initial animation when accessible navigation is on so
         // that the semantics are added to the tree at the correct time.
         final double animationValue = animationCurve.transform(
-            mediaQuery.accessibleNavigation ? 1.0 : widget.route!.animation!.value,
+            mediaQuery.accessibleNavigation ? 1.0 : widget().route!.animation!.value,
         );
         return Semantics(
           scopesRoute: true,
@@ -440,7 +440,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
           explicitChildNodes: true,
           child: ClipRect(
             child: CustomSingleChildLayout(
-              delegate: _ModalBottomSheetLayout(animationValue, widget.isScrollControlled),
+              delegate: _ModalBottomSheetLayout(animationValue, widget().isScrollControlled),
               child: child,
             ),
           ),

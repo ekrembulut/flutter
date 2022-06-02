@@ -492,7 +492,7 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
   @override
   void initState() {
     super.initState();
-    _recognizer = widget.createRecognizer(_startDrag);
+    _recognizer = widget().createRecognizer(_startDrag);
   }
 
   @override
@@ -527,42 +527,42 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
   }
 
   void _routePointer(PointerDownEvent event) {
-    if (widget.maxSimultaneousDrags != null && _activeCount >= widget.maxSimultaneousDrags!)
+    if (widget().maxSimultaneousDrags != null && _activeCount >= widget().maxSimultaneousDrags!)
       return;
     _recognizer!.addPointer(event);
   }
 
   _DragAvatar<T>? _startDrag(Offset position) {
-    if (widget.maxSimultaneousDrags != null && _activeCount >= widget.maxSimultaneousDrags!)
+    if (widget().maxSimultaneousDrags != null && _activeCount >= widget().maxSimultaneousDrags!)
       return null;
     final Offset dragStartPoint;
-    if (widget.dragAnchorStrategy == null) {
-      switch (widget.dragAnchor) {
+    if (widget().dragAnchorStrategy == null) {
+      switch (widget().dragAnchor) {
         case DragAnchor.child:
-          dragStartPoint = childDragAnchorStrategy(widget, context, position);
+          dragStartPoint = childDragAnchorStrategy(widget(), context, position);
           break;
         case DragAnchor.pointer:
-          dragStartPoint = pointerDragAnchorStrategy(widget, context, position);
+          dragStartPoint = pointerDragAnchorStrategy(widget(), context, position);
           break;
       }
     } else {
-      dragStartPoint = widget.dragAnchorStrategy!(widget, context, position);
+      dragStartPoint = widget().dragAnchorStrategy!(widget(), context, position);
     }
     setState(() {
       _activeCount += 1;
     });
     final _DragAvatar<T> avatar = _DragAvatar<T>(
-      overlayState: Overlay.of(context, debugRequiredFor: widget, rootOverlay: widget.rootOverlay)!,
-      data: widget.data,
-      axis: widget.axis,
+      overlayState: Overlay.of(context, debugRequiredFor: widget(), rootOverlay: widget().rootOverlay)!,
+      data: widget().data,
+      axis: widget().axis,
       initialPosition: position,
       dragStartPoint: dragStartPoint,
-      feedback: widget.feedback,
-      feedbackOffset: widget.feedbackOffset,
-      ignoringFeedbackSemantics: widget.ignoringFeedbackSemantics,
+      feedback: widget().feedback,
+      feedbackOffset: widget().feedbackOffset,
+      ignoringFeedbackSemantics: widget().ignoringFeedbackSemantics,
       onDragUpdate: (DragUpdateDetails details) {
-        if (mounted && widget.onDragUpdate != null) {
-          widget.onDragUpdate!(details);
+        if (mounted && widget().onDragUpdate != null) {
+          widget().onDragUpdate!(details);
         }
       },
       onDragEnd: (Velocity velocity, Offset offset, bool wasAccepted) {
@@ -574,33 +574,33 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
           _activeCount -= 1;
           _disposeRecognizerIfInactive();
         }
-        if (mounted && widget.onDragEnd != null) {
-          widget.onDragEnd!(DraggableDetails(
+        if (mounted && widget().onDragEnd != null) {
+          widget().onDragEnd!(DraggableDetails(
               wasAccepted: wasAccepted,
               velocity: velocity,
               offset: offset,
           ));
         }
-        if (wasAccepted && widget.onDragCompleted != null)
-          widget.onDragCompleted!();
-        if (!wasAccepted && widget.onDraggableCanceled != null)
-          widget.onDraggableCanceled!(velocity, offset);
+        if (wasAccepted && widget().onDragCompleted != null)
+          widget().onDragCompleted!();
+        if (!wasAccepted && widget().onDraggableCanceled != null)
+          widget().onDraggableCanceled!(velocity, offset);
       },
     );
-    widget.onDragStarted?.call();
+    widget().onDragStarted?.call();
     return avatar;
   }
 
   @override
   Widget build(BuildContext context) {
-    assert(Overlay.of(context, debugRequiredFor: widget, rootOverlay: widget.rootOverlay) != null);
-    final bool canDrag = widget.maxSimultaneousDrags == null ||
-                         _activeCount < widget.maxSimultaneousDrags!;
-    final bool showChild = _activeCount == 0 || widget.childWhenDragging == null;
+    assert(Overlay.of(context, debugRequiredFor: widget(), rootOverlay: widget().rootOverlay) != null);
+    final bool canDrag = widget().maxSimultaneousDrags == null ||
+                         _activeCount < widget().maxSimultaneousDrags!;
+    final bool showChild = _activeCount == 0 || widget().childWhenDragging == null;
     return Listener(
-      behavior: widget.hitTestBehavior,
+      behavior: widget().hitTestBehavior,
       onPointerDown: canDrag ? _routePointer : null,
-      child: showChild ? widget.child : widget.childWhenDragging,
+      child: showChild ? widget().child : widget().childWhenDragging,
     );
   }
 }
@@ -743,7 +743,7 @@ class _DragTargetState<T extends Object> extends State<DragTarget<T>> {
   bool didEnter(_DragAvatar<Object> avatar) {
     assert(!_candidateAvatars.contains(avatar));
     assert(!_rejectedAvatars.contains(avatar));
-    if (widget.onWillAccept == null || widget.onWillAccept!(avatar.data as T?)) {
+    if (widget().onWillAccept == null || widget().onWillAccept!(avatar.data as T?)) {
       setState(() {
         _candidateAvatars.add(avatar);
       });
@@ -764,7 +764,7 @@ class _DragTargetState<T extends Object> extends State<DragTarget<T>> {
       _candidateAvatars.remove(avatar);
       _rejectedAvatars.remove(avatar);
     });
-    widget.onLeave?.call(avatar.data as T?);
+    widget().onLeave?.call(avatar.data as T?);
   }
 
   void didDrop(_DragAvatar<Object> avatar) {
@@ -774,23 +774,23 @@ class _DragTargetState<T extends Object> extends State<DragTarget<T>> {
     setState(() {
       _candidateAvatars.remove(avatar);
     });
-    widget.onAccept?.call(avatar.data! as T);
-    widget.onAcceptWithDetails?.call(DragTargetDetails<T>(data: avatar.data! as T, offset: avatar._lastOffset!));
+    widget().onAccept?.call(avatar.data! as T);
+    widget().onAcceptWithDetails?.call(DragTargetDetails<T>(data: avatar.data! as T, offset: avatar._lastOffset!));
   }
 
   void didMove(_DragAvatar<Object> avatar) {
     if (!mounted)
       return;
-    widget.onMove?.call(DragTargetDetails<T>(data: avatar.data! as T, offset: avatar._lastOffset!));
+    widget().onMove?.call(DragTargetDetails<T>(data: avatar.data! as T, offset: avatar._lastOffset!));
   }
 
   @override
   Widget build(BuildContext context) {
-    assert(widget.builder != null);
+    assert(widget().builder != null);
     return MetaData(
       metaData: this,
-      behavior: widget.hitTestBehavior,
-      child: widget.builder(context, _mapAvatarsToData<T>(_candidateAvatars), _mapAvatarsToData<Object>(_rejectedAvatars)),
+      behavior: widget().hitTestBehavior,
+      child: widget().builder(context, _mapAvatarsToData<T>(_candidateAvatars), _mapAvatarsToData<Object>(_rejectedAvatars)),
     );
   }
 }

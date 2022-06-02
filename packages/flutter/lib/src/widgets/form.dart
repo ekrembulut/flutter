@@ -109,7 +109,7 @@ class FormState extends State<Form> {
   // Called when a form field has changed. This will cause all form fields
   // to rebuild, useful if form fields have interdependencies.
   void _fieldDidChange() {
-    widget.onChanged?.call();
+    widget().onChanged?.call();
 
     _hasInteractedByUser = _fields
         .any((FormFieldState<dynamic> field) => field._hasInteractedByUser.value);
@@ -132,7 +132,7 @@ class FormState extends State<Form> {
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.autovalidateMode) {
+    switch (widget().autovalidateMode) {
       case AutovalidateMode.always:
         _validate();
         break;
@@ -146,11 +146,11 @@ class FormState extends State<Form> {
     }
 
     return WillPopScope(
-      onWillPop: widget.onWillPop,
+      onWillPop: widget().onWillPop,
       child: _FormScope(
         formState: this,
         generation: _generation,
-        child: widget.child,
+        child: widget().child,
       ),
     );
   }
@@ -210,7 +210,7 @@ class _FormScope extends InheritedWidget {
   final int _generation;
 
   /// The [Form] associated with this widget.
-  Form get form => _formState.widget;
+  Form get form => _formState.widget();
 
   @override
   bool updateShouldNotify(_FormScope old) => _generation != old._generation;
@@ -340,7 +340,7 @@ class FormField<T> extends StatefulWidget {
 /// The current state of a [FormField]. Passed to the [FormFieldBuilder] method
 /// for use in constructing the form field's widget.
 class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
-  late T? _value = widget.initialValue;
+  late T? _value = widget().initialValue;
   final RestorableStringN _errorText = RestorableStringN(null);
   final RestorableBool _hasInteractedByUser = RestorableBool(false);
 
@@ -363,17 +363,17 @@ class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
   /// See also:
   ///
   ///  * [validate], which may update [errorText] and [hasError].
-  bool get isValid => widget.validator?.call(_value) == null;
+  bool get isValid => widget().validator?.call(_value) == null;
 
   /// Calls the [FormField]'s onSaved method with the current value.
   void save() {
-    widget.onSaved?.call(value);
+    widget().onSaved?.call(value);
   }
 
   /// Resets the field to its initial value.
   void reset() {
     setState(() {
-      _value = widget.initialValue;
+      _value = widget().initialValue;
       _hasInteractedByUser.value = false;
       _errorText.value = null;
     });
@@ -395,8 +395,8 @@ class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
   }
 
   void _validate() {
-    if (widget.validator != null)
-      _errorText.value = widget.validator!(_value);
+    if (widget().validator != null)
+      _errorText.value = widget().validator!(_value);
   }
 
   /// Updates this field's state to the new value. Useful for responding to
@@ -427,7 +427,7 @@ class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
   }
 
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -443,8 +443,8 @@ class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.enabled) {
-      switch (widget.autovalidateMode) {
+    if (widget().enabled) {
+      switch (widget().autovalidateMode) {
         case AutovalidateMode.always:
           _validate();
           break;
@@ -458,7 +458,7 @@ class FormFieldState<T> extends State<FormField<T>> with RestorationMixin {
       }
     }
     Form.of(context)?._register(this);
-    return widget.builder(this);
+    return widget().builder(this);
   }
 }
 

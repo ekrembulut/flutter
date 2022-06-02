@@ -454,7 +454,7 @@ class _FixedExtentScrollable extends Scrollable {
 class _FixedExtentScrollableState extends ScrollableState {
   double get itemExtent {
     // Downcast because only _FixedExtentScrollable can make _FixedExtentScrollableState.
-    final _FixedExtentScrollable actualWidget = widget as _FixedExtentScrollable;
+    final _FixedExtentScrollable actualWidget = widget() as _FixedExtentScrollable;
     return actualWidget.itemExtent;
   }
 }
@@ -747,9 +747,9 @@ class _ListWheelScrollViewState extends State<ListWheelScrollView> {
   @override
   void initState() {
     super.initState();
-    scrollController = widget.controller ?? FixedExtentScrollController();
-    if (widget.controller is FixedExtentScrollController) {
-      final FixedExtentScrollController controller = widget.controller! as FixedExtentScrollController;
+    scrollController = widget().controller ?? FixedExtentScrollController();
+    if (widget().controller is FixedExtentScrollController) {
+      final FixedExtentScrollController controller = widget().controller! as FixedExtentScrollController;
       _lastReportedItemIndex = controller.initialItem;
     }
   }
@@ -757,26 +757,26 @@ class _ListWheelScrollViewState extends State<ListWheelScrollView> {
   @override
   void didUpdateWidget(ListWheelScrollView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != null && widget.controller != scrollController) {
+    if (widget().controller != null && widget().controller != scrollController) {
       final ScrollController? oldScrollController = scrollController;
       SchedulerBinding.instance.addPostFrameCallback((_) {
         oldScrollController!.dispose();
       });
-      scrollController = widget.controller;
+      scrollController = widget().controller;
     }
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification.depth == 0
-        && widget.onSelectedItemChanged != null
+        && widget().onSelectedItemChanged != null
         && notification is ScrollUpdateNotification
         && notification.metrics is FixedExtentMetrics) {
       final FixedExtentMetrics metrics = notification.metrics as FixedExtentMetrics;
       final int currentItemIndex = metrics.itemIndex;
       if (currentItemIndex != _lastReportedItemIndex) {
         _lastReportedItemIndex = currentItemIndex;
-        final int trueIndex = widget.childDelegate.trueIndexOf(currentItemIndex);
-        widget.onSelectedItemChanged!(trueIndex);
+        final int trueIndex = widget().childDelegate.trueIndexOf(currentItemIndex);
+        widget().onSelectedItemChanged!(trueIndex);
       }
     }
     return false;
@@ -788,24 +788,24 @@ class _ListWheelScrollViewState extends State<ListWheelScrollView> {
       onNotification: _handleScrollNotification,
       child: _FixedExtentScrollable(
         controller: scrollController,
-        physics: widget.physics,
-        itemExtent: widget.itemExtent,
-        restorationId: widget.restorationId,
-        scrollBehavior: widget.scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
+        physics: widget().physics,
+        itemExtent: widget().itemExtent,
+        restorationId: widget().restorationId,
+        scrollBehavior: widget().scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
         viewportBuilder: (BuildContext context, ViewportOffset offset) {
           return ListWheelViewport(
-            diameterRatio: widget.diameterRatio,
-            perspective: widget.perspective,
-            offAxisFraction: widget.offAxisFraction,
-            useMagnifier: widget.useMagnifier,
-            magnification: widget.magnification,
-            overAndUnderCenterOpacity: widget.overAndUnderCenterOpacity,
-            itemExtent: widget.itemExtent,
-            squeeze: widget.squeeze,
-            renderChildrenOutsideViewport: widget.renderChildrenOutsideViewport,
+            diameterRatio: widget().diameterRatio,
+            perspective: widget().perspective,
+            offAxisFraction: widget().offAxisFraction,
+            useMagnifier: widget().useMagnifier,
+            magnification: widget().magnification,
+            overAndUnderCenterOpacity: widget().overAndUnderCenterOpacity,
+            itemExtent: widget().itemExtent,
+            squeeze: widget().squeeze,
+            renderChildrenOutsideViewport: widget().renderChildrenOutsideViewport,
             offset: offset,
-            childDelegate: widget.childDelegate,
-            clipBehavior: widget.clipBehavior,
+            childDelegate: widget().childDelegate,
+            clipBehavior: widget().clipBehavior,
           );
         },
       ),

@@ -255,32 +255,32 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
   @override
   void initState() {
     super.initState();
-    _firstRowIndex = PageStorage.of(context)?.readState(context) as int? ?? widget.initialFirstRowIndex ?? 0;
-    widget.source.addListener(_handleDataSourceChanged);
+    _firstRowIndex = PageStorage.of(context)?.readState(context) as int? ?? widget().initialFirstRowIndex ?? 0;
+    widget().source.addListener(_handleDataSourceChanged);
     _handleDataSourceChanged();
   }
 
   @override
   void didUpdateWidget(PaginatedDataTable oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.source != widget.source) {
+    if (oldWidget.source != widget().source) {
       oldWidget.source.removeListener(_handleDataSourceChanged);
-      widget.source.addListener(_handleDataSourceChanged);
+      widget().source.addListener(_handleDataSourceChanged);
       _handleDataSourceChanged();
     }
   }
 
   @override
   void dispose() {
-    widget.source.removeListener(_handleDataSourceChanged);
+    widget().source.removeListener(_handleDataSourceChanged);
     super.dispose();
   }
 
   void _handleDataSourceChanged() {
     setState(() {
-      _rowCount = widget.source.rowCount;
-      _rowCountApproximate = widget.source.isRowCountApproximate;
-      _selectedRowCount = widget.source.selectedRowCount;
+      _rowCount = widget().source.rowCount;
+      _rowCountApproximate = widget().source.isRowCountApproximate;
+      _selectedRowCount = widget().source.selectedRowCount;
       _rows.clear();
     });
   }
@@ -289,24 +289,24 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
   void pageTo(int rowIndex) {
     final int oldFirstRowIndex = _firstRowIndex;
     setState(() {
-      final int rowsPerPage = widget.rowsPerPage;
+      final int rowsPerPage = widget().rowsPerPage;
       _firstRowIndex = (rowIndex ~/ rowsPerPage) * rowsPerPage;
     });
-    if ((widget.onPageChanged != null) &&
+    if ((widget().onPageChanged != null) &&
         (oldFirstRowIndex != _firstRowIndex))
-      widget.onPageChanged!(_firstRowIndex);
+      widget().onPageChanged!(_firstRowIndex);
   }
 
   DataRow _getBlankRowFor(int index) {
     return DataRow.byIndex(
       index: index,
-      cells: widget.columns.map<DataCell>((DataColumn column) => DataCell.empty).toList(),
+      cells: widget().columns.map<DataCell>((DataColumn column) => DataCell.empty).toList(),
     );
   }
 
   DataRow _getProgressIndicatorRowFor(int index) {
     bool haveProgressIndicator = false;
-    final List<DataCell> cells = widget.columns.map<DataCell>((DataColumn column) {
+    final List<DataCell> cells = widget().columns.map<DataCell>((DataColumn column) {
       if (!column.numeric) {
         haveProgressIndicator = true;
         return const DataCell(CircularProgressIndicator());
@@ -330,7 +330,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     for (int index = firstRowIndex; index < nextPageFirstRowIndex; index += 1) {
       DataRow? row;
       if (index < _rowCount || _rowCountApproximate) {
-        row = _rows.putIfAbsent(index, () => widget.source.getRow(index));
+        row = _rows.putIfAbsent(index, () => widget().source.getRow(index));
         if (row == null && !haveProgressIndicator) {
           row ??= _getProgressIndicatorRowFor(index);
           haveProgressIndicator = true;
@@ -347,19 +347,19 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
   }
 
   void _handlePrevious() {
-    pageTo(math.max(_firstRowIndex - widget.rowsPerPage, 0));
+    pageTo(math.max(_firstRowIndex - widget().rowsPerPage, 0));
   }
 
   void _handleNext() {
-    pageTo(_firstRowIndex + widget.rowsPerPage);
+    pageTo(_firstRowIndex + widget().rowsPerPage);
   }
 
   void _handleLast() {
-    pageTo(((_rowCount - 1) / widget.rowsPerPage).floor() * widget.rowsPerPage);
+    pageTo(((_rowCount - 1) / widget().rowsPerPage).floor() * widget().rowsPerPage);
   }
 
   bool _isNextPageUnavailable() => !_rowCountApproximate &&
-      (_firstRowIndex + widget.rowsPerPage >= _rowCount);
+      (_firstRowIndex + widget().rowsPerPage >= _rowCount);
 
   final GlobalKey _tableKey = GlobalKey();
 
@@ -371,16 +371,16 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     // HEADER
     final List<Widget> headerWidgets = <Widget>[];
-    if (_selectedRowCount == 0 && widget.header != null) {
-      headerWidgets.add(Expanded(child: widget.header!));
-    } else if (widget.header != null) {
+    if (_selectedRowCount == 0 && widget().header != null) {
+      headerWidgets.add(Expanded(child: widget().header!));
+    } else if (widget().header != null) {
       headerWidgets.add(Expanded(
         child: Text(localizations.selectedRowCountTitle(_selectedRowCount)),
       ));
     }
-    if (widget.actions != null) {
+    if (widget().actions != null) {
       headerWidgets.addAll(
-        widget.actions!.map<Widget>((Widget action) {
+        widget().actions!.map<Widget>((Widget action) {
           return Padding(
             // 8.0 is the default padding of an icon button
             padding: const EdgeInsetsDirectional.only(start: 24.0 - 8.0 * 2.0),
@@ -393,9 +393,9 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
     // FOOTER
     final TextStyle? footerTextStyle = themeData.textTheme.caption;
     final List<Widget> footerWidgets = <Widget>[];
-    if (widget.onRowsPerPageChanged != null) {
-      final List<Widget> availableRowsPerPage = widget.availableRowsPerPage
-        .where((int value) => value <= _rowCount || value == widget.rowsPerPage)
+    if (widget().onRowsPerPageChanged != null) {
+      final List<Widget> availableRowsPerPage = widget().availableRowsPerPage
+        .where((int value) => value <= _rowCount || value == widget().rowsPerPage)
         .map<DropdownMenuItem<int>>((int value) {
           return DropdownMenuItem<int>(
             value: value,
@@ -413,8 +413,8 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 items: availableRowsPerPage.cast<DropdownMenuItem<int>>(),
-                value: widget.rowsPerPage,
-                onChanged: widget.onRowsPerPageChanged,
+                value: widget().rowsPerPage,
+                onChanged: widget().onRowsPerPageChanged,
                 style: footerTextStyle,
               ),
             ),
@@ -427,35 +427,35 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
       Text(
         localizations.pageRowsInfoTitle(
           _firstRowIndex + 1,
-          _firstRowIndex + widget.rowsPerPage,
+          _firstRowIndex + widget().rowsPerPage,
           _rowCount,
           _rowCountApproximate,
         ),
       ),
       Container(width: 32.0),
-      if (widget.showFirstLastButtons)
+      if (widget().showFirstLastButtons)
         IconButton(
-          icon: Icon(Icons.skip_previous, color: widget.arrowHeadColor),
+          icon: Icon(Icons.skip_previous, color: widget().arrowHeadColor),
           padding: EdgeInsets.zero,
           tooltip: localizations.firstPageTooltip,
           onPressed: _firstRowIndex <= 0 ? null : _handleFirst,
         ),
       IconButton(
-        icon: Icon(Icons.chevron_left, color: widget.arrowHeadColor),
+        icon: Icon(Icons.chevron_left, color: widget().arrowHeadColor),
         padding: EdgeInsets.zero,
         tooltip: localizations.previousPageTooltip,
         onPressed: _firstRowIndex <= 0 ? null : _handlePrevious,
       ),
       Container(width: 24.0),
       IconButton(
-        icon: Icon(Icons.chevron_right, color: widget.arrowHeadColor),
+        icon: Icon(Icons.chevron_right, color: widget().arrowHeadColor),
         padding: EdgeInsets.zero,
         tooltip: localizations.nextPageTooltip,
         onPressed: _isNextPageUnavailable() ? null : _handleNext,
       ),
-      if (widget.showFirstLastButtons)
+      if (widget().showFirstLastButtons)
         IconButton(
-          icon: Icon(Icons.skip_next, color: widget.arrowHeadColor),
+          icon: Icon(Icons.skip_next, color: widget().arrowHeadColor),
           padding: EdgeInsets.zero,
           tooltip: localizations.lastPageTooltip,
           onPressed: _isNextPageUnavailable()
@@ -502,26 +502,26 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
                 ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                dragStartBehavior: widget.dragStartBehavior,
+                dragStartBehavior: widget().dragStartBehavior,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minWidth: constraints.minWidth),
                   child: DataTable(
                     key: _tableKey,
-                    columns: widget.columns,
-                    sortColumnIndex: widget.sortColumnIndex,
-                    sortAscending: widget.sortAscending,
-                    onSelectAll: widget.onSelectAll,
+                    columns: widget().columns,
+                    sortColumnIndex: widget().sortColumnIndex,
+                    sortAscending: widget().sortAscending,
+                    onSelectAll: widget().onSelectAll,
                     // Make sure no decoration is set on the DataTable
                     // from the theme, as its already wrapped in a Card.
                     decoration: const BoxDecoration(),
-                    dataRowHeight: widget.dataRowHeight,
-                    headingRowHeight: widget.headingRowHeight,
-                    horizontalMargin: widget.horizontalMargin,
-                    checkboxHorizontalMargin: widget.checkboxHorizontalMargin,
-                    columnSpacing: widget.columnSpacing,
-                    showCheckboxColumn: widget.showCheckboxColumn,
+                    dataRowHeight: widget().dataRowHeight,
+                    headingRowHeight: widget().headingRowHeight,
+                    horizontalMargin: widget().horizontalMargin,
+                    checkboxHorizontalMargin: widget().checkboxHorizontalMargin,
+                    columnSpacing: widget().columnSpacing,
+                    showCheckboxColumn: widget().showCheckboxColumn,
                     showBottomBorder: true,
-                    rows: _getRows(_firstRowIndex, widget.rowsPerPage),
+                    rows: _getRows(_firstRowIndex, widget().rowsPerPage),
                   ),
                 ),
               ),
@@ -536,7 +536,7 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
                     //  https://github.com/flutter/flutter/issues/48522
                     height: 56.0,
                     child: SingleChildScrollView(
-                      dragStartBehavior: widget.dragStartBehavior,
+                      dragStartBehavior: widget().dragStartBehavior,
                       scrollDirection: Axis.horizontal,
                       reverse: true,
                       child: Row(

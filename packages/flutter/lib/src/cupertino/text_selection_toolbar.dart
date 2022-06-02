@@ -424,7 +424,7 @@ class _CupertinoTextSelectionToolbarContentState extends State<_CupertinoTextSel
   void didUpdateWidget(_CupertinoTextSelectionToolbarContent oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If the children are changing, the current page should be reset.
-    if (widget.children != oldWidget.children) {
+    if (widget().children != oldWidget.children) {
       _page = 0;
       _nextPage = null;
       _controller.forward();
@@ -440,7 +440,7 @@ class _CupertinoTextSelectionToolbarContentState extends State<_CupertinoTextSel
 
   @override
   Widget build(BuildContext context) {
-    return widget.toolbarBuilder(context, widget.anchor, widget.isAbove, FadeTransition(
+    return widget().toolbarBuilder(context, widget().anchor, widget().isAbove, FadeTransition(
       opacity: _controller,
       child: _CupertinoTextSelectionToolbarItems(
         page: _page,
@@ -456,7 +456,7 @@ class _CupertinoTextSelectionToolbarContentState extends State<_CupertinoTextSel
         nextButtonDisabled: CupertinoTextSelectionToolbarButton.text(
           text: '▶',
         ),
-        children: widget.children,
+        children: widget().children,
       ),
     ));
   }

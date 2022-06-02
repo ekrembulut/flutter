@@ -1051,21 +1051,21 @@ class _SelectableAnimatedBuilderState extends State<_SelectableAnimatedBuilder>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    _controller.duration = widget.duration;
-    _controller.value = widget.isSelected ? 1.0 : 0.0;
+    _controller.duration = widget().duration;
+    _controller.value = widget().isSelected ? 1.0 : 0.0;
   }
 
   @override
   void didUpdateWidget(_SelectableAnimatedBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.duration != widget.duration) {
-      _controller.duration = widget.duration;
+    if (oldWidget.duration != widget().duration) {
+      _controller.duration = widget().duration;
     }
-    if (oldWidget.isSelected != widget.isSelected) {
-      if (widget.isSelected) {
-        _controller.forward(from: widget.alwaysDoFullAnimation ? 0 : null);
+    if (oldWidget.isSelected != widget().isSelected) {
+      if (widget().isSelected) {
+        _controller.forward(from: widget().alwaysDoFullAnimation ? 0 : null);
       } else {
-        _controller.reverse(from: widget.alwaysDoFullAnimation ? 1 : null);
+        _controller.reverse(from: widget().alwaysDoFullAnimation ? 1 : null);
       }
     }
   }
@@ -1078,7 +1078,7 @@ class _SelectableAnimatedBuilderState extends State<_SelectableAnimatedBuilder>
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(
+    return widget().builder(
       context,
       _controller,
     );
@@ -1122,14 +1122,14 @@ class _CurvedAnimationBuilderState extends State<_CurvedAnimationBuilder> {
   @override
   void initState() {
     super.initState();
-    _animationDirection = widget.animation.status;
-    _updateStatus(widget.animation.status);
-    widget.animation.addStatusListener(_updateStatus);
+    _animationDirection = widget().animation.status;
+    _updateStatus(widget().animation.status);
+    widget().animation.addStatusListener(_updateStatus);
   }
 
   @override
   void dispose() {
-    widget.animation.removeStatusListener(_updateStatus);
+    widget().animation.removeStatusListener(_updateStatus);
     super.dispose();
   }
 
@@ -1163,10 +1163,10 @@ class _CurvedAnimationBuilderState extends State<_CurvedAnimationBuilder> {
     final bool shouldUseForwardCurve = (_preservedDirection ?? _animationDirection) != AnimationStatus.reverse;
 
     final Animation<double> curvedAnimation = CurveTween(
-      curve: shouldUseForwardCurve ? widget.curve : widget.reverseCurve,
-    ).animate(widget.animation);
+      curve: shouldUseForwardCurve ? widget().curve : widget().reverseCurve,
+    ).animate(widget().animation);
 
-    return widget.builder(context, curvedAnimation);
+    return widget().builder(context, curvedAnimation);
   }
 }
 

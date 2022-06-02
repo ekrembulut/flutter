@@ -2389,7 +2389,7 @@ class _WidgetInspectorState extends State<WidgetInspector>
     }
     setState(() {
       // Only exit select mode if there is a button to return to select mode.
-      if (widget.selectButtonBuilder != null)
+      if (widget().selectButtonBuilder != null)
         isSelectMode = false;
     });
   }
@@ -2417,14 +2417,14 @@ class _WidgetInspectorState extends State<WidgetInspector>
           ignoring: isSelectMode,
           key: _ignorePointerKey,
           ignoringSemantics: false,
-          child: widget.child,
+          child: widget().child,
         ),
       ),
-      if (!isSelectMode && widget.selectButtonBuilder != null)
+      if (!isSelectMode && widget().selectButtonBuilder != null)
         Positioned(
           left: _kInspectButtonMargin,
           bottom: _kInspectButtonMargin,
-          child: widget.selectButtonBuilder!(context, _handleEnableSelect),
+          child: widget().selectButtonBuilder!(context, _handleEnableSelect),
         ),
       _InspectorOverlay(selection: selection),
     ]);

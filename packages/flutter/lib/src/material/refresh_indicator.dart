@@ -258,8 +258,8 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
     final ThemeData theme = Theme.of(context);
     _valueColor = _positionController.drive(
       ColorTween(
-        begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-        end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+        begin: (widget().color ?? theme.colorScheme.primary).withOpacity(0.0),
+        end: (widget().color ?? theme.colorScheme.primary).withOpacity(1.0),
       ).chain(CurveTween(
         curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),
       )),
@@ -270,12 +270,12 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
   @override
   void didUpdateWidget(covariant RefreshIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.color != widget.color) {
+    if (oldWidget.color != widget().color) {
       final ThemeData theme = Theme.of(context);
       _valueColor = _positionController.drive(
         ColorTween(
-          begin: (widget.color ?? theme.colorScheme.primary).withOpacity(0.0),
-          end: (widget.color ?? theme.colorScheme.primary).withOpacity(1.0),
+          begin: (widget().color ?? theme.colorScheme.primary).withOpacity(0.0),
+          end: (widget().color ?? theme.colorScheme.primary).withOpacity(1.0),
         ).chain(CurveTween(
             curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit),
         )),
@@ -295,7 +295,7 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
     // user dragging. It may be a result of ScrollController.jumpTo or ballistic scroll.
     // In this case, we don't want to trigger the refresh indicator.
     return ((notification is ScrollStartNotification && notification.dragDetails != null)
-            || (notification is ScrollUpdateNotification && notification.dragDetails != null && widget.triggerMode == RefreshIndicatorTriggerMode.anywhere))
+            || (notification is ScrollUpdateNotification && notification.dragDetails != null && widget().triggerMode == RefreshIndicatorTriggerMode.anywhere))
       && (( notification.metrics.axisDirection == AxisDirection.up && notification.metrics.extentAfter == 0.0)
             || (notification.metrics.axisDirection == AxisDirection.down && notification.metrics.extentBefore == 0.0))
       && _mode == null
@@ -303,7 +303,7 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (!widget.notificationPredicate(notification))
+    if (!widget().notificationPredicate(notification))
       return false;
     if (_shouldStart(notification)) {
       setState(() {
@@ -457,13 +457,13 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
       .animateTo(1.0 / _kDragSizeFactorLimit, duration: _kIndicatorSnapDuration)
       .then<void>((void value) {
         if (mounted && _mode == _RefreshIndicatorMode.snap) {
-          assert(widget.onRefresh != null);
+          assert(widget().onRefresh != null);
           setState(() {
             // Show the indeterminate progress indicator.
             _mode = _RefreshIndicatorMode.refresh;
           });
 
-          final Future<void> refreshResult = widget.onRefresh();
+          final Future<void> refreshResult = widget().onRefresh();
           assert(() {
             if (refreshResult == null)
               FlutterError.reportError(FlutterErrorDetails(
@@ -521,7 +521,7 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
       onNotification: _handleScrollNotification,
       child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: _handleGlowNotification,
-        child: widget.child,
+        child: widget().child,
       ),
     );
     assert(() {
@@ -542,8 +542,8 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
       children: <Widget>[
         child,
         if (_mode != null) Positioned(
-          top: _isIndicatorAtTop! ? widget.edgeOffset : null,
-          bottom: !_isIndicatorAtTop! ? widget.edgeOffset : null,
+          top: _isIndicatorAtTop! ? widget().edgeOffset : null,
+          bottom: !_isIndicatorAtTop! ? widget().edgeOffset : null,
           left: 0.0,
           right: 0.0,
           child: SizeTransition(
@@ -551,8 +551,8 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
             sizeFactor: _positionFactor, // this is what brings it down
             child: Container(
               padding: _isIndicatorAtTop!
-                ? EdgeInsets.only(top: widget.displacement)
-                : EdgeInsets.only(bottom: widget.displacement),
+                ? EdgeInsets.only(top: widget().displacement)
+                : EdgeInsets.only(bottom: widget().displacement),
               alignment: _isIndicatorAtTop!
                 ? Alignment.topCenter
                 : Alignment.bottomCenter,
@@ -562,12 +562,12 @@ class RefreshIndicatorState extends State<RefreshIndicator> with TickerProviderS
                   animation: _positionController,
                   builder: (BuildContext context, Widget? child) {
                     return RefreshProgressIndicator(
-                      semanticsLabel: widget.semanticsLabel ?? MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
-                      semanticsValue: widget.semanticsValue,
+                      semanticsLabel: widget().semanticsLabel ?? MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+                      semanticsValue: widget().semanticsValue,
                       value: showIndeterminateIndicator ? null : _value.value,
                       valueColor: _valueColor,
-                      backgroundColor: widget.backgroundColor,
-                      strokeWidth: widget.strokeWidth,
+                      backgroundColor: widget().backgroundColor,
+                      strokeWidth: widget().strokeWidth,
                     );
                   },
                 ),

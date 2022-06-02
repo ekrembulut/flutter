@@ -277,13 +277,13 @@ class _CupertinoTextFormFieldRowState extends FormFieldState<String> {
       _cupertinoTextFormFieldRow.controller ?? _controller;
 
   CupertinoTextFormFieldRow get _cupertinoTextFormFieldRow =>
-      super.widget as CupertinoTextFormFieldRow;
+      super.widget() as CupertinoTextFormFieldRow;
 
   @override
   void initState() {
     super.initState();
     if (_cupertinoTextFormFieldRow.controller == null) {
-      _controller = TextEditingController(text: widget.initialValue);
+      _controller = TextEditingController(text: widget().initialValue);
     } else {
       _cupertinoTextFormFieldRow.controller!.addListener(_handleControllerChanged);
     }
@@ -329,9 +329,9 @@ class _CupertinoTextFormFieldRowState extends FormFieldState<String> {
   void reset() {
     super.reset();
 
-    if (widget.initialValue != null) {
+    if (widget().initialValue != null) {
       setState(() {
-        _effectiveController!.text = widget.initialValue!;
+        _effectiveController!.text = widget().initialValue!;
       });
     }
   }

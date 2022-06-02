@@ -293,20 +293,20 @@ class AnimatedListState extends State<AnimatedList> with TickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      scrollDirection: widget.scrollDirection,
-      reverse: widget.reverse,
-      controller: widget.controller,
-      primary: widget.primary,
-      physics: widget.physics,
-      shrinkWrap: widget.shrinkWrap,
-      clipBehavior: widget.clipBehavior,
+      scrollDirection: widget().scrollDirection,
+      reverse: widget().reverse,
+      controller: widget().controller,
+      primary: widget().primary,
+      physics: widget().physics,
+      shrinkWrap: widget().shrinkWrap,
+      clipBehavior: widget().clipBehavior,
       slivers: <Widget>[
         SliverPadding(
-          padding: widget.padding ?? EdgeInsets.zero,
+          padding: widget().padding ?? EdgeInsets.zero,
           sliver: SliverAnimatedList(
             key: _sliverAnimatedListKey,
-            itemBuilder: widget.itemBuilder,
-            initialItemCount: widget.initialItemCount,
+            itemBuilder: widget().itemBuilder,
+            initialItemCount: widget().initialItemCount,
           ),
         ),
       ],
@@ -460,7 +460,7 @@ class SliverAnimatedListState extends State<SliverAnimatedList> with TickerProvi
   @override
   void initState() {
     super.initState();
-    _itemsCount = widget.initialItemCount;
+    _itemsCount = widget().initialItemCount;
   }
 
   @override
@@ -514,7 +514,7 @@ class SliverAnimatedListState extends State<SliverAnimatedList> with TickerProvi
     return SliverChildBuilderDelegate(
       _itemBuilder,
       childCount: _itemsCount,
-      findChildIndexCallback: widget.findChildIndexCallback,
+      findChildIndexCallback: widget().findChildIndexCallback,
     );
   }
 
@@ -621,7 +621,7 @@ class SliverAnimatedListState extends State<SliverAnimatedList> with TickerProvi
 
     final _ActiveItem? incomingItem = _activeItemAt(_incomingItems, itemIndex);
     final Animation<double> animation = incomingItem?.controller?.view ?? kAlwaysCompleteAnimation;
-    return widget.itemBuilder(
+    return widget().itemBuilder(
       context,
       _itemIndexToIndex(itemIndex),
       animation,

@@ -485,16 +485,16 @@ class _CupertinoSliverRefreshControlState extends State<CupertinoSliverRefreshCo
       case RefreshIndicatorMode.drag:
         if (latestIndicatorBoxExtent == 0) {
           return RefreshIndicatorMode.inactive;
-        } else if (latestIndicatorBoxExtent < widget.refreshTriggerPullDistance) {
+        } else if (latestIndicatorBoxExtent < widget().refreshTriggerPullDistance) {
           return RefreshIndicatorMode.drag;
         } else {
-          if (widget.onRefresh != null) {
+          if (widget().onRefresh != null) {
             HapticFeedback.mediumImpact();
             // Call onRefresh after this frame finished since the function is
             // user supplied and we're always here in the middle of the sliver's
             // performLayout.
             SchedulerBinding.instance.addPostFrameCallback((Duration timestamp) {
-              refreshTask = widget.onRefresh!()..whenComplete(() {
+              refreshTask = widget().onRefresh!()..whenComplete(() {
                 if (mounted) {
                   setState(() => refreshTask = null);
                   // Trigger one more transition because by this time, BoxConstraint's
@@ -515,7 +515,7 @@ class _CupertinoSliverRefreshControlState extends State<CupertinoSliverRefreshCo
           continue done;
         }
 
-        if (latestIndicatorBoxExtent > widget.refreshIndicatorExtent) {
+        if (latestIndicatorBoxExtent > widget().refreshIndicatorExtent) {
           return RefreshIndicatorMode.armed;
         } else {
           nextState = RefreshIndicatorMode.refresh;
@@ -536,7 +536,7 @@ class _CupertinoSliverRefreshControlState extends State<CupertinoSliverRefreshCo
         // can feel sluggish if not going all the way back to 0.0 prevented
         // a subsequent pull-to-refresh from starting.
         if (latestIndicatorBoxExtent >
-            widget.refreshTriggerPullDistance * _inactiveResetOverscrollFraction) {
+            widget().refreshTriggerPullDistance * _inactiveResetOverscrollFraction) {
           return RefreshIndicatorMode.done;
         } else {
           nextState = RefreshIndicatorMode.inactive;
@@ -550,7 +550,7 @@ class _CupertinoSliverRefreshControlState extends State<CupertinoSliverRefreshCo
   @override
   Widget build(BuildContext context) {
     return _CupertinoSliverRefresh(
-      refreshIndicatorLayoutExtent: widget.refreshIndicatorExtent,
+      refreshIndicatorLayoutExtent: widget().refreshIndicatorExtent,
       hasLayoutExtent: hasSliverLayoutExtent,
       // A LayoutBuilder lets the sliver's layout changes be fed back out to
       // its owner to trigger state changes.
@@ -558,13 +558,13 @@ class _CupertinoSliverRefreshControlState extends State<CupertinoSliverRefreshCo
         builder: (BuildContext context, BoxConstraints constraints) {
           latestIndicatorBoxExtent = constraints.maxHeight;
           refreshState = transitionNextState();
-          if (widget.builder != null && latestIndicatorBoxExtent > 0) {
-            return widget.builder!(
+          if (widget().builder != null && latestIndicatorBoxExtent > 0) {
+            return widget().builder!(
               context,
               refreshState,
               latestIndicatorBoxExtent,
-              widget.refreshTriggerPullDistance,
-              widget.refreshIndicatorExtent,
+              widget().refreshTriggerPullDistance,
+              widget().refreshIndicatorExtent,
             );
           }
           return Container();

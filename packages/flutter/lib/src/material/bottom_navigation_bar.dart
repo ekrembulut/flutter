@@ -772,21 +772,21 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
       circle.dispose();
     _circles.clear();
 
-    _controllers = List<AnimationController>.generate(widget.items.length, (int index) {
+    _controllers = List<AnimationController>.generate(widget().items.length, (int index) {
       return AnimationController(
         duration: kThemeAnimationDuration,
         vsync: this,
       )..addListener(_rebuild);
     });
-    _animations = List<CurvedAnimation>.generate(widget.items.length, (int index) {
+    _animations = List<CurvedAnimation>.generate(widget().items.length, (int index) {
       return CurvedAnimation(
         parent: _controllers[index],
         curve: Curves.fastOutSlowIn,
         reverseCurve: Curves.fastOutSlowIn.flipped,
       );
     });
-    _controllers[widget.currentIndex].value = 1.0;
-    _backgroundColor = widget.items[widget.currentIndex].backgroundColor;
+    _controllers[widget().currentIndex].value = 1.0;
+    _backgroundColor = widget().items[widget().currentIndex].backgroundColor;
   }
 
   // Computes the default value for the [type] parameter.
@@ -796,9 +796,9 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
   // [BottomNavigationBarType.fixed] for 3 or fewer items, and
   // [BottomNavigationBarType.shifting] is used for 4+ items.
   BottomNavigationBarType get _effectiveType {
-    return widget.type
+    return widget().type
       ?? BottomNavigationBarTheme.of(context).type
-      ?? (widget.items.length <= 3 ? BottomNavigationBarType.fixed : BottomNavigationBarType.shifting);
+      ?? (widget().items.length <= 3 ? BottomNavigationBarType.fixed : BottomNavigationBarType.shifting);
   }
 
   // Computes the default value for the [showUnselected] parameter.
@@ -839,12 +839,12 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
   double _evaluateFlex(Animation<double> animation) => _flexTween.evaluate(animation);
 
   void _pushCircle(int index) {
-    if (widget.items[index].backgroundColor != null) {
+    if (widget().items[index].backgroundColor != null) {
       _circles.add(
         _Circle(
           state: this,
           index: index,
-          color: widget.items[index].backgroundColor!,
+          color: widget().items[index].backgroundColor!,
           vsync: this,
         )..controller.addStatusListener(
           (AnimationStatus status) {
@@ -872,24 +872,24 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
     super.didUpdateWidget(oldWidget);
 
     // No animated segue if the length of the items list changes.
-    if (widget.items.length != oldWidget.items.length) {
+    if (widget().items.length != oldWidget.items.length) {
       _resetState();
       return;
     }
 
-    if (widget.currentIndex != oldWidget.currentIndex) {
+    if (widget().currentIndex != oldWidget.currentIndex) {
       switch (_effectiveType) {
         case BottomNavigationBarType.fixed:
           break;
         case BottomNavigationBarType.shifting:
-          _pushCircle(widget.currentIndex);
+          _pushCircle(widget().currentIndex);
           break;
       }
       _controllers[oldWidget.currentIndex].reverse();
-      _controllers[widget.currentIndex].forward();
+      _controllers[widget().currentIndex].forward();
     } else {
-      if (_backgroundColor != widget.items[widget.currentIndex].backgroundColor)
-        _backgroundColor = widget.items[widget.currentIndex].backgroundColor;
+      if (_backgroundColor != widget().items[widget().currentIndex].backgroundColor)
+        _backgroundColor = widget().items[widget().currentIndex].backgroundColor;
     }
   }
 
@@ -910,13 +910,13 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
 
     final TextStyle effectiveSelectedLabelStyle =
       _effectiveTextStyle(
-        widget.selectedLabelStyle ?? bottomTheme.selectedLabelStyle,
-        widget.selectedFontSize,
+        widget().selectedLabelStyle ?? bottomTheme.selectedLabelStyle,
+        widget().selectedFontSize,
       );
     final TextStyle effectiveUnselectedLabelStyle =
       _effectiveTextStyle(
-        widget.unselectedLabelStyle ?? bottomTheme.unselectedLabelStyle,
-        widget.unselectedFontSize,
+        widget().unselectedLabelStyle ?? bottomTheme.unselectedLabelStyle,
+        widget().unselectedFontSize,
       );
 
     final Color themeColor;
@@ -933,21 +933,21 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
     switch (_effectiveType) {
       case BottomNavigationBarType.fixed:
         colorTween = ColorTween(
-          begin: widget.unselectedItemColor
+          begin: widget().unselectedItemColor
             ?? bottomTheme.unselectedItemColor
             ?? themeData.unselectedWidgetColor,
-          end: widget.selectedItemColor
+          end: widget().selectedItemColor
             ?? bottomTheme.selectedItemColor
-            ?? widget.fixedColor
+            ?? widget().fixedColor
             ?? themeColor,
         );
         break;
       case BottomNavigationBarType.shifting:
         colorTween = ColorTween(
-          begin: widget.unselectedItemColor
+          begin: widget().unselectedItemColor
             ?? bottomTheme.unselectedItemColor
             ?? themeData.colorScheme.surface,
-          end: widget.selectedItemColor
+          end: widget().selectedItemColor
             ?? bottomTheme.selectedItemColor
             ?? themeData.colorScheme.surface,
         );
@@ -955,34 +955,34 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
     }
 
     final List<Widget> tiles = <Widget>[];
-    for (int i = 0; i < widget.items.length; i++) {
+    for (int i = 0; i < widget().items.length; i++) {
       final Set<MaterialState> states = <MaterialState>{
-        if (i == widget.currentIndex) MaterialState.selected,
+        if (i == widget().currentIndex) MaterialState.selected,
       };
 
-      final MouseCursor effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states)
+      final MouseCursor effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor?>(widget().mouseCursor, states)
         ?? bottomTheme.mouseCursor?.resolve(states)
         ?? MaterialStateMouseCursor.clickable.resolve(states);
 
       tiles.add(_BottomNavigationTile(
         _effectiveType,
-        widget.items[i],
+        widget().items[i],
         _animations[i],
-        widget.iconSize,
-        selectedIconTheme: widget.selectedIconTheme ?? bottomTheme.selectedIconTheme,
-        unselectedIconTheme: widget.unselectedIconTheme ?? bottomTheme.unselectedIconTheme,
+        widget().iconSize,
+        selectedIconTheme: widget().selectedIconTheme ?? bottomTheme.selectedIconTheme,
+        unselectedIconTheme: widget().unselectedIconTheme ?? bottomTheme.unselectedIconTheme,
         selectedLabelStyle: effectiveSelectedLabelStyle,
         unselectedLabelStyle: effectiveUnselectedLabelStyle,
-        enableFeedback: widget.enableFeedback ?? bottomTheme.enableFeedback ?? true,
+        enableFeedback: widget().enableFeedback ?? bottomTheme.enableFeedback ?? true,
         onTap: () {
-          widget.onTap?.call(i);
+          widget().onTap?.call(i);
         },
         colorTween: colorTween,
         flex: _evaluateFlex(_animations[i]),
-        selected: i == widget.currentIndex,
-        showSelectedLabels: widget.showSelectedLabels ?? bottomTheme.showSelectedLabels ?? true,
-        showUnselectedLabels: widget.showUnselectedLabels ?? bottomTheme.showUnselectedLabels ?? _defaultShowUnselected,
-        indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget.items.length),
+        selected: i == widget().currentIndex,
+        showSelectedLabels: widget().showSelectedLabels ?? bottomTheme.showSelectedLabels ?? true,
+        showUnselectedLabels: widget().showUnselectedLabels ?? bottomTheme.showUnselectedLabels ?? _defaultShowUnselected,
+        indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget().items.length),
         mouseCursor: effectiveMouseCursor,
         layout: layout,
       ));
@@ -995,10 +995,10 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
     assert(debugCheckHasDirectionality(context));
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasMediaQuery(context));
-    assert(Overlay.of(context, debugRequiredFor: widget) != null);
+    assert(Overlay.of(context, debugRequiredFor: widget()) != null);
 
     final BottomNavigationBarThemeData bottomTheme = BottomNavigationBarTheme.of(context);
-    final BottomNavigationBarLandscapeLayout layout = widget.landscapeLayout
+    final BottomNavigationBarLandscapeLayout layout = widget().landscapeLayout
       ?? bottomTheme.landscapeLayout
       ?? BottomNavigationBarLandscapeLayout.spread;
     final double additionalBottomPadding = MediaQuery.of(context).padding.bottom;
@@ -1006,7 +1006,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
     Color? backgroundColor;
     switch (_effectiveType) {
       case BottomNavigationBarType.fixed:
-        backgroundColor = widget.backgroundColor ?? bottomTheme.backgroundColor;
+        backgroundColor = widget().backgroundColor ?? bottomTheme.backgroundColor;
         break;
       case BottomNavigationBarType.shifting:
         backgroundColor = _backgroundColor;
@@ -1017,7 +1017,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> with TickerPr
       explicitChildNodes: true,
       child: _Bar(
         layout: layout,
-        elevation: widget.elevation ?? bottomTheme.elevation ?? 8.0,
+        elevation: widget().elevation ?? bottomTheme.elevation ?? 8.0,
         color: backgroundColor,
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: kBottomNavigationBarHeight + additionalBottomPadding),

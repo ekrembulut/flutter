@@ -380,7 +380,7 @@ class Router<T> extends StatefulWidget {
       }
       return true;
     }());
-    return scope!.routerState.widget as Router<T>;
+    return scope!.routerState.widget() as Router<T>;
   }
 
   /// Retrieves the immediate [Router] ancestor from the given context.
@@ -398,7 +398,7 @@ class Router<T> extends StatefulWidget {
   ///    throw if no [Router] ancestor exists.
   static Router<T>? maybeOf<T extends Object?>(BuildContext context) {
     final _RouterScope? scope = context.dependOnInheritedWidgetOfExactType<_RouterScope>();
-    return scope?.routerState.widget as Router<T>?;
+    return scope?.routerState.widget() as Router<T>?;
   }
 
   /// Forces the [Router] to run the [callback] and create a new history
@@ -497,30 +497,30 @@ class _RouterState<T> extends State<Router<T>> with RestorationMixin {
   final _RestorableRouteInformation _routeInformation = _RestorableRouteInformation();
 
   @override
-  String? get restorationId => widget.restorationScopeId;
+  String? get restorationId => widget().restorationScopeId;
 
   @override
   void initState() {
     super.initState();
-    widget.routeInformationProvider?.addListener(_handleRouteInformationProviderNotification);
-    widget.backButtonDispatcher?.addCallback(_handleBackButtonDispatcherNotification);
-    widget.routerDelegate.addListener(_handleRouterDelegateNotification);
+    widget().routeInformationProvider?.addListener(_handleRouteInformationProviderNotification);
+    widget().backButtonDispatcher?.addCallback(_handleBackButtonDispatcherNotification);
+    widget().routerDelegate.addListener(_handleRouterDelegateNotification);
   }
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_routeInformation, 'route');
     if (_routeInformation.value != null) {
-      _processRouteInformation(_routeInformation.value!, () => widget.routerDelegate.setRestoredRoutePath);
-    } else if (widget.routeInformationProvider != null) {
-      _processRouteInformation(widget.routeInformationProvider!.value, () => widget.routerDelegate.setInitialRoutePath);
+      _processRouteInformation(_routeInformation.value!, () => widget().routerDelegate.setRestoredRoutePath);
+    } else if (widget().routeInformationProvider != null) {
+      _processRouteInformation(widget().routeInformationProvider!.value, () => widget().routerDelegate.setInitialRoutePath);
     }
   }
 
   bool _routeInformationReportingTaskScheduled = false;
 
   void _scheduleRouteInformationReportingTask() {
-    if (_routeInformationReportingTaskScheduled || widget.routeInformationProvider == null)
+    if (_routeInformationReportingTaskScheduled || widget().routeInformationProvider == null)
       return;
     assert(_currentIntentionToReport != null);
     _routeInformationReportingTaskScheduled = true;
@@ -534,16 +534,16 @@ class _RouterState<T> extends State<Router<T>> with RestorationMixin {
     if (_routeInformation.value != null) {
       final RouteInformation currentRouteInformation = _routeInformation.value!;
       assert(_currentIntentionToReport != null);
-      widget.routeInformationProvider!.routerReportsNewRouteInformation(currentRouteInformation, type: _currentIntentionToReport!);
+      widget().routeInformationProvider!.routerReportsNewRouteInformation(currentRouteInformation, type: _currentIntentionToReport!);
     }
     _currentIntentionToReport = RouteInformationReportingType.none;
   }
 
   RouteInformation? _retrieveNewRouteInformation() {
-    final T? configuration = widget.routerDelegate.currentConfiguration;
+    final T? configuration = widget().routerDelegate.currentConfiguration;
     if (configuration == null)
       return null;
-    return widget.routeInformationParser?.restoreRouteInformation(configuration);
+    return widget().routeInformationParser?.restoreRouteInformation(configuration);
   }
 
   void _setStateWithExplicitReportStatus(
@@ -588,42 +588,42 @@ class _RouterState<T> extends State<Router<T>> with RestorationMixin {
   @override
   void didUpdateWidget(Router<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.routeInformationProvider != oldWidget.routeInformationProvider ||
-        widget.backButtonDispatcher != oldWidget.backButtonDispatcher ||
-        widget.routeInformationParser != oldWidget.routeInformationParser ||
-        widget.routerDelegate != oldWidget.routerDelegate) {
+    if (widget().routeInformationProvider != oldWidget.routeInformationProvider ||
+        widget().backButtonDispatcher != oldWidget.backButtonDispatcher ||
+        widget().routeInformationParser != oldWidget.routeInformationParser ||
+        widget().routerDelegate != oldWidget.routerDelegate) {
       _currentRouterTransaction = Object();
     }
-    if (widget.routeInformationProvider != oldWidget.routeInformationProvider) {
+    if (widget().routeInformationProvider != oldWidget.routeInformationProvider) {
       oldWidget.routeInformationProvider?.removeListener(_handleRouteInformationProviderNotification);
-      widget.routeInformationProvider?.addListener(_handleRouteInformationProviderNotification);
-      if (oldWidget.routeInformationProvider?.value != widget.routeInformationProvider?.value) {
+      widget().routeInformationProvider?.addListener(_handleRouteInformationProviderNotification);
+      if (oldWidget.routeInformationProvider?.value != widget().routeInformationProvider?.value) {
         _handleRouteInformationProviderNotification();
       }
     }
-    if (widget.backButtonDispatcher != oldWidget.backButtonDispatcher) {
+    if (widget().backButtonDispatcher != oldWidget.backButtonDispatcher) {
       oldWidget.backButtonDispatcher?.removeCallback(_handleBackButtonDispatcherNotification);
-      widget.backButtonDispatcher?.addCallback(_handleBackButtonDispatcherNotification);
+      widget().backButtonDispatcher?.addCallback(_handleBackButtonDispatcherNotification);
     }
-    if (widget.routerDelegate != oldWidget.routerDelegate) {
+    if (widget().routerDelegate != oldWidget.routerDelegate) {
       oldWidget.routerDelegate.removeListener(_handleRouterDelegateNotification);
-      widget.routerDelegate.addListener(_handleRouterDelegateNotification);
+      widget().routerDelegate.addListener(_handleRouterDelegateNotification);
       _maybeNeedToReportRouteInformation();
     }
   }
 
   @override
   void dispose() {
-    widget.routeInformationProvider?.removeListener(_handleRouteInformationProviderNotification);
-    widget.backButtonDispatcher?.removeCallback(_handleBackButtonDispatcherNotification);
-    widget.routerDelegate.removeListener(_handleRouterDelegateNotification);
+    widget().routeInformationProvider?.removeListener(_handleRouteInformationProviderNotification);
+    widget().backButtonDispatcher?.removeCallback(_handleBackButtonDispatcherNotification);
+    widget().routerDelegate.removeListener(_handleRouterDelegateNotification);
     _currentRouterTransaction = null;
     super.dispose();
   }
 
   void _processRouteInformation(RouteInformation information, ValueGetter<_RouteSetter<T>> delegateRouteSetter) {
     _currentRouterTransaction = Object();
-    widget.routeInformationParser!
+    widget().routeInformationParser!
       .parseRouteInformation(information)
       .then<void>(_processParsedRouteInformation(_currentRouterTransaction, delegateRouteSetter));
   }
@@ -641,13 +641,13 @@ class _RouterState<T> extends State<Router<T>> with RestorationMixin {
   }
 
   void _handleRouteInformationProviderNotification() {
-    assert(widget.routeInformationProvider!.value != null);
-    _processRouteInformation(widget.routeInformationProvider!.value, () => widget.routerDelegate.setNewRoutePath);
+    assert(widget().routeInformationProvider!.value != null);
+    _processRouteInformation(widget().routeInformationProvider!.value, () => widget().routerDelegate.setNewRoutePath);
   }
 
   Future<bool> _handleBackButtonDispatcherNotification() {
     _currentRouterTransaction = Object();
-    return widget.routerDelegate
+    return widget().routerDelegate
       .popRoute()
       .then<bool>(_handleRoutePopped(_currentRouterTransaction));
   }
@@ -680,15 +680,15 @@ class _RouterState<T> extends State<Router<T>> with RestorationMixin {
     return UnmanagedRestorationScope(
       bucket: bucket,
       child: _RouterScope(
-        routeInformationProvider: widget.routeInformationProvider,
-        backButtonDispatcher: widget.backButtonDispatcher,
-        routeInformationParser: widget.routeInformationParser,
-        routerDelegate: widget.routerDelegate,
+        routeInformationProvider: widget().routeInformationProvider,
+        backButtonDispatcher: widget().backButtonDispatcher,
+        routeInformationParser: widget().routeInformationParser,
+        routerDelegate: widget().routerDelegate,
         routerState: this,
         child: Builder(
           // We use a Builder so that the build method below
           // will have a BuildContext that contains the _RouterScope.
-          builder: widget.routerDelegate.build,
+          builder: widget().routerDelegate.build,
         ),
       ),
     );
@@ -1044,13 +1044,13 @@ class _BackButtonListenerState extends State<BackButtonListener> {
 
   @override
   void didChangeDependencies() {
-    dispatcher?.removeCallback(widget.onBackButtonPressed);
+    dispatcher?.removeCallback(widget().onBackButtonPressed);
 
     final BackButtonDispatcher? rootBackDispatcher = Router.of(context).backButtonDispatcher;
     assert(rootBackDispatcher != null, 'The parent router must have a backButtonDispatcher to use this widget');
 
     dispatcher = rootBackDispatcher!.createChildBackButtonDispatcher()
-      ..addCallback(widget.onBackButtonPressed)
+      ..addCallback(widget().onBackButtonPressed)
       ..takePriority();
     super.didChangeDependencies();
   }
@@ -1058,21 +1058,21 @@ class _BackButtonListenerState extends State<BackButtonListener> {
   @override
   void didUpdateWidget(covariant BackButtonListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.onBackButtonPressed != widget.onBackButtonPressed) {
+    if (oldWidget.onBackButtonPressed != widget().onBackButtonPressed) {
       dispatcher?.removeCallback(oldWidget.onBackButtonPressed);
-      dispatcher?.addCallback(widget.onBackButtonPressed);
+      dispatcher?.addCallback(widget().onBackButtonPressed);
       dispatcher?.takePriority();
     }
   }
 
   @override
   void dispose() {
-    dispatcher?.removeCallback(widget.onBackButtonPressed);
+    dispatcher?.removeCallback(widget().onBackButtonPressed);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) => widget().child;
 }
 
 /// A delegate that is used by the [Router] widget to parse a route information

@@ -395,23 +395,23 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
   final _RestorableScrollOffset _persistedScrollOffset = _RestorableScrollOffset();
 
   @override
-  AxisDirection get axisDirection => widget.axisDirection;
+  AxisDirection get axisDirection => widget().axisDirection;
 
   late ScrollBehavior _configuration;
   ScrollPhysics? _physics;
   ScrollController? _fallbackScrollController;
   MediaQueryData? _mediaQueryData;
 
-  ScrollController get _effectiveScrollController => widget.controller ?? _fallbackScrollController!;
+  ScrollController get _effectiveScrollController => widget().controller ?? _fallbackScrollController!;
 
   // Only call this from places that will definitely trigger a rebuild.
   void _updatePosition() {
-    _configuration = widget.scrollBehavior ?? ScrollConfiguration.of(context);
+    _configuration = widget().scrollBehavior ?? ScrollConfiguration.of(context);
     _physics = _configuration.getScrollPhysics(context);
-    if (widget.physics != null) {
-      _physics = widget.physics!.applyTo(_physics);
-    } else if (widget.scrollBehavior != null) {
-      _physics = widget.scrollBehavior!.getScrollPhysics(context).applyTo(_physics);
+    if (widget().physics != null) {
+      _physics = widget().physics!.applyTo(_physics);
+    } else if (widget().scrollBehavior != null) {
+      _physics = widget().scrollBehavior!.getScrollPhysics(context).applyTo(_physics);
     }
     final ScrollPosition? oldPosition = _position;
     if (oldPosition != null) {
@@ -447,7 +447,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
 
   @override
   void initState() {
-    if (widget.controller == null)
+    if (widget().controller == null)
       _fallbackScrollController = ScrollController();
     super.initState();
   }
@@ -460,7 +460,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
   }
 
   bool _shouldUpdatePosition(Scrollable oldWidget) {
-    ScrollPhysics? newPhysics = widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context);
+    ScrollPhysics? newPhysics = widget().physics ?? widget().scrollBehavior?.getScrollPhysics(context);
     ScrollPhysics? oldPhysics = oldWidget.physics ?? oldWidget.scrollBehavior?.getScrollPhysics(context);
     do {
       if (newPhysics?.runtimeType != oldPhysics?.runtimeType)
@@ -469,26 +469,26 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
       oldPhysics = oldPhysics?.parent;
     } while (newPhysics != null || oldPhysics != null);
 
-    return widget.controller?.runtimeType != oldWidget.controller?.runtimeType;
+    return widget().controller?.runtimeType != oldWidget.controller?.runtimeType;
   }
 
   @override
   void didUpdateWidget(Scrollable oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.controller != oldWidget.controller) {
+    if (widget().controller != oldWidget.controller) {
       if (oldWidget.controller == null) {
         // The old controller was null, meaning the fallback cannot be null.
         // Dispose of the fallback.
         assert(_fallbackScrollController !=  null);
-        assert(widget.controller != null);
+        assert(widget().controller != null);
         _fallbackScrollController!.detach(position);
         _fallbackScrollController!.dispose();
         _fallbackScrollController = null;
       } else {
         // The old controller was not null, detach.
         oldWidget.controller?.detach(position);
-        if (widget.controller == null) {
+        if (widget().controller == null) {
           // If the new controller is null, we need to set up the fallback
           // ScrollController.
           _fallbackScrollController = ScrollController();
@@ -504,8 +504,8 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
 
   @override
   void dispose() {
-    if (widget.controller != null) {
-      widget.controller!.detach(position);
+    if (widget().controller != null) {
+      widget().controller!.detach(position);
     } else {
       _fallbackScrollController?.detach(position);
       _fallbackScrollController?.dispose();
@@ -543,7 +543,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
   @override
   @protected
   void setCanDrag(bool value) {
-    if (value == _lastCanDrag && (!value || widget.axis == _lastAxisDirection))
+    if (value == _lastCanDrag && (!value || widget().axis == _lastAxisDirection))
       return;
     if (!value) {
       _gestureRecognizers = const <Type, GestureRecognizerFactory>{};
@@ -552,7 +552,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
       // receiving pointer up events to cancel the hold/drag.
       _handleDragCancel();
     } else {
-      switch (widget.axis) {
+      switch (widget().axis) {
         case Axis.vertical:
           _gestureRecognizers = <Type, GestureRecognizerFactory>{
             VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
@@ -568,7 +568,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
                   ..minFlingVelocity = _physics?.minFlingVelocity
                   ..maxFlingVelocity = _physics?.maxFlingVelocity
                   ..velocityTrackerBuilder = _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior
+                  ..dragStartBehavior = widget().dragStartBehavior
                   ..gestureSettings = _mediaQueryData?.gestureSettings;
               },
             ),
@@ -589,7 +589,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
                   ..minFlingVelocity = _physics?.minFlingVelocity
                   ..maxFlingVelocity = _physics?.maxFlingVelocity
                   ..velocityTrackerBuilder = _configuration.velocityTrackerBuilder(context)
-                  ..dragStartBehavior = widget.dragStartBehavior
+                  ..dragStartBehavior = widget().dragStartBehavior
                   ..gestureSettings = _mediaQueryData?.gestureSettings;
               },
             ),
@@ -598,7 +598,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
       }
     }
     _lastCanDrag = value;
-    _lastAxisDirection = widget.axis;
+    _lastAxisDirection = widget().axis;
     if (_gestureDetectorKey.currentState != null)
       _gestureDetectorKey.currentState!.replaceGestureRecognizers(_gestureRecognizers);
   }
@@ -690,11 +690,11 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
   // Returns the delta that should result from applying [event] with axis and
   // direction taken into account.
   double _pointerSignalEventDelta(PointerScrollEvent event) {
-    double delta = widget.axis == Axis.horizontal
+    double delta = widget().axis == Axis.horizontal
       ? event.scrollDelta.dx
       : event.scrollDelta.dy;
 
-    if (axisDirectionIsReversed(widget.axisDirection)) {
+    if (axisDirectionIsReversed(widget().axisDirection)) {
       delta *= -1;
     }
     return delta;
@@ -755,35 +755,35 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
           key: _gestureDetectorKey,
           gestures: _gestureRecognizers,
           behavior: HitTestBehavior.opaque,
-          excludeFromSemantics: widget.excludeFromSemantics,
+          excludeFromSemantics: widget().excludeFromSemantics,
           child: Semantics(
-            explicitChildNodes: !widget.excludeFromSemantics,
+            explicitChildNodes: !widget().excludeFromSemantics,
             child: IgnorePointer(
               key: _ignorePointerKey,
               ignoring: _shouldIgnorePointer,
               ignoringSemantics: false,
-              child: widget.viewportBuilder(context, position),
+              child: widget().viewportBuilder(context, position),
             ),
           ),
         ),
       ),
     );
 
-    if (!widget.excludeFromSemantics) {
+    if (!widget().excludeFromSemantics) {
       result = NotificationListener<ScrollMetricsNotification>(
         onNotification: _handleScrollMetricsNotification,
         child: _ScrollSemantics(
           key: _scrollSemanticsKey,
           position: position,
           allowImplicitScrolling: _physics!.allowImplicitScrolling,
-          semanticChildCount: widget.semanticChildCount,
+          semanticChildCount: widget().semanticChildCount,
           child: result,
         )
       );
     }
 
     final ScrollableDetails details = ScrollableDetails(
-      direction: widget.axisDirection,
+      direction: widget().axisDirection,
       controller: _effectiveScrollController,
     );
 
@@ -802,7 +802,7 @@ class ScrollableState extends State<Scrollable> with TickerProviderStateMixin, R
   }
 
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 }
 
 /// Describes the aspects of a Scrollable widget to inform inherited widgets
@@ -1112,8 +1112,8 @@ class ScrollAction extends Action<ScrollIntent> {
     assert(state.position.maxScrollExtent != null);
     assert(state.position.minScrollExtent != null);
     assert(state._physics == null || state._physics!.shouldAcceptUserOffset(state.position));
-    if (state.widget.incrementCalculator != null) {
-      return state.widget.incrementCalculator!(
+    if (state.widget().incrementCalculator != null) {
+      return state.widget().incrementCalculator!(
         ScrollIncrementDetails(
           type: type,
           metrics: state.position,

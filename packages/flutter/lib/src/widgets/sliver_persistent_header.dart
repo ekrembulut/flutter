@@ -242,7 +242,7 @@ class _FloatingHeaderState extends State<_FloatingHeader> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) => widget().child;
 }
 
 class _SliverPersistentHeaderElement extends RenderObjectElement {

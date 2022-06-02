@@ -396,12 +396,12 @@ class _FadeInImageState extends State<FadeInImage> {
       errorBuilder: errorBuilder,
       frameBuilder: frameBuilder,
       opacity: opacity,
-      width: widget.width,
-      height: widget.height,
+      width: widget().width,
+      height: widget().height,
       fit: fit,
-      alignment: widget.alignment,
-      repeat: widget.repeat,
-      matchTextDirection: widget.matchTextDirection,
+      alignment: widget().alignment,
+      repeat: widget().repeat,
+      matchTextDirection: widget().matchTextDirection,
       gaplessPlayback: true,
       excludeFromSemantics: true,
     );
@@ -410,10 +410,10 @@ class _FadeInImageState extends State<FadeInImage> {
   @override
   Widget build(BuildContext context) {
     Widget result = _image(
-      image: widget.image,
-      errorBuilder: widget.imageErrorBuilder,
+      image: widget().image,
+      errorBuilder: widget().imageErrorBuilder,
       opacity: _imageAnimation,
-      fit: widget.fit,
+      fit: widget().fit,
       frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded) {
           _resetAnimations();
@@ -423,26 +423,26 @@ class _FadeInImageState extends State<FadeInImage> {
           target: child,
           targetProxyAnimation: _imageAnimation,
           placeholder: _image(
-            image: widget.placeholder,
-            errorBuilder: widget.placeholderErrorBuilder,
+            image: widget().placeholder,
+            errorBuilder: widget().placeholderErrorBuilder,
             opacity: _placeholderAnimation,
-            fit: widget.placeholderFit ?? widget.fit,
+            fit: widget().placeholderFit ?? widget().fit,
           ),
           placeholderProxyAnimation: _placeholderAnimation,
           isTargetLoaded: frame != null,
-          fadeInDuration: widget.fadeInDuration,
-          fadeOutDuration: widget.fadeOutDuration,
-          fadeInCurve: widget.fadeInCurve,
-          fadeOutCurve: widget.fadeOutCurve,
+          fadeInDuration: widget().fadeInDuration,
+          fadeOutDuration: widget().fadeOutDuration,
+          fadeInCurve: widget().fadeInCurve,
+          fadeOutCurve: widget().fadeOutCurve,
         );
       },
     );
 
-    if (!widget.excludeFromSemantics) {
+    if (!widget().excludeFromSemantics) {
       result = Semantics(
-        container: widget.imageSemanticLabel != null,
+        container: widget().imageSemanticLabel != null,
         image: true,
-        label: widget.imageSemanticLabel ?? '',
+        label: widget().imageSemanticLabel ?? '',
         child: result,
       );
     }
@@ -496,12 +496,12 @@ class _AnimatedFadeOutFadeInState extends ImplicitlyAnimatedWidgetState<_Animate
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _targetOpacity = visitor(
       _targetOpacity,
-      widget.isTargetLoaded ? 1.0 : 0.0,
+      widget().isTargetLoaded ? 1.0 : 0.0,
       (dynamic value) => Tween<double>(begin: value as double),
     ) as Tween<double>?;
     _placeholderOpacity = visitor(
       _placeholderOpacity,
-      widget.isTargetLoaded ? 0.0 : 1.0,
+      widget().isTargetLoaded ? 0.0 : 1.0,
       (dynamic value) => Tween<double>(begin: value as double),
     ) as Tween<double>?;
   }
@@ -510,12 +510,12 @@ class _AnimatedFadeOutFadeInState extends ImplicitlyAnimatedWidgetState<_Animate
   void didUpdateTweens() {
     _placeholderOpacityAnimation = animation.drive(TweenSequence<double>(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
-        tween: _placeholderOpacity!.chain(CurveTween(curve: widget.fadeOutCurve)),
-        weight: widget.fadeOutDuration.inMilliseconds.toDouble(),
+        tween: _placeholderOpacity!.chain(CurveTween(curve: widget().fadeOutCurve)),
+        weight: widget().fadeOutDuration.inMilliseconds.toDouble(),
       ),
       TweenSequenceItem<double>(
         tween: ConstantTween<double>(0),
-        weight: widget.fadeInDuration.inMilliseconds.toDouble(),
+        weight: widget().fadeInDuration.inMilliseconds.toDouble(),
       ),
     ]))..addStatusListener((AnimationStatus status) {
       if (_placeholderOpacityAnimation!.isCompleted) {
@@ -527,21 +527,21 @@ class _AnimatedFadeOutFadeInState extends ImplicitlyAnimatedWidgetState<_Animate
     _targetOpacityAnimation = animation.drive(TweenSequence<double>(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
         tween: ConstantTween<double>(0),
-        weight: widget.fadeOutDuration.inMilliseconds.toDouble(),
+        weight: widget().fadeOutDuration.inMilliseconds.toDouble(),
       ),
       TweenSequenceItem<double>(
-        tween: _targetOpacity!.chain(CurveTween(curve: widget.fadeInCurve)),
-        weight: widget.fadeInDuration.inMilliseconds.toDouble(),
+        tween: _targetOpacity!.chain(CurveTween(curve: widget().fadeInCurve)),
+        weight: widget().fadeInDuration.inMilliseconds.toDouble(),
       ),
     ]));
-    if (!widget.isTargetLoaded && _isValid(_placeholderOpacity!) && _isValid(_targetOpacity!)) {
+    if (!widget().isTargetLoaded && _isValid(_placeholderOpacity!) && _isValid(_targetOpacity!)) {
       // Jump (don't fade) back to the placeholder image, so as to be ready
       // for the full animation when the new target image becomes ready.
       controller.value = controller.upperBound;
     }
 
-    widget.targetProxyAnimation.parent = _targetOpacityAnimation;
-    widget.placeholderProxyAnimation.parent = _placeholderOpacityAnimation;
+    widget().targetProxyAnimation.parent = _targetOpacityAnimation;
+    widget().placeholderProxyAnimation.parent = _placeholderOpacityAnimation;
   }
 
   bool _isValid(Tween<double> tween) {
@@ -551,7 +551,7 @@ class _AnimatedFadeOutFadeInState extends ImplicitlyAnimatedWidgetState<_Animate
   @override
   Widget build(BuildContext context) {
     if (_placeholderOpacityAnimation!.isCompleted) {
-      return widget.target;
+      return widget().target;
     }
 
     return Stack(
@@ -561,8 +561,8 @@ class _AnimatedFadeOutFadeInState extends ImplicitlyAnimatedWidgetState<_Animate
       // but it allows the Stack to avoid a call to Directionality.of()
       textDirection: TextDirection.ltr,
       children: <Widget>[
-        widget.target,
-        widget.placeholder,
+        widget().target,
+        widget().placeholder,
       ],
     );
   }

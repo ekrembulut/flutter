@@ -167,7 +167,7 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _children = List<MergeableMaterialItem>.of(widget.children);
+    _children = List<MergeableMaterialItem>.of(widget().children);
 
     for (int i = 0; i < _children.length; i += 1) {
       final MergeableMaterialItem child = _children[i];
@@ -224,9 +224,9 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
   }
 
   bool _debugHasConsecutiveGaps(List<MergeableMaterialItem> children) {
-    for (int i = 0; i < widget.children.length - 1; i += 1) {
-      if (widget.children[i] is MaterialGap &&
-          widget.children[i + 1] is MaterialGap)
+    for (int i = 0; i < widget().children.length - 1; i += 1) {
+      if (widget().children[i] is MaterialGap &&
+          widget().children[i + 1] is MaterialGap)
         return true;
     }
     return false;
@@ -291,13 +291,13 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
     final Set<LocalKey> oldKeys = oldWidget.children.map<LocalKey>(
       (MergeableMaterialItem child) => child.key,
     ).toSet();
-    final Set<LocalKey> newKeys = widget.children.map<LocalKey>(
+    final Set<LocalKey> newKeys = widget().children.map<LocalKey>(
       (MergeableMaterialItem child) => child.key,
     ).toSet();
     final Set<LocalKey> newOnly = newKeys.difference(oldKeys);
     final Set<LocalKey> oldOnly = oldKeys.difference(newKeys);
 
-    final List<MergeableMaterialItem> newChildren = widget.children;
+    final List<MergeableMaterialItem> newChildren = widget().children;
     int i = 0;
     int j = 0;
 
@@ -491,7 +491,7 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
       )!;
     }
 
-    if (widget.mainAxis == Axis.vertical) {
+    if (widget().mainAxis == Axis.vertical) {
       return BorderRadius.vertical(
         top: start ? cardRadius : startRadius,
         bottom: end ? cardRadius : endRadius,
@@ -535,7 +535,7 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
         assert(slices.isNotEmpty);
         widgets.add(
           ListBody(
-            mainAxis: widget.mainAxis,
+            mainAxis: widget().mainAxis,
             children: slices,
           ),
         );
@@ -543,22 +543,22 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
 
         widgets.add(
           SizedBox(
-            width: widget.mainAxis == Axis.horizontal ? _getGapSize(i) : null,
-            height: widget.mainAxis == Axis.vertical ? _getGapSize(i) : null,
+            width: widget().mainAxis == Axis.horizontal ? _getGapSize(i) : null,
+            height: widget().mainAxis == Axis.vertical ? _getGapSize(i) : null,
           ),
         );
       } else {
         final MaterialSlice slice = _children[i] as MaterialSlice;
         Widget child = slice.child;
 
-        if (widget.hasDividers) {
+        if (widget().hasDividers) {
           final bool hasTopDivider = _willNeedDivider(i - 1);
           final bool hasBottomDivider = _willNeedDivider(i + 1);
 
           final BorderSide divider = Divider.createBorderSide(
             context,
             width: 0.5, // TODO(ianh): This probably looks terrible when the dpr isn't a power of two.
-            color: widget.dividerColor,
+            color: widget().dividerColor,
           );
 
           final Border border;
@@ -604,7 +604,7 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
     if (slices.isNotEmpty) {
       widgets.add(
         ListBody(
-          mainAxis: widget.mainAxis,
+          mainAxis: widget().mainAxis,
           children: slices,
         ),
       );
@@ -612,8 +612,8 @@ class _MergeableMaterialState extends State<MergeableMaterial> with TickerProvid
     }
 
     return _MergeableMaterialListBody(
-      mainAxis: widget.mainAxis,
-      elevation: widget.elevation,
+      mainAxis: widget().mainAxis,
+      elevation: widget().elevation,
       items: _children,
       children: widgets,
     );

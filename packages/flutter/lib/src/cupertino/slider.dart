@@ -224,36 +224,36 @@ class CupertinoSlider extends StatefulWidget {
 
 class _CupertinoSliderState extends State<CupertinoSlider> with TickerProviderStateMixin {
   void _handleChanged(double value) {
-    assert(widget.onChanged != null);
-    final double lerpValue = lerpDouble(widget.min, widget.max, value)!;
-    if (lerpValue != widget.value) {
-      widget.onChanged!(lerpValue);
+    assert(widget().onChanged != null);
+    final double lerpValue = lerpDouble(widget().min, widget().max, value)!;
+    if (lerpValue != widget().value) {
+      widget().onChanged!(lerpValue);
     }
   }
 
   void _handleDragStart(double value) {
-    assert(widget.onChangeStart != null);
-    widget.onChangeStart!(lerpDouble(widget.min, widget.max, value)!);
+    assert(widget().onChangeStart != null);
+    widget().onChangeStart!(lerpDouble(widget().min, widget().max, value)!);
   }
 
   void _handleDragEnd(double value) {
-    assert(widget.onChangeEnd != null);
-    widget.onChangeEnd!(lerpDouble(widget.min, widget.max, value)!);
+    assert(widget().onChangeEnd != null);
+    widget().onChangeEnd!(lerpDouble(widget().min, widget().max, value)!);
   }
 
   @override
   Widget build(BuildContext context) {
     return _CupertinoSliderRenderObjectWidget(
-      value: (widget.value - widget.min) / (widget.max - widget.min),
-      divisions: widget.divisions,
+      value: (widget().value - widget().min) / (widget().max - widget().min),
+      divisions: widget().divisions,
       activeColor: CupertinoDynamicColor.resolve(
-        widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
+        widget().activeColor ?? CupertinoTheme.of(context).primaryColor,
         context,
       ),
-      thumbColor: widget.thumbColor,
-      onChanged: widget.onChanged != null ? _handleChanged : null,
-      onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
-      onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+      thumbColor: widget().thumbColor,
+      onChanged: widget().onChanged != null ? _handleChanged : null,
+      onChangeStart: widget().onChangeStart != null ? _handleDragStart : null,
+      onChangeEnd: widget().onChangeEnd != null ? _handleDragEnd : null,
       vsync: this,
     );
   }

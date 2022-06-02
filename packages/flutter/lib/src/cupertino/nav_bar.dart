@@ -447,36 +447,36 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor =
-      CupertinoDynamicColor.maybeResolve(widget.backgroundColor, context) ?? CupertinoTheme.of(context).barBackgroundColor;
+      CupertinoDynamicColor.maybeResolve(widget().backgroundColor, context) ?? CupertinoTheme.of(context).barBackgroundColor;
 
     final _NavigationBarStaticComponents components = _NavigationBarStaticComponents(
       keys: keys,
       route: ModalRoute.of(context),
-      userLeading: widget.leading,
-      automaticallyImplyLeading: widget.automaticallyImplyLeading,
-      automaticallyImplyTitle: widget.automaticallyImplyMiddle,
-      previousPageTitle: widget.previousPageTitle,
-      userMiddle: widget.middle,
-      userTrailing: widget.trailing,
-      padding: widget.padding,
+      userLeading: widget().leading,
+      automaticallyImplyLeading: widget().automaticallyImplyLeading,
+      automaticallyImplyTitle: widget().automaticallyImplyMiddle,
+      previousPageTitle: widget().previousPageTitle,
+      userMiddle: widget().middle,
+      userTrailing: widget().trailing,
+      padding: widget().padding,
       userLargeTitle: null,
       large: false,
     );
 
     final Widget navBar = _wrapWithBackground(
-      border: widget.border,
+      border: widget().border,
       backgroundColor: backgroundColor,
-      brightness: widget.brightness,
+      brightness: widget().brightness,
       child: DefaultTextStyle(
         style: CupertinoTheme.of(context).textTheme.textStyle,
         child: _PersistentNavigationBar(
           components: components,
-          padding: widget.padding,
+          padding: widget().padding,
         ),
       ),
     );
 
-    if (!widget.transitionBetweenRoutes || !_isTransitionable(context)) {
+    if (!widget().transitionBetweenRoutes || !_isTransitionable(context)) {
       // Lint ignore to maintain backward compatibility.
       return navBar;
     }
@@ -485,9 +485,9 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
       // Get the context that might have a possibly changed CupertinoTheme.
       builder: (BuildContext context) {
         return Hero(
-          tag: widget.heroTag == _defaultHeroTag
+          tag: widget().heroTag == _defaultHeroTag
               ? _HeroTag(Navigator.of(context))
-              : widget.heroTag,
+              : widget().heroTag,
           createRectTween: _linearTranslateWithLargestRectSizeTween,
           placeholderBuilder: _navBarHeroLaunchPadBuilder,
           flightShuttleBuilder: _navBarHeroFlightShuttleBuilder,
@@ -498,8 +498,8 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
             backButtonTextStyle: CupertinoTheme.of(context).textTheme.navActionTextStyle,
             titleTextStyle: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
             largeTitleTextStyle: null,
-            border: widget.border,
-            hasUserMiddle: widget.middle != null,
+            border: widget().border,
+            hasUserMiddle: widget().middle != null,
             largeExpanded: false,
             child: navBar,
           ),
@@ -715,14 +715,14 @@ class _CupertinoSliverNavigationBarState extends State<CupertinoSliverNavigation
     final _NavigationBarStaticComponents components = _NavigationBarStaticComponents(
       keys: keys,
       route: ModalRoute.of(context),
-      userLeading: widget.leading,
-      automaticallyImplyLeading: widget.automaticallyImplyLeading,
-      automaticallyImplyTitle: widget.automaticallyImplyTitle,
-      previousPageTitle: widget.previousPageTitle,
-      userMiddle: widget.middle,
-      userTrailing: widget.trailing,
-      userLargeTitle: widget.largeTitle,
-      padding: widget.padding,
+      userLeading: widget().leading,
+      automaticallyImplyLeading: widget().automaticallyImplyLeading,
+      automaticallyImplyTitle: widget().automaticallyImplyTitle,
+      previousPageTitle: widget().previousPageTitle,
+      userMiddle: widget().middle,
+      userTrailing: widget().trailing,
+      userLargeTitle: widget().largeTitle,
+      padding: widget().padding,
       large: true,
     );
 
@@ -733,17 +733,17 @@ class _CupertinoSliverNavigationBarState extends State<CupertinoSliverNavigation
         delegate: _LargeTitleNavigationBarSliverDelegate(
           keys: keys,
           components: components,
-          userMiddle: widget.middle,
-          backgroundColor: CupertinoDynamicColor.maybeResolve(widget.backgroundColor, context) ?? CupertinoTheme.of(context).barBackgroundColor,
-          brightness: widget.brightness,
-          border: widget.border,
-          padding: widget.padding,
+          userMiddle: widget().middle,
+          backgroundColor: CupertinoDynamicColor.maybeResolve(widget().backgroundColor, context) ?? CupertinoTheme.of(context).barBackgroundColor,
+          brightness: widget().brightness,
+          border: widget().border,
+          padding: widget().padding,
           actionsForegroundColor: CupertinoTheme.of(context).primaryColor,
-          transitionBetweenRoutes: widget.transitionBetweenRoutes,
-          heroTag: widget.heroTag,
+          transitionBetweenRoutes: widget().transitionBetweenRoutes,
+          heroTag: widget().heroTag,
           persistentHeight: _kNavBarPersistentHeight + MediaQuery.of(context).padding.top,
-          alwaysShowMiddle: widget.middle != null,
-          stretchConfiguration: widget.stretch ? OverScrollHeaderStretchConfiguration() : null,
+          alwaysShowMiddle: widget().middle != null,
+          stretchConfiguration: widget().stretch ? OverScrollHeaderStretchConfiguration() : null,
         ),
       ),
     );

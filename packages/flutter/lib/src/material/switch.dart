@@ -554,7 +554,7 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
   @override
   void didUpdateWidget(_MaterialSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value) {
+    if (oldWidget.value != widget().value) {
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
       if (position.value == 0.0 || position.value == 1.0) {
@@ -573,23 +573,23 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
   }
 
   @override
-  ValueChanged<bool?>? get onChanged => widget.onChanged != null ? _handleChanged : null;
+  ValueChanged<bool?>? get onChanged => widget().onChanged != null ? _handleChanged : null;
 
   @override
   bool get tristate => false;
 
   @override
-  bool? get value => widget.value;
+  bool? get value => widget().value;
 
   MaterialStateProperty<Color?> get _widgetThumbColor {
     return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
       if (states.contains(MaterialState.disabled)) {
-        return widget.inactiveThumbColor;
+        return widget().inactiveThumbColor;
       }
       if (states.contains(MaterialState.selected)) {
-        return widget.activeColor;
+        return widget().activeColor;
       }
-      return widget.inactiveThumbColor;
+      return widget().inactiveThumbColor;
     });
   }
 
@@ -611,12 +611,12 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
   MaterialStateProperty<Color?> get _widgetTrackColor {
     return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
       if (states.contains(MaterialState.disabled)) {
-        return widget.inactiveTrackColor;
+        return widget().inactiveTrackColor;
       }
       if (states.contains(MaterialState.selected)) {
-        return widget.activeTrackColor;
+        return widget().activeTrackColor;
       }
-      return widget.inactiveTrackColor;
+      return widget().inactiveTrackColor;
     });
   }
 
@@ -638,7 +638,7 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
     });
   }
 
-  double get _trackInnerLength => widget.size.width - _kSwitchMinSize;
+  double get _trackInnerLength => widget().size.width - _kSwitchMinSize;
 
   void _handleDragStart(DragStartDetails details) {
     if (isInteractive)
@@ -665,8 +665,8 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
   bool _needsPositionAnimation = false;
 
   void _handleDragEnd(DragEndDetails details) {
-    if (position.value >= 0.5 != widget.value) {
-      widget.onChanged!(!widget.value);
+    if (position.value >= 0.5 != widget().value) {
+      widget().onChanged!(!widget().value);
       // Wait with finishing the animation until widget.value has changed to
       // !widget.value as part of the widget.onChanged call above.
       setState(() {
@@ -681,8 +681,8 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
 
   void _handleChanged(bool? value) {
     assert(value != null);
-    assert(widget.onChanged != null);
-    widget.onChanged!(value!);
+    assert(widget().onChanged != null);
+    widget().onChanged!(value!);
   }
 
   @override
@@ -701,64 +701,64 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
     // so that they can be lerped between.
     final Set<MaterialState> activeStates = states..add(MaterialState.selected);
     final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
-    final Color effectiveActiveThumbColor = widget.thumbColor?.resolve(activeStates)
+    final Color effectiveActiveThumbColor = widget().thumbColor?.resolve(activeStates)
       ?? _widgetThumbColor.resolve(activeStates)
       ?? switchTheme.thumbColor?.resolve(activeStates)
       ?? _defaultThumbColor.resolve(activeStates);
-    final Color effectiveInactiveThumbColor = widget.thumbColor?.resolve(inactiveStates)
+    final Color effectiveInactiveThumbColor = widget().thumbColor?.resolve(inactiveStates)
       ?? _widgetThumbColor.resolve(inactiveStates)
       ?? switchTheme.thumbColor?.resolve(inactiveStates)
       ?? _defaultThumbColor.resolve(inactiveStates);
-    final Color effectiveActiveTrackColor = widget.trackColor?.resolve(activeStates)
+    final Color effectiveActiveTrackColor = widget().trackColor?.resolve(activeStates)
       ?? _widgetTrackColor.resolve(activeStates)
       ?? switchTheme.trackColor?.resolve(activeStates)
       ?? _defaultTrackColor.resolve(activeStates);
-    final Color effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates)
+    final Color effectiveInactiveTrackColor = widget().trackColor?.resolve(inactiveStates)
       ?? _widgetTrackColor.resolve(inactiveStates)
       ?? switchTheme.trackColor?.resolve(inactiveStates)
       ?? _defaultTrackColor.resolve(inactiveStates);
 
     final Set<MaterialState> focusedStates = states..add(MaterialState.focused);
-    final Color effectiveFocusOverlayColor = widget.overlayColor?.resolve(focusedStates)
-      ?? widget.focusColor
+    final Color effectiveFocusOverlayColor = widget().overlayColor?.resolve(focusedStates)
+      ?? widget().focusColor
       ?? switchTheme.overlayColor?.resolve(focusedStates)
       ?? theme.focusColor;
 
     final Set<MaterialState> hoveredStates = states..add(MaterialState.hovered);
-    final Color effectiveHoverOverlayColor = widget.overlayColor?.resolve(hoveredStates)
-        ?? widget.hoverColor
+    final Color effectiveHoverOverlayColor = widget().overlayColor?.resolve(hoveredStates)
+        ?? widget().hoverColor
         ?? switchTheme.overlayColor?.resolve(hoveredStates)
         ?? theme.hoverColor;
 
     final Set<MaterialState> activePressedStates = activeStates..add(MaterialState.pressed);
-    final Color effectiveActivePressedOverlayColor = widget.overlayColor?.resolve(activePressedStates)
+    final Color effectiveActivePressedOverlayColor = widget().overlayColor?.resolve(activePressedStates)
         ?? switchTheme.overlayColor?.resolve(activePressedStates)
         ?? effectiveActiveThumbColor.withAlpha(kRadialReactionAlpha);
 
     final Set<MaterialState> inactivePressedStates = inactiveStates..add(MaterialState.pressed);
-    final Color effectiveInactivePressedOverlayColor = widget.overlayColor?.resolve(inactivePressedStates)
+    final Color effectiveInactivePressedOverlayColor = widget().overlayColor?.resolve(inactivePressedStates)
         ?? switchTheme.overlayColor?.resolve(inactivePressedStates)
         ?? effectiveActiveThumbColor.withAlpha(kRadialReactionAlpha);
 
     final MaterialStateProperty<MouseCursor> effectiveMouseCursor = MaterialStateProperty.resolveWith<MouseCursor>((Set<MaterialState> states) {
-      return MaterialStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states)
+      return MaterialStateProperty.resolveAs<MouseCursor?>(widget().mouseCursor, states)
         ?? switchTheme.mouseCursor?.resolve(states)
         ?? MaterialStateProperty.resolveAs<MouseCursor>(MaterialStateMouseCursor.clickable, states);
     });
 
     return Semantics(
-      toggled: widget.value,
+      toggled: widget().value,
       child: GestureDetector(
         excludeFromSemantics: true,
         onHorizontalDragStart: _handleDragStart,
         onHorizontalDragUpdate: _handleDragUpdate,
         onHorizontalDragEnd: _handleDragEnd,
-        dragStartBehavior: widget.dragStartBehavior,
+        dragStartBehavior: widget().dragStartBehavior,
         child: buildToggleable(
           mouseCursor: effectiveMouseCursor,
-          focusNode: widget.focusNode,
-          autofocus: widget.autofocus,
-          size: widget.size,
+          focusNode: widget().focusNode,
+          autofocus: widget().autofocus,
+          size: widget().size,
           painter: _painter
             ..position = position
             ..reaction = reaction
@@ -768,16 +768,16 @@ class _MaterialSwitchState extends State<_MaterialSwitch> with TickerProviderSta
             ..reactionColor = effectiveActivePressedOverlayColor
             ..hoverColor = effectiveHoverOverlayColor
             ..focusColor = effectiveFocusOverlayColor
-            ..splashRadius = widget.splashRadius ?? switchTheme.splashRadius ?? kRadialReactionRadius
+            ..splashRadius = widget().splashRadius ?? switchTheme.splashRadius ?? kRadialReactionRadius
             ..downPosition = downPosition
             ..isFocused = states.contains(MaterialState.focused)
             ..isHovered = states.contains(MaterialState.hovered)
             ..activeColor = effectiveActiveThumbColor
             ..inactiveColor = effectiveInactiveThumbColor
-            ..activeThumbImage = widget.activeThumbImage
-            ..onActiveThumbImageError = widget.onActiveThumbImageError
-            ..inactiveThumbImage = widget.inactiveThumbImage
-            ..onInactiveThumbImageError = widget.onInactiveThumbImageError
+            ..activeThumbImage = widget().activeThumbImage
+            ..onActiveThumbImageError = widget().onActiveThumbImageError
+            ..inactiveThumbImage = widget().inactiveThumbImage
+            ..onInactiveThumbImageError = widget().onInactiveThumbImageError
             ..activeTrackColor = effectiveActiveTrackColor
             ..inactiveTrackColor = effectiveInactiveTrackColor
             ..configuration = createLocalImageConfiguration(context)

@@ -151,26 +151,26 @@ class _CupertinoTabViewState extends State<CupertinoTabView> {
   @override
   void didUpdateWidget(CupertinoTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.navigatorKey != oldWidget.navigatorKey
-        || widget.navigatorObservers != oldWidget.navigatorObservers) {
+    if (widget().navigatorKey != oldWidget.navigatorKey
+        || widget().navigatorObservers != oldWidget.navigatorObservers) {
       _updateObservers();
     }
   }
 
   void _updateObservers() {
     _navigatorObservers =
-        List<NavigatorObserver>.of(widget.navigatorObservers)
+        List<NavigatorObserver>.of(widget().navigatorObservers)
           ..add(_heroController);
   }
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: widget.navigatorKey,
+      key: widget().navigatorKey,
       onGenerateRoute: _onGenerateRoute,
       onUnknownRoute: _onUnknownRoute,
       observers: _navigatorObservers,
-      restorationScopeId: widget.restorationScopeId,
+      restorationScopeId: widget().restorationScopeId,
     );
   }
 
@@ -178,11 +178,11 @@ class _CupertinoTabViewState extends State<CupertinoTabView> {
     final String? name = settings.name;
     WidgetBuilder? routeBuilder;
     String? title;
-    if (name == Navigator.defaultRouteName && widget.builder != null) {
-      routeBuilder = widget.builder;
-      title = widget.defaultTitle;
-    } else if (widget.routes != null) {
-      routeBuilder = widget.routes![name];
+    if (name == Navigator.defaultRouteName && widget().builder != null) {
+      routeBuilder = widget().builder;
+      title = widget().defaultTitle;
+    } else if (widget().routes != null) {
+      routeBuilder = widget().routes![name];
     }
     if (routeBuilder != null) {
       return CupertinoPageRoute<dynamic>(
@@ -191,14 +191,14 @@ class _CupertinoTabViewState extends State<CupertinoTabView> {
         settings: settings,
       );
     }
-    if (widget.onGenerateRoute != null)
-      return widget.onGenerateRoute!(settings);
+    if (widget().onGenerateRoute != null)
+      return widget().onGenerateRoute!(settings);
     return null;
   }
 
   Route<dynamic>? _onUnknownRoute(RouteSettings settings) {
     assert(() {
-      if (widget.onUnknownRoute == null) {
+      if (widget().onUnknownRoute == null) {
         throw FlutterError(
           'Could not find a generator for route $settings in the $runtimeType.\n'
           'Generators for routes are searched for in the following order:\n'
@@ -213,7 +213,7 @@ class _CupertinoTabViewState extends State<CupertinoTabView> {
       }
       return true;
     }());
-    final Route<dynamic>? result = widget.onUnknownRoute!(settings);
+    final Route<dynamic>? result = widget().onUnknownRoute!(settings);
     assert(() {
       if (result == null) {
         throw FlutterError(

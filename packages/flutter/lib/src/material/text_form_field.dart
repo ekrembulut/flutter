@@ -258,7 +258,7 @@ class _TextFormFieldState extends FormFieldState<String> {
 
   TextEditingController get _effectiveController => _textFormField.controller ?? _controller!.value;
 
-  TextFormField get _textFormField => super.widget as TextFormField;
+  TextFormField get _textFormField => super.widget() as TextFormField;
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -290,7 +290,7 @@ class _TextFormFieldState extends FormFieldState<String> {
   void initState() {
     super.initState();
     if (_textFormField.controller == null) {
-      _createLocalController(widget.initialValue != null ? TextEditingValue(text: widget.initialValue!) : null);
+      _createLocalController(widget().initialValue != null ? TextEditingValue(text: widget().initialValue!) : null);
     } else {
       _textFormField.controller!.addListener(_handleControllerChanged);
     }
@@ -337,7 +337,7 @@ class _TextFormFieldState extends FormFieldState<String> {
   void reset() {
     // setState will be called in the superclass, so even though state is being
     // manipulated, no setState call is needed here.
-    _effectiveController.text = widget.initialValue ?? '';
+    _effectiveController.text = widget().initialValue ?? '';
     super.reset();
   }
 

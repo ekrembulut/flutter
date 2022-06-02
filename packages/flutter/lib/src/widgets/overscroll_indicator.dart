@@ -183,19 +183,19 @@ class _GlowingOverscrollIndicatorState extends State<GlowingOverscrollIndicator>
   @override
   void initState() {
     super.initState();
-    _leadingController = _GlowController(vsync: this, color: widget.color, axis: widget.axis);
-    _trailingController = _GlowController(vsync: this, color: widget.color, axis: widget.axis);
+    _leadingController = _GlowController(vsync: this, color: widget().color, axis: widget().axis);
+    _trailingController = _GlowController(vsync: this, color: widget().color, axis: widget().axis);
     _leadingAndTrailingListener = Listenable.merge(<Listenable>[_leadingController!, _trailingController!]);
   }
 
   @override
   void didUpdateWidget(GlowingOverscrollIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.color != widget.color || oldWidget.axis != widget.axis) {
-      _leadingController!.color = widget.color;
-      _leadingController!.axis = widget.axis;
-      _trailingController!.color = widget.color;
-      _trailingController!.axis = widget.axis;
+    if (oldWidget.color != widget().color || oldWidget.axis != widget().axis) {
+      _leadingController!.color = widget().color;
+      _leadingController!.axis = widget().axis;
+      _trailingController!.color = widget().color;
+      _trailingController!.axis = widget().axis;
     }
   }
 
@@ -203,7 +203,7 @@ class _GlowingOverscrollIndicatorState extends State<GlowingOverscrollIndicator>
   final Map<bool, bool> _accepted = <bool, bool>{false: true, true: true};
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (!widget.notificationPredicate(notification))
+    if (!widget().notificationPredicate(notification))
       return false;
 
     // Update the paint offset with the current scroll position. This makes
@@ -240,7 +240,7 @@ class _GlowingOverscrollIndicatorState extends State<GlowingOverscrollIndicator>
         }
       }
       assert(controller != null);
-      assert(notification.metrics.axis == widget.axis);
+      assert(notification.metrics.axis == widget().axis);
       if (_accepted[isLeading]!) {
         if (notification.velocity != 0.0) {
           assert(notification.dragDetails == null);
@@ -292,13 +292,13 @@ class _GlowingOverscrollIndicatorState extends State<GlowingOverscrollIndicator>
       child: RepaintBoundary(
         child: CustomPaint(
           foregroundPainter: _GlowingOverscrollIndicatorPainter(
-            leadingController: widget.showLeading ? _leadingController : null,
-            trailingController: widget.showTrailing ? _trailingController : null,
-            axisDirection: widget.axisDirection,
+            leadingController: widget().showLeading ? _leadingController : null,
+            trailingController: widget().showTrailing ? _trailingController : null,
+            axisDirection: widget().axisDirection,
             repaint: _leadingAndTrailingListener,
           ),
           child: RepaintBoundary(
-            child: widget.child,
+            child: widget().child,
           ),
         ),
       ),
@@ -694,7 +694,7 @@ class _StretchingOverscrollIndicatorState extends State<StretchingOverscrollIndi
   bool _accepted = true;
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (!widget.notificationPredicate(notification))
+    if (!widget().notificationPredicate(notification))
       return false;
 
     if (notification is OverscrollNotification) {
@@ -705,7 +705,7 @@ class _StretchingOverscrollIndicatorState extends State<StretchingOverscrollIndi
         _accepted = confirmationNotification._accepted;
       }
 
-      assert(notification.metrics.axis == widget.axis);
+      assert(notification.metrics.axis == widget().axis);
       if (_accepted) {
         if (notification.velocity != 0.0) {
           assert(notification.dragDetails == null);
@@ -734,7 +734,7 @@ class _StretchingOverscrollIndicatorState extends State<StretchingOverscrollIndi
 
   AlignmentDirectional _getAlignmentForAxisDirection(double overscroll) {
     // Accounts for reversed scrollables by checking the AxisDirection
-    switch (widget.axisDirection) {
+    switch (widget().axisDirection) {
       case AxisDirection.up:
         return overscroll > 0
             ? AlignmentDirectional.topCenter
@@ -773,7 +773,7 @@ class _StretchingOverscrollIndicatorState extends State<StretchingOverscrollIndi
           double x = 1.0;
           double y = 1.0;
 
-          switch (widget.axis) {
+          switch (widget().axis) {
             case Axis.horizontal:
               x += stretch;
               mainAxisSize = size.width;
@@ -793,7 +793,7 @@ class _StretchingOverscrollIndicatorState extends State<StretchingOverscrollIndi
           final Widget transform = Transform(
             alignment: alignment,
             transform: Matrix4.diagonal3Values(x, y, 1.0),
-            child: widget.child,
+            child: widget().child,
           );
 
           // Only clip if the viewport dimension is smaller than that of the

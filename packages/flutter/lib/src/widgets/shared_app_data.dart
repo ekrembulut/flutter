@@ -156,7 +156,7 @@ class _SharedAppDataState extends State<SharedAppData> {
 
   @override
   Widget build(BuildContext context) {
-    return _SharedAppModel(sharedAppDataState: this, child: widget.child);
+    return _SharedAppModel(sharedAppDataState: this, child: widget().child);
   }
 
   V getValue<K extends Object, V>(K key, SharedAppDataInitCallback<V> init) {

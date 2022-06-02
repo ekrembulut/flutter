@@ -125,7 +125,7 @@ class _TickerModeState extends State<TickerMode> {
   }
 
   void _updateEffectiveMode() {
-    _effectiveMode.value = _ancestorTicketMode && widget.enabled;
+    _effectiveMode.value = _ancestorTicketMode && widget().enabled;
   }
 
   @override
@@ -133,14 +133,14 @@ class _TickerModeState extends State<TickerMode> {
     return _EffectiveTickerMode(
       enabled: _effectiveMode.value,
       notifier: _effectiveMode,
-      child: widget.child,
+      child: widget().child,
     );
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagProperty('requested mode', value: widget.enabled, ifTrue: 'enabled', ifFalse: 'disabled', showName: true));
+    properties.add(FlagProperty('requested mode', value: widget().enabled, ifTrue: 'enabled', ifFalse: 'disabled', showName: true));
   }
 }
 

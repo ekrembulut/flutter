@@ -1045,29 +1045,29 @@ class _SelectionToolbarOverlayState extends State<_SelectionToolbarOverlay> with
     _controller = AnimationController(duration: SelectionOverlay.fadeDuration, vsync: this);
 
     _toolbarVisibilityChanged();
-    widget.visibility?.addListener(_toolbarVisibilityChanged);
+    widget().visibility?.addListener(_toolbarVisibilityChanged);
   }
 
   @override
   void didUpdateWidget(_SelectionToolbarOverlay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.visibility == widget.visibility) {
+    if (oldWidget.visibility == widget().visibility) {
       return;
     }
     oldWidget.visibility?.removeListener(_toolbarVisibilityChanged);
     _toolbarVisibilityChanged();
-    widget.visibility?.addListener(_toolbarVisibilityChanged);
+    widget().visibility?.addListener(_toolbarVisibilityChanged);
   }
 
   @override
   void dispose() {
-    widget.visibility?.removeListener(_toolbarVisibilityChanged);
+    widget().visibility?.removeListener(_toolbarVisibilityChanged);
     _controller.dispose();
     super.dispose();
   }
 
   void _toolbarVisibilityChanged() {
-    if (widget.visibility?.value ?? true) {
+    if (widget().visibility?.value ?? true) {
       _controller.forward();
     } else {
       _controller.reverse();
@@ -1079,20 +1079,20 @@ class _SelectionToolbarOverlayState extends State<_SelectionToolbarOverlay> with
     return FadeTransition(
       opacity: _opacity,
       child: CompositedTransformFollower(
-        link: widget.layerLink,
+        link: widget().layerLink,
         showWhenUnlinked: false,
-        offset: -widget.editingRegion.topLeft,
+        offset: -widget().editingRegion.topLeft,
         child: Builder(
           builder: (BuildContext context) {
-            return widget.selectionControls!.buildToolbar(
+            return widget().selectionControls!.buildToolbar(
               context,
-              widget.editingRegion,
-              widget.preferredLineHeight,
-              widget.midpoint,
-              widget.selectionEndpoints,
-              widget.selectionDelegate!,
-              widget.clipboardStatus,
-              widget.toolbarLocation,
+              widget().editingRegion,
+              widget().preferredLineHeight,
+              widget().midpoint,
+              widget().selectionEndpoints,
+              widget().selectionDelegate!,
+              widget().clipboardStatus,
+              widget().toolbarLocation,
             );
           },
         ),
@@ -1146,11 +1146,11 @@ class _SelectionHandleOverlayState extends State<_SelectionHandleOverlay> with S
     _controller = AnimationController(duration: SelectionOverlay.fadeDuration, vsync: this);
 
     _handleVisibilityChanged();
-    widget.visibility?.addListener(_handleVisibilityChanged);
+    widget().visibility?.addListener(_handleVisibilityChanged);
   }
 
   void _handleVisibilityChanged() {
-    if (widget.visibility?.value ?? true) {
+    if (widget().visibility?.value ?? true) {
       _controller.forward();
     } else {
       _controller.reverse();
@@ -1162,24 +1162,24 @@ class _SelectionHandleOverlayState extends State<_SelectionHandleOverlay> with S
     super.didUpdateWidget(oldWidget);
     oldWidget.visibility?.removeListener(_handleVisibilityChanged);
     _handleVisibilityChanged();
-    widget.visibility?.addListener(_handleVisibilityChanged);
+    widget().visibility?.addListener(_handleVisibilityChanged);
   }
 
   @override
   void dispose() {
-    widget.visibility?.removeListener(_handleVisibilityChanged);
+    widget().visibility?.removeListener(_handleVisibilityChanged);
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Offset handleAnchor = widget.selectionControls.getHandleAnchor(
-      widget.type,
-      widget.preferredLineHeight,
+    final Offset handleAnchor = widget().selectionControls.getHandleAnchor(
+      widget().type,
+      widget().preferredLineHeight,
     );
-    final Size handleSize = widget.selectionControls.getHandleSize(
-      widget.preferredLineHeight,
+    final Size handleSize = widget().selectionControls.getHandleSize(
+      widget().preferredLineHeight,
     );
 
     final Rect handleRect = Rect.fromLTWH(
@@ -1201,7 +1201,7 @@ class _SelectionHandleOverlayState extends State<_SelectionHandleOverlay> with S
     );
 
     return CompositedTransformFollower(
-      link: widget.handleLayerLink,
+      link: widget().handleLayerLink,
       offset: interactiveRect.topLeft,
       showWhenUnlinked: false,
       child: FadeTransition(
@@ -1212,10 +1212,10 @@ class _SelectionHandleOverlayState extends State<_SelectionHandleOverlay> with S
           height: interactiveRect.height,
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
-            dragStartBehavior: widget.dragStartBehavior,
-            onPanStart: widget.onSelectionHandleDragStart,
-            onPanUpdate: widget.onSelectionHandleDragUpdate,
-            onPanEnd: widget.onSelectionHandleDragEnd,
+            dragStartBehavior: widget().dragStartBehavior,
+            onPanStart: widget().onSelectionHandleDragStart,
+            onPanUpdate: widget().onSelectionHandleDragUpdate,
+            onPanEnd: widget().onSelectionHandleDragEnd,
             child: Padding(
               padding: EdgeInsets.only(
                 left: padding.left,
@@ -1223,11 +1223,11 @@ class _SelectionHandleOverlayState extends State<_SelectionHandleOverlay> with S
                 right: padding.right,
                 bottom: padding.bottom,
               ),
-              child: widget.selectionControls.buildHandle(
+              child: widget().selectionControls.buildHandle(
                 context,
-                widget.type,
-                widget.preferredLineHeight,
-                widget.onSelectionHandleTapped,
+                widget().type,
+                widget().preferredLineHeight,
+                widget().onSelectionHandleTapped,
               ),
             ),
           ),
@@ -1945,7 +1945,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
   // The down handler is force-run on success of a single tap and optimistically
   // run before a long press success.
   void _handleTapDown(TapDownDetails details) {
-    widget.onTapDown?.call(details);
+    widget().onTapDown?.call(details);
     // This isn't detected as a double tap gesture in the gesture recognizer
     // because it's 2 single taps, each of which may do different things depending
     // on whether it's a single tap, the first tap of a double tap, the second
@@ -1953,7 +1953,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
     if (_doubleTapTimer != null && _isWithinDoubleTapTolerance(details.globalPosition)) {
       // If there was already a previous tap, the second down hold/tap is a
       // double tap down.
-      widget.onDoubleTapDown?.call(details);
+      widget().onDoubleTapDown?.call(details);
 
       _doubleTapTimer!.cancel();
       _doubleTapTimeout();
@@ -1963,7 +1963,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
 
   void _handleTapUp(TapUpDetails details) {
     if (!_isDoubleTap) {
-      widget.onSingleTapUp?.call(details);
+      widget().onSingleTapUp?.call(details);
       _lastTapOffset = details.globalPosition;
       _doubleTapTimer = Timer(kDoubleTapTimeout, _doubleTapTimeout);
     }
@@ -1971,7 +1971,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
   }
 
   void _handleTapCancel() {
-    widget.onSingleTapCancel?.call();
+    widget().onSingleTapCancel?.call();
   }
 
   DragStartDetails? _lastDragStartDetails;
@@ -1981,7 +1981,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
   void _handleDragStart(DragStartDetails details) {
     assert(_lastDragStartDetails == null);
     _lastDragStartDetails = details;
-    widget.onDragSelectionStart?.call(details);
+    widget().onDragSelectionStart?.call(details);
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
@@ -1999,7 +1999,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
   void _handleDragUpdateThrottled() {
     assert(_lastDragStartDetails != null);
     assert(_lastDragUpdateDetails != null);
-    widget.onDragSelectionUpdate?.call(_lastDragStartDetails!, _lastDragUpdateDetails!);
+    widget().onDragSelectionUpdate?.call(_lastDragStartDetails!, _lastDragUpdateDetails!);
     _dragUpdateThrottleTimer = null;
     _lastDragUpdateDetails = null;
   }
@@ -2012,7 +2012,7 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
       _dragUpdateThrottleTimer!.cancel();
       _handleDragUpdateThrottled();
     }
-    widget.onDragSelectionEnd?.call(details);
+    widget().onDragSelectionEnd?.call(details);
     _dragUpdateThrottleTimer = null;
     _lastDragStartDetails = null;
     _lastDragUpdateDetails = null;
@@ -2021,28 +2021,28 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
   void _forcePressStarted(ForcePressDetails details) {
     _doubleTapTimer?.cancel();
     _doubleTapTimer = null;
-    widget.onForcePressStart?.call(details);
+    widget().onForcePressStart?.call(details);
   }
 
   void _forcePressEnded(ForcePressDetails details) {
-    widget.onForcePressEnd?.call(details);
+    widget().onForcePressEnd?.call(details);
   }
 
   void _handleLongPressStart(LongPressStartDetails details) {
-    if (!_isDoubleTap && widget.onSingleLongTapStart != null) {
-      widget.onSingleLongTapStart!(details);
+    if (!_isDoubleTap && widget().onSingleLongTapStart != null) {
+      widget().onSingleLongTapStart!(details);
     }
   }
 
   void _handleLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
-    if (!_isDoubleTap && widget.onSingleLongTapMoveUpdate != null) {
-      widget.onSingleLongTapMoveUpdate!(details);
+    if (!_isDoubleTap && widget().onSingleLongTapMoveUpdate != null) {
+      widget().onSingleLongTapMoveUpdate!(details);
     }
   }
 
   void _handleLongPressEnd(LongPressEndDetails details) {
-    if (!_isDoubleTap && widget.onSingleLongTapEnd != null) {
-      widget.onSingleLongTapEnd!(details);
+    if (!_isDoubleTap && widget().onSingleLongTapEnd != null) {
+      widget().onSingleLongTapEnd!(details);
     }
     _isDoubleTap = false;
   }
@@ -2070,17 +2070,17 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
       () => TapGestureRecognizer(debugOwner: this),
       (TapGestureRecognizer instance) {
         instance
-          ..onSecondaryTap = widget.onSecondaryTap
-          ..onSecondaryTapDown = widget.onSecondaryTapDown
+          ..onSecondaryTap = widget().onSecondaryTap
+          ..onSecondaryTapDown = widget().onSecondaryTapDown
           ..onTapDown = _handleTapDown
           ..onTapUp = _handleTapUp
           ..onTapCancel = _handleTapCancel;
       },
     );
 
-    if (widget.onSingleLongTapStart != null ||
-        widget.onSingleLongTapMoveUpdate != null ||
-        widget.onSingleLongTapEnd != null) {
+    if (widget().onSingleLongTapStart != null ||
+        widget().onSingleLongTapMoveUpdate != null ||
+        widget().onSingleLongTapEnd != null) {
       gestures[LongPressGestureRecognizer] = GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
         () => LongPressGestureRecognizer(debugOwner: this, kind: PointerDeviceKind.touch),
         (LongPressGestureRecognizer instance) {
@@ -2092,9 +2092,9 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
       );
     }
 
-    if (widget.onDragSelectionStart != null ||
-        widget.onDragSelectionUpdate != null ||
-        widget.onDragSelectionEnd != null) {
+    if (widget().onDragSelectionStart != null ||
+        widget().onDragSelectionUpdate != null ||
+        widget().onDragSelectionEnd != null) {
       gestures[PanGestureRecognizer] = GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
         () => PanGestureRecognizer(debugOwner: this, supportedDevices: <PointerDeviceKind>{ PointerDeviceKind.mouse }),
         (PanGestureRecognizer instance) {
@@ -2109,13 +2109,13 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
       );
     }
 
-    if (widget.onForcePressStart != null || widget.onForcePressEnd != null) {
+    if (widget().onForcePressStart != null || widget().onForcePressEnd != null) {
       gestures[ForcePressGestureRecognizer] = GestureRecognizerFactoryWithHandlers<ForcePressGestureRecognizer>(
         () => ForcePressGestureRecognizer(debugOwner: this),
         (ForcePressGestureRecognizer instance) {
           instance
-            ..onStart = widget.onForcePressStart != null ? _forcePressStarted : null
-            ..onEnd = widget.onForcePressEnd != null ? _forcePressEnded : null;
+            ..onStart = widget().onForcePressStart != null ? _forcePressStarted : null
+            ..onEnd = widget().onForcePressEnd != null ? _forcePressEnded : null;
         },
       );
     }
@@ -2123,8 +2123,8 @@ class _TextSelectionGestureDetectorState extends State<TextSelectionGestureDetec
     return RawGestureDetector(
       gestures: gestures,
       excludeFromSemantics: true,
-      behavior: widget.behavior,
-      child: widget.child,
+      behavior: widget().behavior,
+      child: widget().child,
     );
   }
 }

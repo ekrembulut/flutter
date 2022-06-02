@@ -160,7 +160,7 @@ class ScrollNotificationObserverState extends State<ScrollNotificationObserver> 
       },
       child: _ScrollNotificationObserverScope(
         scrollNotificationObserverState: this,
-        child: widget.child,
+        child: widget().child,
       ),
     );
   }

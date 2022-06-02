@@ -520,7 +520,7 @@ class _PlatformMenuBarState extends State<PlatformMenuBar> {
   void didUpdateWidget(PlatformMenuBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     final List<MenuItem> newDescendants = <MenuItem>[
-      for (final MenuItem item in widget.menus) ...<MenuItem>[
+      for (final MenuItem item in widget().menus) ...<MenuItem>[
         item,
         ...item.descendants,
       ],
@@ -534,14 +534,14 @@ class _PlatformMenuBarState extends State<PlatformMenuBar> {
   // Updates the data structures for the menu and send them to the platform
   // plugin.
   void _updateMenu() {
-    WidgetsBinding.instance.platformMenuDelegate.setMenus(widget.menus);
+    WidgetsBinding.instance.platformMenuDelegate.setMenus(widget().menus);
   }
 
   @override
   Widget build(BuildContext context) {
     // PlatformMenuBar is really about managing the platform menu bar, and
     // doesn't do any rendering or event handling in Flutter.
-    return widget.body;
+    return widget().body;
   }
 }
 

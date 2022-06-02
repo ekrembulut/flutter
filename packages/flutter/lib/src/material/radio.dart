@@ -312,18 +312,18 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
 
   void _handleChanged(bool? selected) {
     if (selected == null) {
-      widget.onChanged!(null);
+      widget().onChanged!(null);
       return;
     }
     if (selected) {
-      widget.onChanged!(widget.value);
+      widget().onChanged!(widget().value);
     }
   }
 
   @override
   void didUpdateWidget(Radio<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget._selected != oldWidget._selected) {
+    if (widget()._selected != oldWidget._selected) {
       animateToValue();
     }
   }
@@ -335,13 +335,13 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
   }
 
   @override
-  ValueChanged<bool?>? get onChanged => widget.onChanged != null ? _handleChanged : null;
+  ValueChanged<bool?>? get onChanged => widget().onChanged != null ? _handleChanged : null;
 
   @override
-  bool get tristate => widget.toggleable;
+  bool get tristate => widget().toggleable;
 
   @override
-  bool? get value => widget._selected;
+  bool? get value => widget()._selected;
 
   MaterialStateProperty<Color?> get _widgetFillColor {
     return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
@@ -349,7 +349,7 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
         return null;
       }
       if (states.contains(MaterialState.selected)) {
-        return widget.activeColor;
+        return widget().activeColor;
       }
       return null;
     });
@@ -373,10 +373,10 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
     assert(debugCheckHasMaterial(context));
     final ThemeData themeData = Theme.of(context);
     final RadioThemeData radioTheme = RadioTheme.of(context);
-    final MaterialTapTargetSize effectiveMaterialTapTargetSize = widget.materialTapTargetSize
+    final MaterialTapTargetSize effectiveMaterialTapTargetSize = widget().materialTapTargetSize
       ?? radioTheme.materialTapTargetSize
       ?? themeData.materialTapTargetSize;
-    final VisualDensity effectiveVisualDensity = widget.visualDensity
+    final VisualDensity effectiveVisualDensity = widget().visualDensity
       ?? radioTheme.visualDensity
       ?? themeData.visualDensity;
     Size size;
@@ -391,7 +391,7 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
     size += effectiveVisualDensity.baseSizeAdjustment;
 
     final MaterialStateProperty<MouseCursor> effectiveMouseCursor = MaterialStateProperty.resolveWith<MouseCursor>((Set<MaterialState> states) {
-      return MaterialStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states)
+      return MaterialStateProperty.resolveAs<MouseCursor?>(widget().mouseCursor, states)
         ?? radioTheme.mouseCursor?.resolve(states)
         ?? MaterialStateProperty.resolveAs<MouseCursor>(MaterialStateMouseCursor.clickable, states);
     });
@@ -400,43 +400,43 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
     // so that they can be lerped between.
     final Set<MaterialState> activeStates = states..add(MaterialState.selected);
     final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
-    final Color effectiveActiveColor = widget.fillColor?.resolve(activeStates)
+    final Color effectiveActiveColor = widget().fillColor?.resolve(activeStates)
       ?? _widgetFillColor.resolve(activeStates)
       ?? radioTheme.fillColor?.resolve(activeStates)
       ?? _defaultFillColor.resolve(activeStates);
-    final Color effectiveInactiveColor = widget.fillColor?.resolve(inactiveStates)
+    final Color effectiveInactiveColor = widget().fillColor?.resolve(inactiveStates)
       ?? _widgetFillColor.resolve(inactiveStates)
       ?? radioTheme.fillColor?.resolve(inactiveStates)
       ?? _defaultFillColor.resolve(inactiveStates);
 
     final Set<MaterialState> focusedStates = states..add(MaterialState.focused);
-    final Color effectiveFocusOverlayColor = widget.overlayColor?.resolve(focusedStates)
-      ?? widget.focusColor
+    final Color effectiveFocusOverlayColor = widget().overlayColor?.resolve(focusedStates)
+      ?? widget().focusColor
       ?? radioTheme.overlayColor?.resolve(focusedStates)
       ?? themeData.focusColor;
 
     final Set<MaterialState> hoveredStates = states..add(MaterialState.hovered);
-    final Color effectiveHoverOverlayColor = widget.overlayColor?.resolve(hoveredStates)
-        ?? widget.hoverColor
+    final Color effectiveHoverOverlayColor = widget().overlayColor?.resolve(hoveredStates)
+        ?? widget().hoverColor
         ?? radioTheme.overlayColor?.resolve(hoveredStates)
         ?? themeData.hoverColor;
 
     final Set<MaterialState> activePressedStates = activeStates..add(MaterialState.pressed);
-    final Color effectiveActivePressedOverlayColor = widget.overlayColor?.resolve(activePressedStates)
+    final Color effectiveActivePressedOverlayColor = widget().overlayColor?.resolve(activePressedStates)
         ?? radioTheme.overlayColor?.resolve(activePressedStates)
         ?? effectiveActiveColor.withAlpha(kRadialReactionAlpha);
 
     final Set<MaterialState> inactivePressedStates = inactiveStates..add(MaterialState.pressed);
-    final Color effectiveInactivePressedOverlayColor = widget.overlayColor?.resolve(inactivePressedStates)
+    final Color effectiveInactivePressedOverlayColor = widget().overlayColor?.resolve(inactivePressedStates)
         ?? radioTheme.overlayColor?.resolve(inactivePressedStates)
         ?? effectiveActiveColor.withAlpha(kRadialReactionAlpha);
 
     return Semantics(
       inMutuallyExclusiveGroup: true,
-      checked: widget._selected,
+      checked: widget()._selected,
       child: buildToggleable(
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
+        focusNode: widget().focusNode,
+        autofocus: widget().autofocus,
         mouseCursor: effectiveMouseCursor,
         size: size,
         painter: _painter
@@ -448,7 +448,7 @@ class _RadioState<T> extends State<Radio<T>> with TickerProviderStateMixin, Togg
           ..reactionColor = effectiveActivePressedOverlayColor
           ..hoverColor = effectiveHoverOverlayColor
           ..focusColor = effectiveFocusOverlayColor
-          ..splashRadius = widget.splashRadius ?? radioTheme.splashRadius ?? kRadialReactionRadius
+          ..splashRadius = widget().splashRadius ?? radioTheme.splashRadius ?? kRadialReactionRadius
           ..downPosition = downPosition
           ..isFocused = states.contains(MaterialState.focused)
           ..isHovered = states.contains(MaterialState.hovered)

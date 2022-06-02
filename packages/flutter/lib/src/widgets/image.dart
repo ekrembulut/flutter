@@ -1082,12 +1082,12 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
   void didUpdateWidget(Image oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (_isListeningToStream &&
-        (widget.loadingBuilder == null) != (oldWidget.loadingBuilder == null)) {
+        (widget().loadingBuilder == null) != (oldWidget.loadingBuilder == null)) {
       final ImageStreamListener oldListener = _getListener();
       _imageStream!.addListener(_getListener(recreateListener: true));
       _imageStream!.removeListener(oldListener);
     }
-    if (widget.image != oldWidget.image)
+    if (widget().image != oldWidget.image)
       _resolveImage();
   }
 
@@ -1113,12 +1113,12 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
   void _resolveImage() {
     final ScrollAwareImageProvider provider = ScrollAwareImageProvider<Object>(
       context: _scrollAwareContext,
-      imageProvider: widget.image,
+      imageProvider: widget().image,
     );
     final ImageStream newStream =
       provider.resolve(createLocalImageConfiguration(
         context,
-        size: widget.width != null && widget.height != null ? Size(widget.width!, widget.height!) : null,
+        size: widget().width != null && widget().height != null ? Size(widget().width!, widget().height!) : null,
       ));
     assert(newStream != null);
     _updateSourceStream(newStream);
@@ -1131,15 +1131,15 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
       _lastStack = null;
       _imageStreamListener = ImageStreamListener(
         _handleImageFrame,
-        onChunk: widget.loadingBuilder == null ? null : _handleImageChunk,
-        onError: widget.errorBuilder != null || kDebugMode
+        onChunk: widget().loadingBuilder == null ? null : _handleImageChunk,
+        onError: widget().errorBuilder != null || kDebugMode
             ? (Object error, StackTrace? stackTrace) {
                 setState(() {
                   _lastException = error;
                   _lastStack = stackTrace;
                 });
                 assert(() {
-                  if (widget.errorBuilder == null) {
+                  if (widget().errorBuilder == null) {
                     // ignore: only_throw_errors, since we're just proxying the error.
                     throw error; // Ensures the error message is printed to the console.
                   }
@@ -1164,7 +1164,7 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
   }
 
   void _handleImageChunk(ImageChunkEvent event) {
-    assert(widget.loadingBuilder != null);
+    assert(widget().loadingBuilder != null);
     setState(() {
       _loadingProgress = event;
       _lastException = null;
@@ -1187,7 +1187,7 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
     if (_isListeningToStream)
       _imageStream!.removeListener(_getListener());
 
-    if (!widget.gaplessPlayback)
+    if (!widget().gaplessPlayback)
       setState(() { _replaceImage(info: null); });
 
     setState(() {
@@ -1262,8 +1262,8 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (_lastException != null) {
-      if (widget.errorBuilder != null)
-        return widget.errorBuilder!(context, _lastException!, _lastStack);
+      if (widget().errorBuilder != null)
+        return widget().errorBuilder!(context, _lastException!, _lastStack);
       if (kDebugMode)
         return _debugBuildErrorWidget(context, _lastException!);
     }
@@ -1275,36 +1275,36 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
       // a new image.
       image: _imageInfo?.image,
       debugImageLabel: _imageInfo?.debugLabel,
-      width: widget.width,
-      height: widget.height,
+      width: widget().width,
+      height: widget().height,
       scale: _imageInfo?.scale ?? 1.0,
-      color: widget.color,
-      opacity: widget.opacity,
-      colorBlendMode: widget.colorBlendMode,
-      fit: widget.fit,
-      alignment: widget.alignment,
-      repeat: widget.repeat,
-      centerSlice: widget.centerSlice,
-      matchTextDirection: widget.matchTextDirection,
+      color: widget().color,
+      opacity: widget().opacity,
+      colorBlendMode: widget().colorBlendMode,
+      fit: widget().fit,
+      alignment: widget().alignment,
+      repeat: widget().repeat,
+      centerSlice: widget().centerSlice,
+      matchTextDirection: widget().matchTextDirection,
       invertColors: _invertColors,
-      isAntiAlias: widget.isAntiAlias,
-      filterQuality: widget.filterQuality,
+      isAntiAlias: widget().isAntiAlias,
+      filterQuality: widget().filterQuality,
     );
 
-    if (!widget.excludeFromSemantics) {
+    if (!widget().excludeFromSemantics) {
       result = Semantics(
-        container: widget.semanticLabel != null,
+        container: widget().semanticLabel != null,
         image: true,
-        label: widget.semanticLabel ?? '',
+        label: widget().semanticLabel ?? '',
         child: result,
       );
     }
 
-    if (widget.frameBuilder != null)
-      result = widget.frameBuilder!(context, result, _frameNumber, _wasSynchronouslyLoaded);
+    if (widget().frameBuilder != null)
+      result = widget().frameBuilder!(context, result, _frameNumber, _wasSynchronouslyLoaded);
 
-    if (widget.loadingBuilder != null)
-      result = widget.loadingBuilder!(context, result, _loadingProgress);
+    if (widget().loadingBuilder != null)
+      result = widget().loadingBuilder!(context, result, _loadingProgress);
 
     return result;
   }

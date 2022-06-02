@@ -162,20 +162,20 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
   @override
   void initState() {
     super.initState();
-    _mode = widget.initialCalendarMode;
-    _currentDisplayedMonthDate = DateTime(widget.initialDate.year, widget.initialDate.month);
-    _selectedDate = widget.initialDate;
+    _mode = widget().initialCalendarMode;
+    _currentDisplayedMonthDate = DateTime(widget().initialDate.year, widget().initialDate.month);
+    _selectedDate = widget().initialDate;
   }
 
   @override
   void didUpdateWidget(CalendarDatePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialCalendarMode != oldWidget.initialCalendarMode) {
-      _mode = widget.initialCalendarMode;
+    if (widget().initialCalendarMode != oldWidget.initialCalendarMode) {
+      _mode = widget().initialCalendarMode;
     }
-    if (!DateUtils.isSameDay(widget.initialDate, oldWidget.initialDate)) {
-      _currentDisplayedMonthDate = DateTime(widget.initialDate.year, widget.initialDate.month);
-      _selectedDate = widget.initialDate;
+    if (!DateUtils.isSameDay(widget().initialDate, oldWidget.initialDate)) {
+      _currentDisplayedMonthDate = DateTime(widget().initialDate.year, widget().initialDate.month);
+      _selectedDate = widget().initialDate;
     }
   }
 
@@ -232,7 +232,7 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
     setState(() {
       if (_currentDisplayedMonthDate.year != date.year || _currentDisplayedMonthDate.month != date.month) {
         _currentDisplayedMonthDate = DateTime(date.year, date.month);
-        widget.onDisplayedMonthChanged?.call(_currentDisplayedMonthDate);
+        widget().onDisplayedMonthChanged?.call(_currentDisplayedMonthDate);
       }
     });
   }
@@ -240,10 +240,10 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
   void _handleYearChanged(DateTime value) {
     _vibrate();
 
-    if (value.isBefore(widget.firstDate)) {
-      value = widget.firstDate;
-    } else if (value.isAfter(widget.lastDate)) {
-      value = widget.lastDate;
+    if (value.isBefore(widget().firstDate)) {
+      value = widget().firstDate;
+    } else if (value.isAfter(widget().lastDate)) {
+      value = widget().lastDate;
     }
 
     setState(() {
@@ -256,7 +256,7 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
     _vibrate();
     setState(() {
       _selectedDate = value;
-      widget.onDateChanged(_selectedDate);
+      widget().onDateChanged(_selectedDate);
     });
   }
 
@@ -266,22 +266,22 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
         return _MonthPicker(
           key: _monthPickerKey,
           initialMonth: _currentDisplayedMonthDate,
-          currentDate: widget.currentDate,
-          firstDate: widget.firstDate,
-          lastDate: widget.lastDate,
+          currentDate: widget().currentDate,
+          firstDate: widget().firstDate,
+          lastDate: widget().lastDate,
           selectedDate: _selectedDate,
           onChanged: _handleDayChanged,
           onDisplayedMonthChanged: _handleMonthChanged,
-          selectableDayPredicate: widget.selectableDayPredicate,
+          selectableDayPredicate: widget().selectableDayPredicate,
         );
       case DatePickerMode.year:
         return Padding(
           padding: const EdgeInsets.only(top: _subHeaderHeight),
           child: YearPicker(
             key: _yearPickerKey,
-            currentDate: widget.currentDate,
-            firstDate: widget.firstDate,
-            lastDate: widget.lastDate,
+            currentDate: widget().currentDate,
+            firstDate: widget().firstDate,
+            lastDate: widget().lastDate,
             initialDate: _currentDisplayedMonthDate,
             selectedDate: _selectedDate,
             onChanged: _handleYearChanged,
@@ -346,7 +346,7 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
   void initState() {
     super.initState();
     _controller = AnimationController(
-      value: widget.mode == DatePickerMode.year ? 0.5 : 0,
+      value: widget().mode == DatePickerMode.year ? 0.5 : 0,
       upperBound: 0.5,
       duration: const Duration(milliseconds: 200),
       vsync: this,
@@ -356,11 +356,11 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
   @override
   void didUpdateWidget(_DatePickerModeToggleButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.mode == widget.mode) {
+    if (oldWidget.mode == widget().mode) {
       return;
     }
 
-    if (widget.mode == DatePickerMode.year) {
+    if (widget().mode == DatePickerMode.year) {
       _controller.forward();
     } else {
       _controller.reverse();
@@ -386,14 +386,14 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
               child: SizedBox(
                 height: _subHeaderHeight,
                 child: InkWell(
-                  onTap: widget.onTitlePressed,
+                  onTap: widget().onTitlePressed,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
                       children: <Widget>[
                         Flexible(
                           child: Text(
-                            widget.title,
+                            widget().title,
                             overflow: TextOverflow.ellipsis,
                             style: textTheme.subtitle2?.copyWith(
                               color: controlColor,
@@ -414,7 +414,7 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
               ),
             ),
           ),
-          if (widget.mode == DatePickerMode.day)
+          if (widget().mode == DatePickerMode.day)
             // Give space for the prev/next month buttons that are underneath this row
             const SizedBox(width: _monthNavButtonsWidth),
         ],
@@ -501,8 +501,8 @@ class _MonthPickerState extends State<_MonthPicker> {
   @override
   void initState() {
     super.initState();
-    _currentMonth = widget.initialMonth;
-    _pageController = PageController(initialPage: DateUtils.monthDelta(widget.firstDate, _currentMonth));
+    _currentMonth = widget().initialMonth;
+    _pageController = PageController(initialPage: DateUtils.monthDelta(widget().firstDate, _currentMonth));
     _shortcutMap = const <ShortcutActivator, Intent>{
       SingleActivator(LogicalKeyboardKey.arrowLeft): DirectionalFocusIntent(TraversalDirection.left),
       SingleActivator(LogicalKeyboardKey.arrowRight): DirectionalFocusIntent(TraversalDirection.right),
@@ -527,10 +527,10 @@ class _MonthPickerState extends State<_MonthPicker> {
   @override
   void didUpdateWidget(_MonthPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialMonth != oldWidget.initialMonth && widget.initialMonth != _currentMonth) {
+    if (widget().initialMonth != oldWidget.initialMonth && widget().initialMonth != _currentMonth) {
       // We can't interrupt this widget build with a scroll, so do it next frame
       WidgetsBinding.instance.addPostFrameCallback(
-        (Duration timeStamp) => _showMonth(widget.initialMonth, jump: true),
+        (Duration timeStamp) => _showMonth(widget().initialMonth, jump: true),
       );
     }
   }
@@ -544,15 +544,15 @@ class _MonthPickerState extends State<_MonthPicker> {
 
   void _handleDateSelected(DateTime selectedDate) {
     _focusedDay = selectedDate;
-    widget.onChanged(selectedDate);
+    widget().onChanged(selectedDate);
   }
 
   void _handleMonthPageChanged(int monthPage) {
     setState(() {
-      final DateTime monthDate = DateUtils.addMonthsToMonthDate(widget.firstDate, monthPage);
+      final DateTime monthDate = DateUtils.addMonthsToMonthDate(widget().firstDate, monthPage);
       if (!DateUtils.isSameMonth(_currentMonth, monthDate)) {
         _currentMonth = DateTime(monthDate.year, monthDate.month);
-        widget.onDisplayedMonthChanged(_currentMonth);
+        widget().onDisplayedMonthChanged(_currentMonth);
         if (_focusedDay != null && !DateUtils.isSameMonth(_focusedDay, _currentMonth)) {
           // We have navigated to a new month with the grid focused, but the
           // focused day is not in this month. Choose a new one trying to keep
@@ -613,7 +613,7 @@ class _MonthPickerState extends State<_MonthPicker> {
 
   /// Navigate to the given month.
   void _showMonth(DateTime month, { bool jump = false}) {
-    final int monthPage = DateUtils.monthDelta(widget.firstDate, month);
+    final int monthPage = DateUtils.monthDelta(widget().firstDate, month);
     if (jump) {
       _pageController.jumpToPage(monthPage);
     } else {
@@ -628,14 +628,14 @@ class _MonthPickerState extends State<_MonthPicker> {
   /// True if the earliest allowable month is displayed.
   bool get _isDisplayingFirstMonth {
     return !_currentMonth.isAfter(
-      DateTime(widget.firstDate.year, widget.firstDate.month),
+      DateTime(widget().firstDate.year, widget().firstDate.month),
     );
   }
 
   /// True if the latest allowable month is displayed.
   bool get _isDisplayingLastMonth {
     return !_currentMonth.isBefore(
-      DateTime(widget.lastDate.year, widget.lastDate.month),
+      DateTime(widget().lastDate.year, widget().lastDate.month),
     );
   }
 
@@ -643,10 +643,10 @@ class _MonthPickerState extends State<_MonthPicker> {
   void _handleGridFocusChange(bool focused) {
     setState(() {
       if (focused && _focusedDay == null) {
-        if (DateUtils.isSameMonth(widget.selectedDate, _currentMonth)) {
-          _focusedDay = widget.selectedDate;
-        } else if (DateUtils.isSameMonth(widget.currentDate, _currentMonth)) {
-          _focusedDay = _focusableDayForMonth(_currentMonth, widget.currentDate.day);
+        if (DateUtils.isSameMonth(widget().selectedDate, _currentMonth)) {
+          _focusedDay = widget().selectedDate;
+        } else if (DateUtils.isSameMonth(widget().currentDate, _currentMonth)) {
+          _focusedDay = _focusableDayForMonth(_currentMonth, widget().currentDate.day);
         } else {
           _focusedDay = _focusableDayForMonth(_currentMonth, 1);
         }
@@ -709,7 +709,7 @@ class _MonthPickerState extends State<_MonthPicker> {
   DateTime? _nextDateInDirection(DateTime date, TraversalDirection direction) {
     final TextDirection textDirection = Directionality.of(context);
     DateTime nextDate = DateUtils.addDaysToDate(date, _dayDirectionOffset(direction, textDirection));
-    while (!nextDate.isBefore(widget.firstDate) && !nextDate.isAfter(widget.lastDate)) {
+    while (!nextDate.isBefore(widget().firstDate) && !nextDate.isAfter(widget().lastDate)) {
       if (_isSelectable(nextDate)) {
         return nextDate;
       }
@@ -719,20 +719,20 @@ class _MonthPickerState extends State<_MonthPicker> {
   }
 
   bool _isSelectable(DateTime date) {
-    return widget.selectableDayPredicate == null || widget.selectableDayPredicate!.call(date);
+    return widget().selectableDayPredicate == null || widget().selectableDayPredicate!.call(date);
   }
 
   Widget _buildItems(BuildContext context, int index) {
-    final DateTime month = DateUtils.addMonthsToMonthDate(widget.firstDate, index);
+    final DateTime month = DateUtils.addMonthsToMonthDate(widget().firstDate, index);
     return _DayPicker(
       key: ValueKey<DateTime>(month),
-      selectedDate: widget.selectedDate,
-      currentDate: widget.currentDate,
+      selectedDate: widget().selectedDate,
+      currentDate: widget().currentDate,
       onChanged: _handleDateSelected,
-      firstDate: widget.firstDate,
-      lastDate: widget.lastDate,
+      firstDate: widget().firstDate,
+      lastDate: widget().lastDate,
       displayedMonth: month,
-      selectableDayPredicate: widget.selectableDayPredicate,
+      selectableDayPredicate: widget().selectableDayPredicate,
     );
   }
 
@@ -776,7 +776,7 @@ class _MonthPickerState extends State<_MonthPicker> {
                   key: _pageViewKey,
                   controller: _pageController,
                   itemBuilder: _buildItems,
-                  itemCount: DateUtils.monthDelta(widget.firstDate, widget.lastDate) + 1,
+                  itemCount: DateUtils.monthDelta(widget().firstDate, widget().lastDate) + 1,
                   onPageChanged: _handleMonthPageChanged,
                 ),
               ),
@@ -877,7 +877,7 @@ class _DayPickerState extends State<_DayPicker> {
   @override
   void initState() {
     super.initState();
-    final int daysInMonth = DateUtils.getDaysInMonth(widget.displayedMonth.year, widget.displayedMonth.month);
+    final int daysInMonth = DateUtils.getDaysInMonth(widget().displayedMonth.year, widget().displayedMonth.month);
     _dayFocusNodes = List<FocusNode>.generate(
       daysInMonth,
       (int index) => FocusNode(skipTraversal: true, debugLabel: 'Day ${index + 1}'),
@@ -889,7 +889,7 @@ class _DayPickerState extends State<_DayPicker> {
     super.didChangeDependencies();
     // Check to see if the focused date is in this month, if so focus it.
     final DateTime? focusedDate = _FocusedDate.of(context);
-    if (focusedDate != null && DateUtils.isSameMonth(widget.displayedMonth, focusedDate)) {
+    if (focusedDate != null && DateUtils.isSameMonth(widget().displayedMonth, focusedDate)) {
       _dayFocusNodes[focusedDate.day - 1].requestFocus();
     }
   }
@@ -948,8 +948,8 @@ class _DayPickerState extends State<_DayPicker> {
     final Color selectedDayBackground = colorScheme.primary;
     final Color todayColor = colorScheme.primary;
 
-    final int year = widget.displayedMonth.year;
-    final int month = widget.displayedMonth.month;
+    final int year = widget().displayedMonth.year;
+    final int month = widget().displayedMonth.month;
 
     final int daysInMonth = DateUtils.getDaysInMonth(year, month);
     final int dayOffset = DateUtils.firstDayOffset(year, month, localizations);
@@ -964,11 +964,11 @@ class _DayPickerState extends State<_DayPicker> {
         dayItems.add(Container());
       } else {
         final DateTime dayToBuild = DateTime(year, month, day);
-        final bool isDisabled = dayToBuild.isAfter(widget.lastDate) ||
-            dayToBuild.isBefore(widget.firstDate) ||
-            (widget.selectableDayPredicate != null && !widget.selectableDayPredicate!(dayToBuild));
-        final bool isSelectedDay = DateUtils.isSameDay(widget.selectedDate, dayToBuild);
-        final bool isToday = DateUtils.isSameDay(widget.currentDate, dayToBuild);
+        final bool isDisabled = dayToBuild.isAfter(widget().lastDate) ||
+            dayToBuild.isBefore(widget().firstDate) ||
+            (widget().selectableDayPredicate != null && !widget().selectableDayPredicate!(dayToBuild));
+        final bool isSelectedDay = DateUtils.isSameDay(widget().selectedDate, dayToBuild);
+        final bool isToday = DateUtils.isSameDay(widget().currentDate, dayToBuild);
 
         BoxDecoration? decoration;
         Color dayColor = enabledDayColor;
@@ -1006,7 +1006,7 @@ class _DayPickerState extends State<_DayPicker> {
         } else {
           dayWidget = InkResponse(
             focusNode: _dayFocusNodes[day - 1],
-            onTap: () => widget.onChanged(dayToBuild),
+            onTap: () => widget().onChanged(dayToBuild),
             radius: _dayPickerRowHeight / 2 + 4,
             splashColor: selectedDayBackground.withOpacity(0.38),
             child: Semantics(
@@ -1145,19 +1145,19 @@ class _YearPickerState extends State<YearPicker> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController(initialScrollOffset: _scrollOffsetForYear(widget.selectedDate));
+    _scrollController = ScrollController(initialScrollOffset: _scrollOffsetForYear(widget().selectedDate));
   }
 
   @override
   void didUpdateWidget(YearPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selectedDate != oldWidget.selectedDate) {
-      _scrollController.jumpTo(_scrollOffsetForYear(widget.selectedDate));
+    if (widget().selectedDate != oldWidget.selectedDate) {
+      _scrollController.jumpTo(_scrollOffsetForYear(widget().selectedDate));
     }
   }
 
   double _scrollOffsetForYear(DateTime date) {
-    final int initialYearIndex = date.year - widget.firstDate.year;
+    final int initialYearIndex = date.year - widget().firstDate.year;
     final int initialYearRow = initialYearIndex ~/ _yearPickerColumnCount;
     // Move the offset down by 2 rows to approximately center it.
     final int centeredYearRow = initialYearRow - 2;
@@ -1170,10 +1170,10 @@ class _YearPickerState extends State<YearPicker> {
 
     // Backfill the _YearPicker with disabled years if necessary.
     final int offset = _itemCount < minYears ? (minYears - _itemCount) ~/ 2 : 0;
-    final int year = widget.firstDate.year + index - offset;
-    final bool isSelected = year == widget.selectedDate.year;
-    final bool isCurrentYear = year == widget.currentDate.year;
-    final bool isDisabled = year < widget.firstDate.year || year > widget.lastDate.year;
+    final int year = widget().firstDate.year + index - offset;
+    final bool isSelected = year == widget().selectedDate.year;
+    final bool isCurrentYear = year == widget().currentDate.year;
+    final bool isDisabled = year < widget().firstDate.year || year > widget().lastDate.year;
     const double decorationHeight = 36.0;
     const double decorationWidth = 72.0;
 
@@ -1226,7 +1226,7 @@ class _YearPickerState extends State<YearPicker> {
     } else {
       yearItem = InkWell(
         key: ValueKey<int>(year),
-        onTap: () => widget.onChanged(DateTime(year, widget.initialDate.month)),
+        onTap: () => widget().onChanged(DateTime(year, widget().initialDate.month)),
         child: yearItem,
       );
     }
@@ -1235,7 +1235,7 @@ class _YearPickerState extends State<YearPicker> {
   }
 
   int get _itemCount {
-    return widget.lastDate.year - widget.firstDate.year + 1;
+    return widget().lastDate.year - widget().firstDate.year + 1;
   }
 
   @override
@@ -1247,7 +1247,7 @@ class _YearPickerState extends State<YearPicker> {
         Expanded(
           child: GridView.builder(
             controller: _scrollController,
-            dragStartBehavior: widget.dragStartBehavior,
+            dragStartBehavior: widget().dragStartBehavior,
             gridDelegate: _yearPickerGridDelegate,
             itemBuilder: _buildYearItem,
             itemCount: math.max(_itemCount, minYears),

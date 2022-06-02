@@ -113,7 +113,7 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
     _controller = AnimationController(duration: kThemeAnimationDuration, vsync: this);
     _iconTurns = _controller.drive(_iconTurnTween);
     // If the widget is initially expanded, rotate the icon without animating it.
-    if (widget.isExpanded) {
+    if (widget().isExpanded) {
       _controller.value = math.pi;
     }
   }
@@ -127,8 +127,8 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
   @override
   void didUpdateWidget(ExpandIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isExpanded != oldWidget.isExpanded) {
-      if (widget.isExpanded) {
+    if (widget().isExpanded != oldWidget.isExpanded) {
+      if (widget().isExpanded) {
         _controller.forward();
       } else {
         _controller.reverse();
@@ -137,7 +137,7 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
   }
 
   void _handlePressed() {
-    widget.onPressed?.call(widget.isExpanded);
+    widget().onPressed?.call(widget().isExpanded);
   }
 
   /// Default icon colors and opacities for when [Theme.brightness] is set to
@@ -146,12 +146,12 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
   /// Icon colors and opacities for [Brightness.dark] are based on the
   /// [Material Design dark theme specifications](https://material.io/design/color/dark-theme.html#ui-application)
   Color get _iconColor {
-    if (widget.isExpanded && widget.expandedColor != null) {
-      return widget.expandedColor!;
+    if (widget().isExpanded && widget().expandedColor != null) {
+      return widget().expandedColor!;
     }
 
-    if (widget.color != null) {
-      return widget.color!;
+    if (widget().color != null) {
+      return widget().color!;
     }
 
     switch(Theme.of(context).brightness) {
@@ -167,16 +167,16 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMaterialLocalizations(context));
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-    final String onTapHint = widget.isExpanded ? localizations.expandedIconTapHint : localizations.collapsedIconTapHint;
+    final String onTapHint = widget().isExpanded ? localizations.expandedIconTapHint : localizations.collapsedIconTapHint;
 
     return Semantics(
-      onTapHint: widget.onPressed == null ? null : onTapHint,
+      onTapHint: widget().onPressed == null ? null : onTapHint,
       child: IconButton(
-        padding: widget.padding,
-        iconSize: widget.size,
+        padding: widget().padding,
+        iconSize: widget().size,
         color: _iconColor,
-        disabledColor: widget.disabledColor,
-        onPressed: widget.onPressed == null ? null : _handlePressed,
+        disabledColor: widget().disabledColor,
+        onPressed: widget().onPressed == null ? null : _handlePressed,
         icon: RotationTransition(
           turns: _iconTurns,
           child: const Icon(Icons.expand_more),

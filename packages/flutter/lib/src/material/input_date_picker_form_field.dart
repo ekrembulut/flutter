@@ -147,7 +147,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.initialDate;
+    _selectedDate = widget().initialDate;
   }
 
   @override
@@ -165,11 +165,11 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   @override
   void didUpdateWidget(InputDatePickerFormField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialDate != oldWidget.initialDate) {
+    if (widget().initialDate != oldWidget.initialDate) {
       // Can't update the form field in the middle of a build, so do it next frame
       WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
         setState(() {
-          _selectedDate = widget.initialDate;
+          _selectedDate = widget().initialDate;
           _updateValueForSelectedDate();
         });
       });
@@ -182,7 +182,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
       _inputText = localizations.formatCompactDate(_selectedDate!);
       TextEditingValue textEditingValue = _controller.value.copyWith(text: _inputText);
       // Select the new text if we are auto focused and haven't selected the text before.
-      if (widget.autofocus && !_autoSelected) {
+      if (widget().autofocus && !_autoSelected) {
         textEditingValue = textEditingValue.copyWith(selection: TextSelection(
           baseOffset: 0,
           extentOffset: _inputText!.length,
@@ -204,17 +204,17 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   bool _isValidAcceptableDate(DateTime? date) {
     return
       date != null &&
-      !date.isBefore(widget.firstDate) &&
-      !date.isAfter(widget.lastDate) &&
-      (widget.selectableDayPredicate == null || widget.selectableDayPredicate!(date));
+      !date.isBefore(widget().firstDate) &&
+      !date.isAfter(widget().lastDate) &&
+      (widget().selectableDayPredicate == null || widget().selectableDayPredicate!(date));
   }
 
   String? _validateDate(String? text) {
     final DateTime? date = _parseDate(text);
     if (date == null) {
-      return widget.errorFormatText ?? MaterialLocalizations.of(context).invalidDateFormatLabel;
+      return widget().errorFormatText ?? MaterialLocalizations.of(context).invalidDateFormatLabel;
     } else if (!_isValidAcceptableDate(date)) {
-      return widget.errorInvalidText ?? MaterialLocalizations.of(context).dateOutOfRangeLabel;
+      return widget().errorInvalidText ?? MaterialLocalizations.of(context).dateOutOfRangeLabel;
     }
     return null;
   }
@@ -229,11 +229,11 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   }
 
   void _handleSaved(String? text) {
-    _updateDate(text, widget.onDateSaved);
+    _updateDate(text, widget().onDateSaved);
   }
 
   void _handleSubmitted(String text) {
-    _updateDate(text, widget.onDateSubmitted);
+    _updateDate(text, widget().onDateSubmitted);
   }
 
   @override
@@ -244,14 +244,14 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
       decoration: InputDecoration(
         border: inputTheme.border ?? const UnderlineInputBorder(),
         filled: inputTheme.filled,
-        hintText: widget.fieldHintText ?? localizations.dateHelpText,
-        labelText: widget.fieldLabelText ?? localizations.dateInputLabel,
+        hintText: widget().fieldHintText ?? localizations.dateHelpText,
+        labelText: widget().fieldLabelText ?? localizations.dateInputLabel,
       ),
       validator: _validateDate,
-      keyboardType: widget.keyboardType ?? TextInputType.datetime,
+      keyboardType: widget().keyboardType ?? TextInputType.datetime,
       onSaved: _handleSaved,
       onFieldSubmitted: _handleSubmitted,
-      autofocus: widget.autofocus,
+      autofocus: widget().autofocus,
       controller: _controller,
     );
   }

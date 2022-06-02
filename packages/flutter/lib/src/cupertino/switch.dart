@@ -155,7 +155,7 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
   late AnimationController _reactionController;
   late Animation<double> _reaction;
 
-  bool get isInteractive => widget.onChanged != null;
+  bool get isInteractive => widget().onChanged != null;
 
   // A non-null boolean value that changes to true at the end of a drag if the
   // switch must be animated to the position indicated by the widget's value.
@@ -174,11 +174,11 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
       ..onStart = _handleDragStart
       ..onUpdate = _handleDragUpdate
       ..onEnd = _handleDragEnd
-      ..dragStartBehavior = widget.dragStartBehavior;
+      ..dragStartBehavior = widget().dragStartBehavior;
 
     _positionController = AnimationController(
       duration: _kToggleDuration,
-      value: widget.value ? 1.0 : 0.0,
+      value: widget().value ? 1.0 : 0.0,
       vsync: this,
     );
     position = CurvedAnimation(
@@ -198,9 +198,9 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
   @override
   void didUpdateWidget(CupertinoSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _drag.dragStartBehavior = widget.dragStartBehavior;
+    _drag.dragStartBehavior = widget().dragStartBehavior;
 
-    if (needsPositionAnimation || oldWidget.value != widget.value)
+    if (needsPositionAnimation || oldWidget.value != widget().value)
       _resumePositionAnimation(isLinear: needsPositionAnimation);
   }
 
@@ -215,7 +215,7 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
     position
       ..curve = isLinear ? Curves.linear : Curves.ease
       ..reverseCurve = isLinear ? Curves.linear : Curves.ease.flipped;
-    if (widget.value)
+    if (widget().value)
       _positionController.forward();
     else
       _positionController.reverse();
@@ -229,7 +229,7 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
 
   void _handleTap() {
     if (isInteractive) {
-      widget.onChanged!(!widget.value);
+      widget().onChanged!(!widget().value);
       _emitVibration();
     }
   }
@@ -275,8 +275,8 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
     // Deferring the animation to the next build phase.
     setState(() { needsPositionAnimation = true; });
     // Call onChanged when the user's intent to change value is clear.
-    if (position.value >= 0.5 != widget.value)
-      widget.onChanged!(!widget.value);
+    if (position.value >= 0.5 != widget().value)
+      widget().onChanged!(!widget().value);
     _reactionController.reverse();
   }
 
@@ -301,16 +301,16 @@ class _CupertinoSwitchState extends State<CupertinoSwitch> with TickerProviderSt
     return MouseRegion(
       cursor: isInteractive && kIsWeb ? SystemMouseCursors.click : MouseCursor.defer,
       child: Opacity(
-        opacity: widget.onChanged == null ? _kCupertinoSwitchDisabledOpacity : 1.0,
+        opacity: widget().onChanged == null ? _kCupertinoSwitchDisabledOpacity : 1.0,
         child: _CupertinoSwitchRenderObjectWidget(
-          value: widget.value,
+          value: widget().value,
           activeColor: CupertinoDynamicColor.resolve(
-            widget.activeColor ?? CupertinoColors.systemGreen,
+            widget().activeColor ?? CupertinoColors.systemGreen,
             context,
           ),
-          trackColor: CupertinoDynamicColor.resolve(widget.trackColor ?? CupertinoColors.secondarySystemFill, context),
-          thumbColor: CupertinoDynamicColor.resolve(widget.thumbColor ?? CupertinoColors.white, context),
-          onChanged: widget.onChanged,
+          trackColor: CupertinoDynamicColor.resolve(widget().trackColor ?? CupertinoColors.secondarySystemFill, context),
+          thumbColor: CupertinoDynamicColor.resolve(widget().thumbColor ?? CupertinoColors.white, context),
+          onChanged: widget().onChanged,
           textDirection: Directionality.of(context),
           state: this,
         ),

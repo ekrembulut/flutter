@@ -101,8 +101,8 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
   @override
   void initState() {
     super.initState();
-    _effectiveAnimationStatus = widget.animation.status;
-    widget.animation.addStatusListener(_animationListener);
+    _effectiveAnimationStatus = widget().animation.status;
+    widget().animation.addStatusListener(_animationListener);
     _updateAnimations();
   }
 
@@ -120,10 +120,10 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
   @override
   void didUpdateWidget(DualTransitionBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.animation != widget.animation) {
+    if (oldWidget.animation != widget().animation) {
       oldWidget.animation.removeStatusListener(_animationListener);
-      widget.animation.addStatusListener(_animationListener);
-      _animationListener(widget.animation.status);
+      widget().animation.addStatusListener(_animationListener);
+      _animationListener(widget().animation.status);
     }
   }
 
@@ -166,32 +166,32 @@ class _DualTransitionBuilderState extends State<DualTransitionBuilder> {
     switch (_effectiveAnimationStatus) {
       case AnimationStatus.dismissed:
       case AnimationStatus.forward:
-        _forwardAnimation.parent = widget.animation;
+        _forwardAnimation.parent = widget().animation;
         _reverseAnimation.parent = kAlwaysDismissedAnimation;
         break;
       case AnimationStatus.reverse:
       case AnimationStatus.completed:
         _forwardAnimation.parent = kAlwaysCompleteAnimation;
-        _reverseAnimation.parent = ReverseAnimation(widget.animation);
+        _reverseAnimation.parent = ReverseAnimation(widget().animation);
         break;
     }
   }
 
   @override
   void dispose() {
-    widget.animation.removeStatusListener(_animationListener);
+    widget().animation.removeStatusListener(_animationListener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.forwardBuilder(
+    return widget().forwardBuilder(
       context,
       _forwardAnimation,
-      widget.reverseBuilder(
+      widget().reverseBuilder(
         context,
         _reverseAnimation,
-        widget.child,
+        widget().child,
       ),
     );
   }

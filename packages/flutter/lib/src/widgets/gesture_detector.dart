@@ -1326,17 +1326,17 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
   @override
   void initState() {
     super.initState();
-    _semantics = widget.semantics ?? _DefaultSemanticsGestureDelegate(this);
-    _syncAll(widget.gestures);
+    _semantics = widget().semantics ?? _DefaultSemanticsGestureDelegate(this);
+    _syncAll(widget().gestures);
   }
 
   @override
   void didUpdateWidget(RawGestureDetector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!(oldWidget.semantics == null && widget.semantics == null)) {
-      _semantics = widget.semantics ?? _DefaultSemanticsGestureDelegate(this);
+    if (!(oldWidget.semantics == null && widget().semantics == null)) {
+      _semantics = widget().semantics ?? _DefaultSemanticsGestureDelegate(this);
     }
-    _syncAll(widget.gestures);
+    _syncAll(widget().gestures);
   }
 
   /// This method can be called after the build phase, during the
@@ -1368,7 +1368,7 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
       return true;
     }());
     _syncAll(gestures);
-    if (!widget.excludeFromSemantics) {
+    if (!widget().excludeFromSemantics) {
       final RenderSemanticsGestureHandler semanticsGestureHandler = context.findRenderObject()! as RenderSemanticsGestureHandler;
       _updateSemanticsForRenderObject(semanticsGestureHandler);
     }
@@ -1386,7 +1386,7 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
   /// If this is never called, then the actions are not filtered. If the list of
   /// actions to filter changes, it must be called again.
   void replaceSemanticsActions(Set<SemanticsAction> actions) {
-    if (widget.excludeFromSemantics)
+    if (widget().excludeFromSemantics)
       return;
 
     final RenderSemanticsGestureHandler? semanticsGestureHandler = context.findRenderObject() as RenderSemanticsGestureHandler?;
@@ -1436,11 +1436,11 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
   }
 
   HitTestBehavior get _defaultBehavior {
-    return widget.child == null ? HitTestBehavior.translucent : HitTestBehavior.deferToChild;
+    return widget().child == null ? HitTestBehavior.translucent : HitTestBehavior.deferToChild;
   }
 
   void _updateSemanticsForRenderObject(RenderSemanticsGestureHandler renderObject) {
-    assert(!widget.excludeFromSemantics);
+    assert(!widget().excludeFromSemantics);
     assert(_semantics != null);
     _semantics!.assignSemantics(renderObject);
   }
@@ -1449,12 +1449,12 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
   Widget build(BuildContext context) {
     Widget result = Listener(
       onPointerDown: _handlePointerDown,
-      behavior: widget.behavior ?? _defaultBehavior,
-      child: widget.child,
+      behavior: widget().behavior ?? _defaultBehavior,
+      child: widget().child,
     );
-    if (!widget.excludeFromSemantics) {
+    if (!widget().excludeFromSemantics) {
       result = _GestureSemantics(
-        behavior: widget.behavior ?? _defaultBehavior,
+        behavior: widget().behavior ?? _defaultBehavior,
         assignSemantics: _updateSemanticsForRenderObject,
         child: result,
       );
@@ -1471,12 +1471,12 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
       final List<String> gestures = _recognizers!.values.map<String>((GestureRecognizer recognizer) => recognizer.debugDescription).toList();
       properties.add(IterableProperty<String>('gestures', gestures, ifEmpty: '<none>'));
       properties.add(IterableProperty<GestureRecognizer>('recognizers', _recognizers!.values, level: DiagnosticLevel.fine));
-      properties.add(DiagnosticsProperty<bool>('excludeFromSemantics', widget.excludeFromSemantics, defaultValue: false));
-      if (!widget.excludeFromSemantics) {
-        properties.add(DiagnosticsProperty<SemanticsGestureDelegate>('semantics', widget.semantics, defaultValue: null));
+      properties.add(DiagnosticsProperty<bool>('excludeFromSemantics', widget().excludeFromSemantics, defaultValue: false));
+      if (!widget().excludeFromSemantics) {
+        properties.add(DiagnosticsProperty<SemanticsGestureDelegate>('semantics', widget().semantics, defaultValue: null));
       }
     }
-    properties.add(EnumProperty<HitTestBehavior>('behavior', widget.behavior, defaultValue: null));
+    properties.add(EnumProperty<HitTestBehavior>('behavior', widget().behavior, defaultValue: null));
   }
 }
 
@@ -1546,7 +1546,7 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
 
   @override
   void assignSemantics(RenderSemanticsGestureHandler renderObject) {
-    assert(!detectorState.widget.excludeFromSemantics);
+    assert(!detectorState.widget().excludeFromSemantics);
     final Map<Type, GestureRecognizer> recognizers = detectorState._recognizers!;
     renderObject
       ..onTap = _getTapHandler(recognizers)

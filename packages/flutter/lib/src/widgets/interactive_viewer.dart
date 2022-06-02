@@ -522,14 +522,14 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   // the child.
   Rect get _boundaryRect {
     assert(_childKey.currentContext != null);
-    assert(!widget.boundaryMargin.left.isNaN);
-    assert(!widget.boundaryMargin.right.isNaN);
-    assert(!widget.boundaryMargin.top.isNaN);
-    assert(!widget.boundaryMargin.bottom.isNaN);
+    assert(!widget().boundaryMargin.left.isNaN);
+    assert(!widget().boundaryMargin.right.isNaN);
+    assert(!widget().boundaryMargin.top.isNaN);
+    assert(!widget().boundaryMargin.bottom.isNaN);
 
     final RenderBox childRenderBox = _childKey.currentContext!.findRenderObject()! as RenderBox;
     final Size childSize = childRenderBox.size;
-    final Rect boundaryRect = widget.boundaryMargin.inflateRect(Offset.zero & childSize);
+    final Rect boundaryRect = widget().boundaryMargin.inflateRect(Offset.zero & childSize);
     assert(
       !boundaryRect.isEmpty,
       "InteractiveViewer's child must have nonzero dimensions.",
@@ -561,7 +561,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
       return matrix.clone();
     }
 
-    final Offset alignedTranslation = widget.alignPanAxis && _panAxis != null
+    final Offset alignedTranslation = widget().alignPanAxis && _panAxis != null
       ? _alignAxis(translation, _panAxis!)
       : translation;
 
@@ -662,8 +662,8 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
       ),
     );
     final double clampedTotalScale = totalScale.clamp(
-      widget.minScale,
-      widget.maxScale,
+      widget().minScale,
+      widget().maxScale,
     );
     final double clampedScale = clampedTotalScale / currentScale;
     return matrix.clone()..scale(clampedScale);
@@ -692,11 +692,11 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
         return _rotateEnabled;
 
       case _GestureType.scale:
-        return widget.scaleEnabled;
+        return widget().scaleEnabled;
 
       case _GestureType.pan:
       case null:
-        return widget.panEnabled;
+        return widget().panEnabled;
     }
   }
 
@@ -705,7 +705,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   // starts at 0. Pan will have no scale and no rotation because it uses only one
   // finger.
   _GestureType _getGestureType(ScaleUpdateDetails details) {
-    final double scale = !widget.scaleEnabled ? 1.0 : details.scale;
+    final double scale = !widget().scaleEnabled ? 1.0 : details.scale;
     final double rotation = !_rotateEnabled ? 0.0 : details.rotation;
     if ((scale - 1).abs() > rotation.abs()) {
       return _GestureType.scale;
@@ -719,7 +719,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   // Handle the start of a gesture. All of pan, scale, and rotate are handled
   // with GestureDetector's scale gesture.
   void _onScaleStart(ScaleStartDetails details) {
-    widget.onInteractionStart?.call(details);
+    widget().onInteractionStart?.call(details);
 
     if (_controller.isAnimating) {
       _controller.stop();
@@ -755,7 +755,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
       _gestureType ??= _getGestureType(details);
     }
     if (!_gestureIsSupported(_gestureType)) {
-      widget.onInteractionUpdate?.call(details);
+      widget().onInteractionUpdate?.call(details);
       return;
     }
 
@@ -799,7 +799,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
 
       case _GestureType.rotate:
         if (details.rotation == 0.0) {
-          widget.onInteractionUpdate?.call(details);
+          widget().onInteractionUpdate?.call(details);
           return;
         }
         final double desiredRotation = _rotationStart! + details.rotation;
@@ -817,7 +817,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
         // In an effort to keep the behavior similar whether or not scaleEnabled
         // is true, these gestures are thrown away.
         if (details.scale != 1.0) {
-          widget.onInteractionUpdate?.call(details);
+          widget().onInteractionUpdate?.call(details);
           return;
         }
         _panAxis ??= _getPanAxis(_referenceFocalPoint!, focalPointScene);
@@ -833,13 +833,13 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
         );
         break;
     }
-    widget.onInteractionUpdate?.call(details);
+    widget().onInteractionUpdate?.call(details);
   }
 
   // Handle the end of a gesture of _GestureType. All of pan, scale, and rotate
   // are handled with GestureDetector's scale gesture.
   void _onScaleEnd(ScaleEndDetails details) {
-    widget.onInteractionEnd?.call(details);
+    widget().onInteractionEnd?.call(details);
     _scaleStart = null;
     _rotationStart = null;
     _referenceFocalPoint = null;
@@ -893,21 +893,21 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
       if (event.scrollDelta.dy == 0.0) {
         return;
       }
-      widget.onInteractionStart?.call(
+      widget().onInteractionStart?.call(
         ScaleStartDetails(
           focalPoint: event.position,
           localFocalPoint: event.localPosition,
         ),
       );
-      final double scaleChange = math.exp(-event.scrollDelta.dy / widget.scaleFactor);
+      final double scaleChange = math.exp(-event.scrollDelta.dy / widget().scaleFactor);
 
       if (!_gestureIsSupported(_GestureType.scale)) {
-        widget.onInteractionUpdate?.call(ScaleUpdateDetails(
+        widget().onInteractionUpdate?.call(ScaleUpdateDetails(
           focalPoint: event.position,
           localFocalPoint: event.localPosition,
           scale: scaleChange,
         ));
-        widget.onInteractionEnd?.call(ScaleEndDetails());
+        widget().onInteractionEnd?.call(ScaleEndDetails());
         return;
       }
 
@@ -930,12 +930,12 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
         focalPointSceneScaled - focalPointScene,
       );
 
-      widget.onInteractionUpdate?.call(ScaleUpdateDetails(
+      widget().onInteractionUpdate?.call(ScaleUpdateDetails(
         focalPoint: event.position,
         localFocalPoint: event.localPosition,
         scale: scaleChange,
       ));
-      widget.onInteractionEnd?.call(ScaleEndDetails());
+      widget().onInteractionEnd?.call(ScaleEndDetails());
     }
   }
 
@@ -974,7 +974,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   void initState() {
     super.initState();
 
-    _transformationController = widget.transformationController
+    _transformationController = widget().transformationController
         ?? TransformationController();
     _transformationController!.addListener(_onTransformationControllerChange);
     _controller = AnimationController(
@@ -988,20 +988,20 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
     // Handle all cases of needing to dispose and initialize
     // transformationControllers.
     if (oldWidget.transformationController == null) {
-      if (widget.transformationController != null) {
+      if (widget().transformationController != null) {
         _transformationController!.removeListener(_onTransformationControllerChange);
         _transformationController!.dispose();
-        _transformationController = widget.transformationController;
+        _transformationController = widget().transformationController;
         _transformationController!.addListener(_onTransformationControllerChange);
       }
     } else {
-      if (widget.transformationController == null) {
+      if (widget().transformationController == null) {
         _transformationController!.removeListener(_onTransformationControllerChange);
         _transformationController = TransformationController();
         _transformationController!.addListener(_onTransformationControllerChange);
-      } else if (widget.transformationController != oldWidget.transformationController) {
+      } else if (widget().transformationController != oldWidget.transformationController) {
         _transformationController!.removeListener(_onTransformationControllerChange);
-        _transformationController = widget.transformationController;
+        _transformationController = widget().transformationController;
         _transformationController!.addListener(_onTransformationControllerChange);
       }
     }
@@ -1011,7 +1011,7 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   void dispose() {
     _controller.dispose();
     _transformationController!.removeListener(_onTransformationControllerChange);
-    if (widget.transformationController == null) {
+    if (widget().transformationController == null) {
       _transformationController!.dispose();
     }
     super.dispose();
@@ -1020,28 +1020,28 @@ class _InteractiveViewerState extends State<InteractiveViewer> with TickerProvid
   @override
   Widget build(BuildContext context) {
     Widget child;
-    if (widget.child != null) {
+    if (widget().child != null) {
       child = _InteractiveViewerBuilt(
         childKey: _childKey,
-        clipBehavior: widget.clipBehavior,
-        constrained: widget.constrained,
+        clipBehavior: widget().clipBehavior,
+        constrained: widget().constrained,
         matrix: _transformationController!.value,
-        child: widget.child!,
+        child: widget().child!,
       );
     } else {
       // When using InteractiveViewer.builder, then constrained is false and the
       // viewport is the size of the constraints.
-      assert(widget.builder != null);
-      assert(!widget.constrained);
+      assert(widget().builder != null);
+      assert(!widget().constrained);
       child = LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final Matrix4 matrix = _transformationController!.value;
           return _InteractiveViewerBuilt(
             childKey: _childKey,
-            clipBehavior: widget.clipBehavior,
-            constrained: widget.constrained,
+            clipBehavior: widget().clipBehavior,
+            constrained: widget().constrained,
             matrix: matrix,
-            child: widget.builder!(
+            child: widget().builder!(
               context,
               _transformViewport(matrix, Offset.zero & constraints.biggest),
             ),

@@ -88,7 +88,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
     editableText.hideToolbar();
     super.onSingleTapUp(details);
     _state._requestKeyboard();
-    _state.widget.onTap?.call();
+    _state.widget().onTap?.call();
   }
 
   @override
@@ -813,19 +813,19 @@ class TextField extends StatefulWidget {
 
 class _TextFieldState extends State<TextField> with RestorationMixin implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
   RestorableTextEditingController? _controller;
-  TextEditingController get _effectiveController => widget.controller ?? _controller!.value;
+  TextEditingController get _effectiveController => widget().controller ?? _controller!.value;
 
   FocusNode? _focusNode;
-  FocusNode get _effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
+  FocusNode get _effectiveFocusNode => widget().focusNode ?? (_focusNode ??= FocusNode());
 
-  MaxLengthEnforcement get _effectiveMaxLengthEnforcement => widget.maxLengthEnforcement
+  MaxLengthEnforcement get _effectiveMaxLengthEnforcement => widget().maxLengthEnforcement
     ?? LengthLimitingTextInputFormatter.getDefaultMaxLengthEnforcement(Theme.of(context).platform);
 
   bool _isHovering = false;
 
-  bool get needsCounter => widget.maxLength != null
-    && widget.decoration != null
-    && widget.decoration!.counterText == null;
+  bool get needsCounter => widget().maxLength != null
+    && widget().decoration != null
+    && widget().decoration!.counterText == null;
 
   bool _showSelectionHandles = false;
 
@@ -839,25 +839,25 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   final GlobalKey<EditableTextState> editableTextKey = GlobalKey<EditableTextState>();
 
   @override
-  bool get selectionEnabled => widget.selectionEnabled;
+  bool get selectionEnabled => widget().selectionEnabled;
   // End of API for TextSelectionGestureDetectorBuilderDelegate.
 
-  bool get _isEnabled =>  widget.enabled ?? widget.decoration?.enabled ?? true;
+  bool get _isEnabled =>  widget().enabled ?? widget().decoration?.enabled ?? true;
 
   int get _currentLength => _effectiveController.value.text.characters.length;
 
-  bool get _hasIntrinsicError => widget.maxLength != null && widget.maxLength! > 0 && _effectiveController.value.text.characters.length > widget.maxLength!;
+  bool get _hasIntrinsicError => widget().maxLength != null && widget().maxLength! > 0 && _effectiveController.value.text.characters.length > widget().maxLength!;
 
-  bool get _hasError => widget.decoration?.errorText != null || _hasIntrinsicError;
+  bool get _hasError => widget().decoration?.errorText != null || _hasIntrinsicError;
 
   InputDecoration _getEffectiveDecoration() {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     final ThemeData themeData = Theme.of(context);
-    final InputDecoration effectiveDecoration = (widget.decoration ?? const InputDecoration())
+    final InputDecoration effectiveDecoration = (widget().decoration ?? const InputDecoration())
       .applyDefaults(themeData.inputDecorationTheme)
       .copyWith(
         enabled: _isEnabled,
-        hintMaxLines: widget.decoration?.hintMaxLines ?? widget.maxLines,
+        hintMaxLines: widget().decoration?.hintMaxLines ?? widget().maxLines,
       );
 
     // No need to build anything if counter or counterText were given directly.
@@ -869,12 +869,12 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
     final int currentLength = _currentLength;
     if (effectiveDecoration.counter == null
         && effectiveDecoration.counterText == null
-        && widget.buildCounter != null) {
+        && widget().buildCounter != null) {
       final bool isFocused = _effectiveFocusNode.hasFocus;
-      final Widget? builtCounter = widget.buildCounter!(
+      final Widget? builtCounter = widget().buildCounter!(
         context,
         currentLength: currentLength,
-        maxLength: widget.maxLength,
+        maxLength: widget().maxLength,
         isFocused: isFocused,
       );
       // If buildCounter returns null, don't add a counter widget to the field.
@@ -888,17 +888,17 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
       return effectiveDecoration.copyWith(counter: counter);
     }
 
-    if (widget.maxLength == null)
+    if (widget().maxLength == null)
       return effectiveDecoration; // No counter widget
 
     String counterText = '$currentLength';
     String semanticCounterText = '';
 
     // Handle a real maxLength (positive number)
-    if (widget.maxLength! > 0) {
+    if (widget().maxLength! > 0) {
       // Show the maxLength in the counter
-      counterText += '/${widget.maxLength}';
-      final int remaining = (widget.maxLength! - currentLength).clamp(0, widget.maxLength!);
+      counterText += '/${widget().maxLength}';
+      final int remaining = (widget().maxLength! - currentLength).clamp(0, widget().maxLength!);
       semanticCounterText = localizations.remainingTextFieldCharacterCount(remaining);
     }
 
@@ -922,7 +922,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   void initState() {
     super.initState();
     _selectionGestureDetectorBuilder = _TextFieldSelectionGestureDetectorBuilder(state: this);
-    if (widget.controller == null) {
+    if (widget().controller == null) {
       _createLocalController();
     }
     _effectiveFocusNode.canRequestFocus = _isEnabled;
@@ -948,24 +948,24 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   @override
   void didUpdateWidget(TextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller == null && oldWidget.controller != null) {
+    if (widget().controller == null && oldWidget.controller != null) {
       _createLocalController(oldWidget.controller!.value);
-    } else if (widget.controller != null && oldWidget.controller == null) {
+    } else if (widget().controller != null && oldWidget.controller == null) {
       unregisterFromRestoration(_controller!);
       _controller!.dispose();
       _controller = null;
     }
 
-    if (widget.focusNode != oldWidget.focusNode) {
+    if (widget().focusNode != oldWidget.focusNode) {
       (oldWidget.focusNode ?? _focusNode)?.removeListener(_handleFocusChanged);
-      (widget.focusNode ?? _focusNode)?.addListener(_handleFocusChanged);
+      (widget().focusNode ?? _focusNode)?.addListener(_handleFocusChanged);
     }
 
     _effectiveFocusNode.canRequestFocus = _canRequestFocus;
 
-    if (_effectiveFocusNode.hasFocus && widget.readOnly != oldWidget.readOnly && _isEnabled) {
+    if (_effectiveFocusNode.hasFocus && widget().readOnly != oldWidget.readOnly && _isEnabled) {
       if(_effectiveController.selection.isCollapsed) {
-        _showSelectionHandles = !widget.readOnly;
+        _showSelectionHandles = !widget().readOnly;
       }
     }
   }
@@ -993,7 +993,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   }
 
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 
   @override
   void dispose() {
@@ -1018,7 +1018,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
     if (cause == SelectionChangedCause.keyboard)
       return false;
 
-    if (widget.readOnly && _effectiveController.selection.isCollapsed)
+    if (widget().readOnly && _effectiveController.selection.isCollapsed)
       return false;
 
     if (!_isEnabled)
@@ -1091,13 +1091,13 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints = widget.autofillHints?.toList(growable: false);
+    final List<String>? autofillHints = widget().autofillHints?.toList(growable: false);
     final AutofillConfiguration autofillConfiguration = autofillHints != null
       ? AutofillConfiguration(
           uniqueIdentifier: autofillId,
           autofillHints: autofillHints,
           currentEditingValue: _effectiveController.value,
-          hintText: (widget.decoration ?? const InputDecoration()).hintText,
+          hintText: (widget().decoration ?? const InputDecoration()).hintText,
         )
       : AutofillConfiguration.disabled;
 
@@ -1111,34 +1111,34 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
     assert(
-      !(widget.style != null && widget.style!.inherit == false &&
-        (widget.style!.fontSize == null || widget.style!.textBaseline == null)),
+      !(widget().style != null && widget().style!.inherit == false &&
+        (widget().style!.fontSize == null || widget().style!.textBaseline == null)),
       'inherit false style must supply fontSize and textBaseline',
     );
 
     final ThemeData theme = Theme.of(context);
     final TextSelectionThemeData selectionTheme = TextSelectionTheme.of(context);
-    final TextStyle style = theme.textTheme.subtitle1!.merge(widget.style);
-    final Brightness keyboardAppearance = widget.keyboardAppearance ?? theme.brightness;
+    final TextStyle style = theme.textTheme.subtitle1!.merge(widget().style);
+    final Brightness keyboardAppearance = widget().keyboardAppearance ?? theme.brightness;
     final TextEditingController controller = _effectiveController;
     final FocusNode focusNode = _effectiveFocusNode;
     final List<TextInputFormatter> formatters = <TextInputFormatter>[
-      ...?widget.inputFormatters,
-      if (widget.maxLength != null)
+      ...?widget().inputFormatters,
+      if (widget().maxLength != null)
         LengthLimitingTextInputFormatter(
-          widget.maxLength,
+          widget().maxLength,
           maxLengthEnforcement: _effectiveMaxLengthEnforcement,
         ),
     ];
 
-    TextSelectionControls? textSelectionControls = widget.selectionControls;
+    TextSelectionControls? textSelectionControls = widget().selectionControls;
     final bool paintCursorAboveText;
     final bool cursorOpacityAnimates;
     Offset? cursorOffset;
-    Color? cursorColor = widget.cursorColor;
+    Color? cursorColor = widget().cursorColor;
     final Color selectionColor;
     Color? autocorrectionTextRectColor;
-    Radius? cursorRadius = widget.cursorRadius;
+    Radius? cursorRadius = widget().cursorRadius;
     VoidCallback? handleDidGainAccessibilityFocus;
 
     switch (theme.platform) {
@@ -1213,80 +1213,80 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
         bucket: bucket,
         child: EditableText(
           key: editableTextKey,
-          readOnly: widget.readOnly || !_isEnabled,
-          toolbarOptions: widget.toolbarOptions,
-          showCursor: widget.showCursor,
+          readOnly: widget().readOnly || !_isEnabled,
+          toolbarOptions: widget().toolbarOptions,
+          showCursor: widget().showCursor,
           showSelectionHandles: _showSelectionHandles,
           controller: controller,
           focusNode: focusNode,
-          keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          textCapitalization: widget.textCapitalization,
+          keyboardType: widget().keyboardType,
+          textInputAction: widget().textInputAction,
+          textCapitalization: widget().textCapitalization,
           style: style,
-          strutStyle: widget.strutStyle,
-          textAlign: widget.textAlign,
-          textDirection: widget.textDirection,
-          autofocus: widget.autofocus,
-          obscuringCharacter: widget.obscuringCharacter,
-          obscureText: widget.obscureText,
-          autocorrect: widget.autocorrect,
-          smartDashesType: widget.smartDashesType,
-          smartQuotesType: widget.smartQuotesType,
-          enableSuggestions: widget.enableSuggestions,
-          maxLines: widget.maxLines,
-          minLines: widget.minLines,
-          expands: widget.expands,
+          strutStyle: widget().strutStyle,
+          textAlign: widget().textAlign,
+          textDirection: widget().textDirection,
+          autofocus: widget().autofocus,
+          obscuringCharacter: widget().obscuringCharacter,
+          obscureText: widget().obscureText,
+          autocorrect: widget().autocorrect,
+          smartDashesType: widget().smartDashesType,
+          smartQuotesType: widget().smartQuotesType,
+          enableSuggestions: widget().enableSuggestions,
+          maxLines: widget().maxLines,
+          minLines: widget().minLines,
+          expands: widget().expands,
           // Only show the selection highlight when the text field is focused.
           selectionColor: focusNode.hasFocus ? selectionColor : null,
-          selectionControls: widget.selectionEnabled ? textSelectionControls : null,
-          onChanged: widget.onChanged,
+          selectionControls: widget().selectionEnabled ? textSelectionControls : null,
+          onChanged: widget().onChanged,
           onSelectionChanged: _handleSelectionChanged,
-          onEditingComplete: widget.onEditingComplete,
-          onSubmitted: widget.onSubmitted,
-          onAppPrivateCommand: widget.onAppPrivateCommand,
+          onEditingComplete: widget().onEditingComplete,
+          onSubmitted: widget().onSubmitted,
+          onAppPrivateCommand: widget().onAppPrivateCommand,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           inputFormatters: formatters,
           rendererIgnoresPointer: true,
           mouseCursor: MouseCursor.defer, // TextField will handle the cursor
-          cursorWidth: widget.cursorWidth,
-          cursorHeight: widget.cursorHeight,
+          cursorWidth: widget().cursorWidth,
+          cursorHeight: widget().cursorHeight,
           cursorRadius: cursorRadius,
           cursorColor: cursorColor,
-          selectionHeightStyle: widget.selectionHeightStyle,
-          selectionWidthStyle: widget.selectionWidthStyle,
+          selectionHeightStyle: widget().selectionHeightStyle,
+          selectionWidthStyle: widget().selectionWidthStyle,
           cursorOpacityAnimates: cursorOpacityAnimates,
           cursorOffset: cursorOffset,
           paintCursorAboveText: paintCursorAboveText,
           backgroundCursorColor: CupertinoColors.inactiveGray,
-          scrollPadding: widget.scrollPadding,
+          scrollPadding: widget().scrollPadding,
           keyboardAppearance: keyboardAppearance,
-          enableInteractiveSelection: widget.enableInteractiveSelection,
-          dragStartBehavior: widget.dragStartBehavior,
-          scrollController: widget.scrollController,
-          scrollPhysics: widget.scrollPhysics,
+          enableInteractiveSelection: widget().enableInteractiveSelection,
+          dragStartBehavior: widget().dragStartBehavior,
+          scrollController: widget().scrollController,
+          scrollPhysics: widget().scrollPhysics,
           autofillClient: this,
           autocorrectionTextRectColor: autocorrectionTextRectColor,
-          clipBehavior: widget.clipBehavior,
+          clipBehavior: widget().clipBehavior,
           restorationId: 'editable',
-          scribbleEnabled: widget.scribbleEnabled,
-          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+          scribbleEnabled: widget().scribbleEnabled,
+          enableIMEPersonalizedLearning: widget().enableIMEPersonalizedLearning,
         ),
       ),
     );
 
-    if (widget.decoration != null) {
+    if (widget().decoration != null) {
       child = AnimatedBuilder(
         animation: Listenable.merge(<Listenable>[ focusNode, controller ]),
         builder: (BuildContext context, Widget? child) {
           return InputDecorator(
             decoration: _getEffectiveDecoration(),
-            baseStyle: widget.style,
-            textAlign: widget.textAlign,
-            textAlignVertical: widget.textAlignVertical,
+            baseStyle: widget().style,
+            textAlign: widget().textAlign,
+            textAlignVertical: widget().textAlignVertical,
             isHovering: _isHovering,
             isFocused: focusNode.hasFocus,
             isEmpty: controller.value.text.isEmpty,
-            expands: widget.expands,
+            expands: widget().expands,
             child: child,
           );
         },
@@ -1294,7 +1294,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
       );
     }
     final MouseCursor effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
-      widget.mouseCursor ?? MaterialStateMouseCursor.textable,
+      widget().mouseCursor ?? MaterialStateMouseCursor.textable,
       <MaterialState>{
         if (!_isEnabled) MaterialState.disabled,
         if (_isHovering) MaterialState.hovered,
@@ -1305,9 +1305,9 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
 
     final int? semanticsMaxValueLength;
     if (_effectiveMaxLengthEnforcement != MaxLengthEnforcement.none &&
-      widget.maxLength != null &&
-      widget.maxLength! > 0) {
-      semanticsMaxValueLength = widget.maxLength;
+      widget().maxLength != null &&
+      widget().maxLength! > 0) {
+      semanticsMaxValueLength = widget().maxLength;
     } else {
       semanticsMaxValueLength = null;
     }
@@ -1326,7 +1326,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
               return Semantics(
                 maxValueLength: semanticsMaxValueLength,
                 currentValueLength: _currentLength,
-                onTap: widget.readOnly ? null : () {
+                onTap: widget().readOnly ? null : () {
                   if (!_effectiveController.selection.isValid)
                     _effectiveController.selection = TextSelection.collapsed(offset: _effectiveController.text.length);
                   _requestKeyboard();

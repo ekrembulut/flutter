@@ -278,7 +278,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
   Widget _wrapWithSemantics(Widget child, int index) {
     void reorder(int startIndex, int endIndex) {
       if (startIndex != endIndex)
-        widget.onReorder(startIndex, endIndex);
+        widget().onReorder(startIndex, endIndex);
     }
 
     // First, determine which semantics actions apply.
@@ -286,7 +286,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
 
     // Create the appropriate semantics actions.
     void moveToStart() => reorder(index, 0);
-    void moveToEnd() => reorder(index, widget.itemCount);
+    void moveToEnd() => reorder(index, widget().itemCount);
     void moveBefore() => reorder(index, index - 1);
     // To move after, we go to index+2 because we are moving it to the space
     // before index+2, which is after the space at index+1.
@@ -298,7 +298,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
     if (index > 0) {
       semanticsActions[CustomSemanticsAction(label: localizations.reorderItemToStart)] = moveToStart;
       String reorderItemBefore = localizations.reorderItemUp;
-      if (widget.scrollDirection == Axis.horizontal) {
+      if (widget().scrollDirection == Axis.horizontal) {
         reorderItemBefore = Directionality.of(context) == TextDirection.ltr
             ? localizations.reorderItemLeft
             : localizations.reorderItemRight;
@@ -307,9 +307,9 @@ class _ReorderableListViewState extends State<ReorderableListView> {
     }
 
     // If the item can move to after its current position in the list.
-    if (index < widget.itemCount - 1) {
+    if (index < widget().itemCount - 1) {
       String reorderItemAfter = localizations.reorderItemDown;
-      if (widget.scrollDirection == Axis.horizontal) {
+      if (widget().scrollDirection == Axis.horizontal) {
         reorderItemAfter = Directionality.of(context) == TextDirection.ltr
             ? localizations.reorderItemRight
             : localizations.reorderItemLeft;
@@ -333,7 +333,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    final Widget item = widget.itemBuilder(context, index);
+    final Widget item = widget().itemBuilder(context, index);
     assert(() {
       if (item.key == null) {
         throw FlutterError(
@@ -348,12 +348,12 @@ class _ReorderableListViewState extends State<ReorderableListView> {
     final Widget itemWithSemantics = _wrapWithSemantics(item, index);
     final Key itemGlobalKey = _ReorderableListViewChildGlobalKey(item.key!, this);
 
-    if (widget.buildDefaultDragHandles) {
+    if (widget().buildDefaultDragHandles) {
       switch (Theme.of(context).platform) {
         case TargetPlatform.linux:
         case TargetPlatform.windows:
         case TargetPlatform.macOS:
-          switch (widget.scrollDirection) {
+          switch (widget().scrollDirection) {
             case Axis.horizontal:
               return Stack(
                 key: itemGlobalKey,
@@ -435,36 +435,36 @@ class _ReorderableListViewState extends State<ReorderableListView> {
 
     // If there is a header or footer we can't just apply the padding to the list,
     // so we break it up into padding for the header, footer and padding for the list.
-    final EdgeInsets padding = widget.padding ?? EdgeInsets.zero;
+    final EdgeInsets padding = widget().padding ?? EdgeInsets.zero;
     late final EdgeInsets headerPadding;
     late final EdgeInsets footerPadding;
     late final EdgeInsets listPadding;
 
-    if (widget.header == null && widget.footer == null) {
+    if (widget().header == null && widget().footer == null) {
       headerPadding = EdgeInsets.zero;
       footerPadding = EdgeInsets.zero;
       listPadding = padding;
-    } else if (widget.header != null || widget.footer != null) {
-      switch (widget.scrollDirection) {
+    } else if (widget().header != null || widget().footer != null) {
+      switch (widget().scrollDirection) {
         case Axis.horizontal:
-          if (widget.reverse) {
+          if (widget().reverse) {
             headerPadding = EdgeInsets.fromLTRB(0, padding.top, padding.right, padding.bottom);
-            listPadding = EdgeInsets.fromLTRB(widget.footer != null ? 0 : padding.left, padding.top, widget.header != null ? 0 : padding.right, padding.bottom);
+            listPadding = EdgeInsets.fromLTRB(widget().footer != null ? 0 : padding.left, padding.top, widget().header != null ? 0 : padding.right, padding.bottom);
             footerPadding = EdgeInsets.fromLTRB(padding.left, padding.top, 0, padding.bottom);
           } else {
             headerPadding = EdgeInsets.fromLTRB(padding.left, padding.top, 0, padding.bottom);
-            listPadding = EdgeInsets.fromLTRB(widget.header != null ? 0 : padding.left, padding.top, widget.footer != null ? 0 : padding.right, padding.bottom);
+            listPadding = EdgeInsets.fromLTRB(widget().header != null ? 0 : padding.left, padding.top, widget().footer != null ? 0 : padding.right, padding.bottom);
             footerPadding = EdgeInsets.fromLTRB(0, padding.top, padding.right, padding.bottom);
           }
           break;
         case Axis.vertical:
-          if (widget.reverse) {
+          if (widget().reverse) {
             headerPadding = EdgeInsets.fromLTRB(padding.left, 0, padding.right, padding.bottom);
-            listPadding = EdgeInsets.fromLTRB(padding.left, widget.footer != null ? 0 : padding.top, padding.right, widget.header != null ? 0 : padding.bottom);
+            listPadding = EdgeInsets.fromLTRB(padding.left, widget().footer != null ? 0 : padding.top, padding.right, widget().header != null ? 0 : padding.bottom);
             footerPadding = EdgeInsets.fromLTRB(padding.left, padding.top, padding.right, 0);
           } else {
             headerPadding = EdgeInsets.fromLTRB(padding.left, padding.top, padding.right, 0);
-            listPadding = EdgeInsets.fromLTRB(padding.left, widget.header != null ? 0 : padding.top, padding.right, widget.footer != null ? 0 : padding.bottom);
+            listPadding = EdgeInsets.fromLTRB(padding.left, widget().header != null ? 0 : padding.top, padding.right, widget().footer != null ? 0 : padding.bottom);
             footerPadding = EdgeInsets.fromLTRB(padding.left, 0, padding.right, padding.bottom);
           }
          break;
@@ -472,41 +472,41 @@ class _ReorderableListViewState extends State<ReorderableListView> {
     }
 
     return CustomScrollView(
-      scrollDirection: widget.scrollDirection,
-      reverse: widget.reverse,
-      controller: widget.scrollController,
-      primary: widget.primary,
-      physics: widget.physics,
-      shrinkWrap: widget.shrinkWrap,
-      anchor: widget.anchor,
-      cacheExtent: widget.cacheExtent,
-      dragStartBehavior: widget.dragStartBehavior,
-      keyboardDismissBehavior: widget.keyboardDismissBehavior,
-      restorationId: widget.restorationId,
-      clipBehavior: widget.clipBehavior,
+      scrollDirection: widget().scrollDirection,
+      reverse: widget().reverse,
+      controller: widget().scrollController,
+      primary: widget().primary,
+      physics: widget().physics,
+      shrinkWrap: widget().shrinkWrap,
+      anchor: widget().anchor,
+      cacheExtent: widget().cacheExtent,
+      dragStartBehavior: widget().dragStartBehavior,
+      keyboardDismissBehavior: widget().keyboardDismissBehavior,
+      restorationId: widget().restorationId,
+      clipBehavior: widget().clipBehavior,
       slivers: <Widget>[
-        if (widget.header != null)
+        if (widget().header != null)
           SliverPadding(
             padding: headerPadding,
-            sliver: SliverToBoxAdapter(child: widget.header),
+            sliver: SliverToBoxAdapter(child: widget().header),
           ),
         SliverPadding(
           padding: listPadding,
           sliver: SliverReorderableList(
             itemBuilder: _itemBuilder,
-            itemExtent: widget.itemExtent,
-            prototypeItem: widget.prototypeItem,
-            itemCount: widget.itemCount,
-            onReorder: widget.onReorder,
-            onReorderStart: widget.onReorderStart,
-            onReorderEnd: widget.onReorderEnd,
-            proxyDecorator: widget.proxyDecorator ?? _proxyDecorator,
+            itemExtent: widget().itemExtent,
+            prototypeItem: widget().prototypeItem,
+            itemCount: widget().itemCount,
+            onReorder: widget().onReorder,
+            onReorderStart: widget().onReorderStart,
+            onReorderEnd: widget().onReorderEnd,
+            proxyDecorator: widget().proxyDecorator ?? _proxyDecorator,
           ),
         ),
-        if (widget.footer != null)
+        if (widget().footer != null)
           SliverPadding(
             padding: footerPadding,
-            sliver: SliverToBoxAdapter(child: widget.footer),
+            sliver: SliverToBoxAdapter(child: widget().footer),
           ),
       ],
     );

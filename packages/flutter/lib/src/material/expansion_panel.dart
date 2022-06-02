@@ -266,11 +266,11 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
   @override
   void initState() {
     super.initState();
-    if (widget._allowOnlyOnePanelOpen) {
+    if (widget()._allowOnlyOnePanelOpen) {
       assert(_allIdentifiersUnique(), 'All ExpansionPanelRadio identifier values must be unique.');
-      if (widget.initialOpenPanelValue != null) {
+      if (widget().initialOpenPanelValue != null) {
         _currentOpenPanel =
-          searchPanelByValue(widget.children.cast<ExpansionPanelRadio>(), widget.initialOpenPanelValue);
+          searchPanelByValue(widget().children.cast<ExpansionPanelRadio>(), widget().initialOpenPanelValue);
       }
     }
   }
@@ -279,13 +279,13 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
   void didUpdateWidget(ExpansionPanelList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget._allowOnlyOnePanelOpen) {
+    if (widget()._allowOnlyOnePanelOpen) {
       assert(_allIdentifiersUnique(), 'All ExpansionPanelRadio identifier values must be unique.');
       // If the previous widget was non-radio ExpansionPanelList, initialize the
       // open panel to widget.initialOpenPanelValue
       if (!oldWidget._allowOnlyOnePanelOpen) {
         _currentOpenPanel =
-          searchPanelByValue(widget.children.cast<ExpansionPanelRadio>(), widget.initialOpenPanelValue);
+          searchPanelByValue(widget().children.cast<ExpansionPanelRadio>(), widget().initialOpenPanelValue);
       }
     } else {
       _currentOpenPanel = null;
@@ -294,34 +294,34 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
 
   bool _allIdentifiersUnique() {
     final Map<Object, bool> identifierMap = <Object, bool>{};
-    for (final ExpansionPanelRadio child in widget.children.cast<ExpansionPanelRadio>()) {
+    for (final ExpansionPanelRadio child in widget().children.cast<ExpansionPanelRadio>()) {
       identifierMap[child.value] = true;
     }
-    return identifierMap.length == widget.children.length;
+    return identifierMap.length == widget().children.length;
   }
 
   bool _isChildExpanded(int index) {
-    if (widget._allowOnlyOnePanelOpen) {
-      final ExpansionPanelRadio radioWidget = widget.children[index] as ExpansionPanelRadio;
+    if (widget()._allowOnlyOnePanelOpen) {
+      final ExpansionPanelRadio radioWidget = widget().children[index] as ExpansionPanelRadio;
       return _currentOpenPanel?.value == radioWidget.value;
     }
-    return widget.children[index].isExpanded;
+    return widget().children[index].isExpanded;
   }
 
   void _handlePressed(bool isExpanded, int index) {
-    widget.expansionCallback?.call(index, isExpanded);
+    widget().expansionCallback?.call(index, isExpanded);
 
-    if (widget._allowOnlyOnePanelOpen) {
-      final ExpansionPanelRadio pressedChild = widget.children[index] as ExpansionPanelRadio;
+    if (widget()._allowOnlyOnePanelOpen) {
+      final ExpansionPanelRadio pressedChild = widget().children[index] as ExpansionPanelRadio;
 
       // If another ExpansionPanelRadio was already open, apply its
       // expansionCallback (if any) to false, because it's closing.
-      for (int childIndex = 0; childIndex < widget.children.length; childIndex += 1) {
-        final ExpansionPanelRadio child = widget.children[childIndex] as ExpansionPanelRadio;
-        if (widget.expansionCallback != null &&
+      for (int childIndex = 0; childIndex < widget().children.length; childIndex += 1) {
+        final ExpansionPanelRadio child = widget().children[childIndex] as ExpansionPanelRadio;
+        if (widget().expansionCallback != null &&
             childIndex != index &&
             child.value == _currentOpenPanel?.value)
-          widget.expansionCallback!(childIndex, false);
+          widget().expansionCallback!(childIndex, false);
       }
 
       setState(() {
@@ -340,18 +340,18 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
 
   @override
   Widget build(BuildContext context) {
-    assert(kElevationToShadow.containsKey(widget.elevation),
+    assert(kElevationToShadow.containsKey(widget().elevation),
       'Invalid value for elevation. See the kElevationToShadow constant for'
       ' possible elevation values.',
     );
 
     final List<MergeableMaterialItem> items = <MergeableMaterialItem>[];
 
-    for (int index = 0; index < widget.children.length; index += 1) {
+    for (int index = 0; index < widget().children.length; index += 1) {
       if (_isChildExpanded(index) && index != 0 && !_isChildExpanded(index - 1))
         items.add(MaterialGap(key: _SaltedKey<BuildContext, int>(context, index * 2 - 1)));
 
-      final ExpansionPanel child = widget.children[index];
+      final ExpansionPanel child = widget().children[index];
       final Widget headerWidget = child.headerBuilder(
         context,
         _isChildExpanded(index),
@@ -379,9 +379,9 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
         children: <Widget>[
           Expanded(
             child: AnimatedContainer(
-              duration: widget.animationDuration,
+              duration: widget().animationDuration,
               curve: Curves.fastOutSlowIn,
-              margin: _isChildExpanded(index) ? widget.expandedHeaderPadding : EdgeInsets.zero,
+              margin: _isChildExpanded(index) ? widget().expandedHeaderPadding : EdgeInsets.zero,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: _kPanelHeaderCollapsedHeight),
                 child: headerWidget,
@@ -413,21 +413,21 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
                 secondCurve: const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
                 sizeCurve: Curves.fastOutSlowIn,
                 crossFadeState: _isChildExpanded(index) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                duration: widget.animationDuration,
+                duration: widget().animationDuration,
               ),
             ],
           ),
         ),
       );
 
-      if (_isChildExpanded(index) && index != widget.children.length - 1)
+      if (_isChildExpanded(index) && index != widget().children.length - 1)
         items.add(MaterialGap(key: _SaltedKey<BuildContext, int>(context, index * 2 + 1)));
     }
 
     return MergeableMaterial(
       hasDividers: true,
-      dividerColor: widget.dividerColor,
-      elevation: widget.elevation,
+      dividerColor: widget().dividerColor,
+      elevation: widget().elevation,
       children: items,
     );
   }

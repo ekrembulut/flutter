@@ -368,31 +368,31 @@ class ReorderableListState extends State<ReorderableList> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      scrollDirection: widget.scrollDirection,
-      reverse: widget.reverse,
-      controller: widget.controller,
-      primary: widget.primary,
-      physics: widget.physics,
-      shrinkWrap: widget.shrinkWrap,
-      anchor: widget.anchor,
-      cacheExtent: widget.cacheExtent,
-      dragStartBehavior: widget.dragStartBehavior,
-      keyboardDismissBehavior: widget.keyboardDismissBehavior,
-      restorationId: widget.restorationId,
-      clipBehavior: widget.clipBehavior,
+      scrollDirection: widget().scrollDirection,
+      reverse: widget().reverse,
+      controller: widget().controller,
+      primary: widget().primary,
+      physics: widget().physics,
+      shrinkWrap: widget().shrinkWrap,
+      anchor: widget().anchor,
+      cacheExtent: widget().cacheExtent,
+      dragStartBehavior: widget().dragStartBehavior,
+      keyboardDismissBehavior: widget().keyboardDismissBehavior,
+      restorationId: widget().restorationId,
+      clipBehavior: widget().clipBehavior,
       slivers: <Widget>[
         SliverPadding(
-          padding: widget.padding ?? EdgeInsets.zero,
+          padding: widget().padding ?? EdgeInsets.zero,
           sliver: SliverReorderableList(
             key: _sliverReorderableListKey,
-            itemExtent: widget.itemExtent,
-            prototypeItem: widget.prototypeItem,
-            itemBuilder: widget.itemBuilder,
-            itemCount: widget.itemCount,
-            onReorder: widget.onReorder,
-            onReorderStart: widget.onReorderStart,
-            onReorderEnd: widget.onReorderEnd,
-            proxyDecorator: widget.proxyDecorator,
+            itemExtent: widget().itemExtent,
+            prototypeItem: widget().prototypeItem,
+            itemBuilder: widget().itemBuilder,
+            itemCount: widget().itemCount,
+            onReorder: widget().onReorder,
+            onReorderStart: widget().onReorderStart,
+            onReorderEnd: widget().onReorderEnd,
+            proxyDecorator: widget().proxyDecorator,
           ),
         ),
       ],
@@ -600,7 +600,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
   @override
   void didUpdateWidget(covariant SliverReorderableList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.itemCount != oldWidget.itemCount) {
+    if (widget().itemCount != oldWidget.itemCount) {
       cancelReorder();
     }
   }
@@ -628,7 +628,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
     required PointerDownEvent event,
     required MultiDragGestureRecognizer recognizer,
   }) {
-    assert(0 <= index && index < widget.itemCount);
+    assert(0 <= index && index < widget().itemCount);
     setState(() {
       if (_dragInfo != null) {
         cancelReorder();
@@ -684,7 +684,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
     assert(_dragInfo == null);
     final _ReorderableItemState item = _items[_dragIndex!]!;
     item.dragging = true;
-    widget.onReorderStart?.call(_dragIndex!);
+    widget().onReorderStart?.call(_dragIndex!);
     item.rebuild();
     _dragStartTransitionComplete = false;
     SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
@@ -700,7 +700,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
       onCancel: _dragCancel,
       onEnd: _dragEnd,
       onDropCompleted: _dropCompleted,
-      proxyDecorator: widget.proxyDecorator,
+      proxyDecorator: widget().proxyDecorator,
       tickerProvider: this,
     );
     _dragInfo!.startDrag();
@@ -732,7 +732,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
 
   void _dragEnd(_DragInfo item) {
     setState(() {
-      if (_insertIndex! < widget.itemCount - 1) {
+      if (_insertIndex! < widget().itemCount - 1) {
         // Find the location of the item we want to insert before
         _finalDropPosition = _itemOffsetAt(_insertIndex! + (_reverse ? 1 : 0));
       } else {
@@ -747,14 +747,14 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
         }
       }
     });
-    widget.onReorderEnd?.call(_insertIndex!);
+    widget().onReorderEnd?.call(_insertIndex!);
   }
 
   void _dropCompleted() {
     final int fromIndex = _dragIndex!;
     final int toIndex = _insertIndex!;
     if (fromIndex != toIndex) {
-      widget.onReorder.call(fromIndex, toIndex);
+      widget().onReorder.call(fromIndex, toIndex);
     }
     _dragReset();
   }
@@ -884,7 +884,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    if (_dragInfo != null && index >= widget.itemCount) {
+    if (_dragInfo != null && index >= widget().itemCount) {
       switch (_scrollDirection) {
         case Axis.horizontal:
           return SizedBox(width: _dragInfo!.itemExtent);
@@ -892,7 +892,7 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
           return SizedBox(height: _dragInfo!.itemExtent);
       }
     }
-    final Widget child = widget.itemBuilder(context, index);
+    final Widget child = widget().itemBuilder(context, index);
     assert(child.key != null, 'All list items must have a key');
     final OverlayState overlay = Overlay.of(context)!;
     return _ReorderableItem(
@@ -911,18 +911,18 @@ class SliverReorderableListState extends State<SliverReorderableList> with Ticke
       // When dragging, the dragged item is still in the list but has been replaced
       // by a zero height SizedBox, so that the gap can move around. To make the
       // list extent stable we add a dummy entry to the end.
-      childCount: widget.itemCount + (_dragInfo != null ? 1 : 0),
-      findChildIndexCallback: widget.findChildIndexCallback,
+      childCount: widget().itemCount + (_dragInfo != null ? 1 : 0),
+      findChildIndexCallback: widget().findChildIndexCallback,
     );
-    if (widget.itemExtent != null) {
+    if (widget().itemExtent != null) {
       return SliverFixedExtentList(
         delegate: childrenDelegate,
-        itemExtent: widget.itemExtent!,
+        itemExtent: widget().itemExtent!,
       );
-    } else if (widget.prototypeItem != null) {
+    } else if (widget().prototypeItem != null) {
       return SliverPrototypeExtentList(
         delegate: childrenDelegate,
-        prototypeItem: widget.prototypeItem!,
+        prototypeItem: widget().prototypeItem!,
       );
     }
     return SliverList(delegate: childrenDelegate);
@@ -1092,8 +1092,8 @@ class _ReorderableItemState extends State<_ReorderableItem> {
   Offset _targetOffset = Offset.zero;
   AnimationController? _offsetAnimation;
 
-  Key get key => widget.key!;
-  int get index => widget.index;
+  Key get key => widget().key!;
+  int get index => widget().index;
 
   bool get dragging => _dragging;
   set dragging(bool dragging) {
@@ -1122,7 +1122,7 @@ class _ReorderableItemState extends State<_ReorderableItem> {
   @override
   void didUpdateWidget(covariant _ReorderableItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) {
+    if (oldWidget.index != widget().index) {
       _listState._unregisterItem(oldWidget.index, this);
       _listState._registerItem(this);
     }
@@ -1136,7 +1136,7 @@ class _ReorderableItemState extends State<_ReorderableItem> {
     _listState._registerItem(this);
     return Transform(
       transform: Matrix4.translationValues(offset.dx, offset.dy, 0.0),
-      child: widget.child,
+      child: widget().child,
     );
   }
 
@@ -1332,8 +1332,8 @@ class _DragInfo extends Drag {
     final RenderBox itemRenderBox = item.context.findRenderObject()! as RenderBox;
     listState = item._listState;
     index = item.index;
-    child = item.widget.child;
-    capturedThemes = item.widget.capturedThemes;
+    child = item.widget().child;
+    capturedThemes = item.widget().capturedThemes;
     dragPosition = initialPosition;
     dragOffset = itemRenderBox.globalToLocal(initialPosition);
     itemSize = item.context.size!;

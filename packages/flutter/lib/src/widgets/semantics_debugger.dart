@@ -160,7 +160,7 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
         _client.generation,
         _lastPointerDownLocation, // in physical pixels
         WidgetsBinding.instance.window.devicePixelRatio,
-        widget.labelStyle,
+        widget().labelStyle,
       ),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -173,7 +173,7 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
           behavior: HitTestBehavior.opaque,
           child: IgnorePointer(
             ignoringSemantics: false,
-            child: widget.child,
+            child: widget().child,
           ),
         ),
       ),

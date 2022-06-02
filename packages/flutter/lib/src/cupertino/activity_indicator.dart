@@ -94,7 +94,7 @@ class _CupertinoActivityIndicatorState extends State<CupertinoActivityIndicator>
       vsync: this,
     );
 
-    if (widget.animating) {
+    if (widget().animating) {
       _controller.repeat();
     }
   }
@@ -102,8 +102,8 @@ class _CupertinoActivityIndicatorState extends State<CupertinoActivityIndicator>
   @override
   void didUpdateWidget(CupertinoActivityIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animating != oldWidget.animating) {
-      if (widget.animating)
+    if (widget().animating != oldWidget.animating) {
+      if (widget().animating)
         _controller.repeat();
       else
         _controller.stop();
@@ -119,14 +119,14 @@ class _CupertinoActivityIndicatorState extends State<CupertinoActivityIndicator>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.radius * 2,
-      width: widget.radius * 2,
+      height: widget().radius * 2,
+      width: widget().radius * 2,
       child: CustomPaint(
         painter: _CupertinoActivityIndicatorPainter(
           position: _controller,
-          activeColor: widget.color ?? CupertinoDynamicColor.resolve(_kActiveTickColor, context),
-          radius: widget.radius,
-          progress: widget.progress,
+          activeColor: widget().color ?? CupertinoDynamicColor.resolve(_kActiveTickColor, context),
+          radius: widget().radius,
+          progress: widget().progress,
         ),
       ),
     );

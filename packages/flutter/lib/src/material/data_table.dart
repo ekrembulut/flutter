@@ -1153,25 +1153,25 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _up = widget.up;
+    _up = widget().up;
     _opacityAnimation = CurvedAnimation(
       parent: _opacityController = AnimationController(
-        duration: widget.duration,
+        duration: widget().duration,
         vsync: this,
       ),
       curve: Curves.fastOutSlowIn,
     )
     ..addListener(_rebuild);
-    _opacityController.value = widget.visible ? 1.0 : 0.0;
+    _opacityController.value = widget().visible ? 1.0 : 0.0;
     _orientationController = AnimationController(
-      duration: widget.duration,
+      duration: widget().duration,
       vsync: this,
     );
     _orientationAnimation = _orientationController.drive(_turnTween)
       ..addListener(_rebuild)
       ..addStatusListener(_resetOrientationAnimation);
-    if (widget.visible)
-      _orientationOffset = widget.up! ? 0.0 : math.pi;
+    if (widget().visible)
+      _orientationOffset = widget().up! ? 0.0 : math.pi;
   }
 
   void _rebuild() {
@@ -1192,15 +1192,15 @@ class _SortArrowState extends State<_SortArrow> with TickerProviderStateMixin {
   void didUpdateWidget(_SortArrow oldWidget) {
     super.didUpdateWidget(oldWidget);
     bool skipArrow = false;
-    final bool? newUp = widget.up ?? _up;
-    if (oldWidget.visible != widget.visible) {
-      if (widget.visible && (_opacityController.status == AnimationStatus.dismissed)) {
+    final bool? newUp = widget().up ?? _up;
+    if (oldWidget.visible != widget().visible) {
+      if (widget().visible && (_opacityController.status == AnimationStatus.dismissed)) {
         _orientationController.stop();
         _orientationController.value = 0.0;
         _orientationOffset = newUp! ? 0.0 : math.pi;
         skipArrow = true;
       }
-      if (widget.visible) {
+      if (widget().visible) {
         _opacityController.forward();
       } else {
         _opacityController.reverse();

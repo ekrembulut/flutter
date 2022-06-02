@@ -192,20 +192,20 @@ class _OverlayEntryWidgetState extends State<_OverlayEntryWidget> {
   @override
   void initState() {
     super.initState();
-    widget.entry._updateMounted(true);
+    widget().entry._updateMounted(true);
   }
 
   @override
   void dispose() {
-    widget.entry._updateMounted(false);
+    widget().entry._updateMounted(false);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return TickerMode(
-      enabled: widget.tickerEnabled,
-      child: widget.entry.builder(context),
+      enabled: widget().tickerEnabled,
+      child: widget().entry.builder(context),
     );
   }
 
@@ -332,7 +332,7 @@ class OverlayState extends State<Overlay> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    insertAll(widget.initialEntries);
+    insertAll(widget().initialEntries);
   }
 
   int _insertionIndex(OverlayEntry? below, OverlayEntry? above) {
@@ -513,7 +513,7 @@ class OverlayState extends State<Overlay> with TickerProviderStateMixin {
     }
     return _Theatre(
       skipCount: children.length - onstageCount,
-      clipBehavior: widget.clipBehavior,
+      clipBehavior: widget().clipBehavior,
       children: children.reversed.toList(growable: false),
     );
   }

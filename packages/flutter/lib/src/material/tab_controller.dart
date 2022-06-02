@@ -399,9 +399,9 @@ class _DefaultTabControllerState extends State<DefaultTabController> with Single
     super.initState();
     _controller = TabController(
       vsync: this,
-      length: widget.length,
-      initialIndex: widget.initialIndex,
-      animationDuration: widget.animationDuration,
+      length: widget().length,
+      initialIndex: widget().initialIndex,
+      animationDuration: widget().animationDuration,
     );
   }
 
@@ -416,34 +416,34 @@ class _DefaultTabControllerState extends State<DefaultTabController> with Single
     return _TabControllerScope(
       controller: _controller,
       enabled: TickerMode.of(context),
-      child: widget.child,
+      child: widget().child,
     );
   }
 
   @override
   void didUpdateWidget(DefaultTabController oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.length != widget.length) {
+    if (oldWidget.length != widget().length) {
       // If the length is shortened while the last tab is selected, we should
       // automatically update the index of the controller to be the new last tab.
       int? newIndex;
       int previousIndex = _controller.previousIndex;
-      if (_controller.index >= widget.length) {
-        newIndex = math.max(0, widget.length - 1);
+      if (_controller.index >= widget().length) {
+        newIndex = math.max(0, widget().length - 1);
         previousIndex = _controller.index;
       }
       _controller = _controller._copyWith(
-        length: widget.length,
-        animationDuration: widget.animationDuration,
+        length: widget().length,
+        animationDuration: widget().animationDuration,
         index: newIndex,
         previousIndex: previousIndex,
       );
     }
 
-    if (oldWidget.animationDuration != widget.animationDuration) {
+    if (oldWidget.animationDuration != widget().animationDuration) {
       _controller = _controller._copyWith(
-        length: widget.length,
-        animationDuration: widget.animationDuration,
+        length: widget().length,
+        animationDuration: widget().animationDuration,
         index: _controller.index,
         previousIndex: _controller.previousIndex,
       );

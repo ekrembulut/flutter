@@ -225,21 +225,21 @@ class _MaterialBannerState extends State<MaterialBanner> {
   @override
   void initState() {
     super.initState();
-    widget.animation?.addStatusListener(_onAnimationStatusChanged);
+    widget().animation?.addStatusListener(_onAnimationStatusChanged);
   }
 
   @override
   void didUpdateWidget(MaterialBanner oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animation != oldWidget.animation) {
+    if (widget().animation != oldWidget.animation) {
       oldWidget.animation?.removeStatusListener(_onAnimationStatusChanged);
-      widget.animation?.addStatusListener(_onAnimationStatusChanged);
+      widget().animation?.addStatusListener(_onAnimationStatusChanged);
     }
   }
 
   @override
   void dispose() {
-    widget.animation?.removeStatusListener(_onAnimationStatusChanged);
+    widget().animation?.removeStatusListener(_onAnimationStatusChanged);
     super.dispose();
   }
 
@@ -250,8 +250,8 @@ class _MaterialBannerState extends State<MaterialBanner> {
       case AnimationStatus.reverse:
         break;
       case AnimationStatus.completed:
-        if (widget.onVisible != null && !_wasVisible) {
-          widget.onVisible!();
+        if (widget().onVisible != null && !_wasVisible) {
+          widget().onVisible!();
         }
         _wasVisible = true;
     }
@@ -262,16 +262,16 @@ class _MaterialBannerState extends State<MaterialBanner> {
     assert(debugCheckHasMediaQuery(context));
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
 
-    assert(widget.actions.isNotEmpty);
+    assert(widget().actions.isNotEmpty);
 
     final ThemeData theme = Theme.of(context);
     final MaterialBannerThemeData bannerTheme = MaterialBannerTheme.of(context);
 
-    final bool isSingleRow = widget.actions.length == 1 && !widget.forceActionsBelow;
-    final EdgeInsetsGeometry padding = widget.padding ?? bannerTheme.padding ?? (isSingleRow
+    final bool isSingleRow = widget().actions.length == 1 && !widget().forceActionsBelow;
+    final EdgeInsetsGeometry padding = widget().padding ?? bannerTheme.padding ?? (isSingleRow
         ? const EdgeInsetsDirectional.only(start: 16.0, top: 2.0)
         : const EdgeInsetsDirectional.only(start: 16.0, top: 24.0, end: 16.0, bottom: 4.0));
-    final EdgeInsetsGeometry leadingPadding = widget.leadingPadding
+    final EdgeInsetsGeometry leadingPadding = widget().leadingPadding
         ?? bannerTheme.leadingPadding
         ?? const EdgeInsetsDirectional.only(end: 16.0);
 
@@ -280,17 +280,17 @@ class _MaterialBannerState extends State<MaterialBanner> {
       constraints: const BoxConstraints(minHeight: 52.0),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: OverflowBar(
-        overflowAlignment: widget.overflowAlignment,
+        overflowAlignment: widget().overflowAlignment,
         spacing: 8,
-        children: widget.actions,
+        children: widget().actions,
       ),
     );
 
-    final double elevation = widget.elevation ?? bannerTheme.elevation ?? 0.0;
-    final Color backgroundColor = widget.backgroundColor
+    final double elevation = widget().elevation ?? bannerTheme.elevation ?? 0.0;
+    final Color backgroundColor = widget().backgroundColor
         ?? bannerTheme.backgroundColor
         ?? theme.colorScheme.surface;
-    final TextStyle? textStyle = widget.contentTextStyle
+    final TextStyle? textStyle = widget().contentTextStyle
         ?? bannerTheme.contentTextStyle
         ?? theme.textTheme.bodyText2;
 
@@ -306,15 +306,15 @@ class _MaterialBannerState extends State<MaterialBanner> {
               padding: padding,
               child: Row(
                 children: <Widget>[
-                  if (widget.leading != null)
+                  if (widget().leading != null)
                     Padding(
                       padding: leadingPadding,
-                      child: widget.leading,
+                      child: widget().leading,
                     ),
                   Expanded(
                     child: DefaultTextStyle(
                       style: textStyle!,
-                      child: widget.content,
+                      child: widget().content,
                     ),
                   ),
                   if (isSingleRow)
@@ -333,19 +333,19 @@ class _MaterialBannerState extends State<MaterialBanner> {
     );
 
     // This provides a static banner for backwards compatibility.
-    if (widget.animation == null)
+    if (widget().animation == null)
       return materialBanner;
 
     materialBanner = SafeArea(
       child: materialBanner,
     );
 
-    final CurvedAnimation heightAnimation = CurvedAnimation(parent: widget.animation!, curve: _materialBannerHeightCurve);
+    final CurvedAnimation heightAnimation = CurvedAnimation(parent: widget().animation!, curve: _materialBannerHeightCurve);
     final Animation<Offset> slideOutAnimation = Tween<Offset>(
       begin: const Offset(0.0, -1.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-      parent: widget.animation!,
+      parent: widget().animation!,
       curve: const Threshold(0.0),
     ));
 
@@ -381,7 +381,7 @@ class _MaterialBannerState extends State<MaterialBanner> {
     }
 
     return Hero(
-      tag: '<MaterialBanner Hero tag - ${widget.content}>',
+      tag: '<MaterialBanner Hero tag - ${widget().content}>',
       child: ClipRect(child: materialBannerTransition),
     );
   }

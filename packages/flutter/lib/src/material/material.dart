@@ -379,9 +379,9 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
 
   Color? _getBackgroundColor(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    Color? color = widget.color;
+    Color? color = widget().color;
     if (color == null) {
-      switch (widget.type) {
+      switch (widget().type) {
         case MaterialType.canvas:
           color = theme.canvasColor;
           break;
@@ -401,21 +401,21 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final Color? backgroundColor = _getBackgroundColor(context);
-    final Color? modelShadowColor = widget.shadowColor ?? (theme.useMaterial3 ? null : theme.shadowColor);
+    final Color? modelShadowColor = widget().shadowColor ?? (theme.useMaterial3 ? null : theme.shadowColor);
     // If no shadow color is specified, use 0 for elevation in the model so a drop shadow won't be painted.
-    final double modelElevation = modelShadowColor != null ? widget.elevation : 0;
+    final double modelElevation = modelShadowColor != null ? widget().elevation : 0;
     assert(
-      backgroundColor != null || widget.type == MaterialType.transparency,
+      backgroundColor != null || widget().type == MaterialType.transparency,
       'If Material type is not MaterialType.transparency, a color must '
       'either be passed in through the `color` property, or be defined '
       'in the theme (ex. canvasColor != null if type is set to '
       'MaterialType.canvas)',
     );
-    Widget? contents = widget.child;
+    Widget? contents = widget().child;
     if (contents != null) {
       contents = AnimatedDefaultTextStyle(
-        style: widget.textStyle ?? Theme.of(context).textTheme.bodyText2!,
-        duration: widget.animationDuration,
+        style: widget().textStyle ?? Theme.of(context).textTheme.bodyText2!,
+        duration: widget().animationDuration,
         child: contents,
       );
     }
@@ -427,7 +427,7 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
       },
       child: _InkFeatures(
         key: _inkFeatureRenderer,
-        absorbHitTest: widget.type != MaterialType.transparency,
+        absorbHitTest: widget().type != MaterialType.transparency,
         color: backgroundColor,
         vsync: this,
         child: contents,
@@ -443,16 +443,16 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
     // specified rectangles (e.g shape RoundedRectangleBorder with radius 0, but
     // we choose not to as we want the change from the fast-path to the
     // slow-path to be noticeable in the construction site of Material.
-    if (widget.type == MaterialType.canvas && widget.shape == null && widget.borderRadius == null) {
+    if (widget().type == MaterialType.canvas && widget().shape == null && widget().borderRadius == null) {
       final Color color = Theme.of(context).useMaterial3
-        ? ElevationOverlay.applySurfaceTint(backgroundColor!, widget.surfaceTintColor, widget.elevation)
-        : ElevationOverlay.applyOverlay(context, backgroundColor!, widget.elevation);
+        ? ElevationOverlay.applySurfaceTint(backgroundColor!, widget().surfaceTintColor, widget().elevation)
+        : ElevationOverlay.applyOverlay(context, backgroundColor!, widget().elevation);
 
       return AnimatedPhysicalModel(
         curve: Curves.fastOutSlowIn,
-        duration: widget.animationDuration,
+        duration: widget().animationDuration,
         shape: BoxShape.rectangle,
-        clipBehavior: widget.clipBehavior,
+        clipBehavior: widget().clipBehavior,
         elevation: modelElevation,
         color: color,
         shadowColor: modelShadowColor ?? const Color(0x00000000),
@@ -463,25 +463,25 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
 
     final ShapeBorder shape = _getShape();
 
-    if (widget.type == MaterialType.transparency) {
+    if (widget().type == MaterialType.transparency) {
       return _transparentInterior(
         context: context,
         shape: shape,
-        clipBehavior: widget.clipBehavior,
+        clipBehavior: widget().clipBehavior,
         contents: contents,
       );
     }
 
     return _MaterialInterior(
       curve: Curves.fastOutSlowIn,
-      duration: widget.animationDuration,
+      duration: widget().animationDuration,
       shape: shape,
-      borderOnForeground: widget.borderOnForeground,
-      clipBehavior: widget.clipBehavior,
-      elevation: widget.elevation,
+      borderOnForeground: widget().borderOnForeground,
+      clipBehavior: widget().clipBehavior,
+      elevation: widget().elevation,
       color: backgroundColor!,
       shadowColor: modelShadowColor,
-      surfaceTintColor: widget.surfaceTintColor,
+      surfaceTintColor: widget().surfaceTintColor,
       child: contents,
     );
   }
@@ -514,11 +514,11 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
   // Otherwise, the shape is determined by the widget type as described in the
   // Material class documentation.
   ShapeBorder _getShape() {
-    if (widget.shape != null)
-      return widget.shape!;
-    if (widget.borderRadius != null)
-      return RoundedRectangleBorder(borderRadius: widget.borderRadius!);
-    switch (widget.type) {
+    if (widget().shape != null)
+      return widget().shape!;
+    if (widget().borderRadius != null)
+      return RoundedRectangleBorder(borderRadius: widget().borderRadius!);
+    switch (widget().type) {
       case MaterialType.canvas:
       case MaterialType.transparency:
         return const RoundedRectangleBorder();
@@ -526,7 +526,7 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
       case MaterialType.card:
       case MaterialType.button:
         return RoundedRectangleBorder(
-          borderRadius: widget.borderRadius ?? kMaterialEdges[widget.type]!,
+          borderRadius: widget().borderRadius ?? kMaterialEdges[widget().type]!,
         );
 
       case MaterialType.circle:
@@ -810,26 +810,26 @@ class _MaterialInteriorState extends AnimatedWidgetBaseState<_MaterialInterior> 
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _elevation = visitor(
       _elevation,
-      widget.elevation,
+      widget().elevation,
       (dynamic value) => Tween<double>(begin: value as double),
     ) as Tween<double>?;
-    _shadowColor =  widget.shadowColor != null
+    _shadowColor =  widget().shadowColor != null
       ? visitor(
           _shadowColor,
-          widget.shadowColor,
+          widget().shadowColor,
           (dynamic value) => ColorTween(begin: value as Color),
         ) as ColorTween?
       : null;
-    _surfaceTintColor = widget.surfaceTintColor != null
+    _surfaceTintColor = widget().surfaceTintColor != null
       ? visitor(
           _surfaceTintColor,
-          widget.surfaceTintColor,
+          widget().surfaceTintColor,
               (dynamic value) => ColorTween(begin: value as Color),
         ) as ColorTween?
       : null;
     _border = visitor(
       _border,
-      widget.shape,
+      widget().shape,
       (dynamic value) => ShapeBorderTween(begin: value as ShapeBorder),
     ) as ShapeBorderTween?;
   }
@@ -839,24 +839,24 @@ class _MaterialInteriorState extends AnimatedWidgetBaseState<_MaterialInterior> 
     final ShapeBorder shape = _border!.evaluate(animation)!;
     final double elevation = _elevation!.evaluate(animation);
     final Color color = Theme.of(context).useMaterial3
-      ? ElevationOverlay.applySurfaceTint(widget.color, _surfaceTintColor?.evaluate(animation), elevation)
-      : ElevationOverlay.applyOverlay(context, widget.color, elevation);
+      ? ElevationOverlay.applySurfaceTint(widget().color, _surfaceTintColor?.evaluate(animation), elevation)
+      : ElevationOverlay.applyOverlay(context, widget().color, elevation);
     // If no shadow color is specified, use 0 for elevation in the model so a drop shadow won't be painted.
-    final double modelElevation = widget.shadowColor != null ? elevation : 0;
+    final double modelElevation = widget().shadowColor != null ? elevation : 0;
     final Color shadowColor = _shadowColor?.evaluate(animation) ?? const Color(0x00000000);
     return PhysicalShape(
       clipper: ShapeBorderClipper(
         shape: shape,
         textDirection: Directionality.maybeOf(context),
       ),
-      clipBehavior: widget.clipBehavior,
+      clipBehavior: widget().clipBehavior,
       elevation: modelElevation,
       color: color,
       shadowColor: shadowColor,
       child: _ShapeBorderPaint(
         shape: shape,
-        borderOnForeground: widget.borderOnForeground,
-        child: widget.child,
+        borderOnForeground: widget().borderOnForeground,
+        child: widget().child,
       ),
     );
   }

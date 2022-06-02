@@ -317,12 +317,12 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
   RestorableTextEditingController? _controller;
 
   TextEditingController get _effectiveController =>
-      widget.controller ?? _controller!.value;
+      widget().controller ?? _controller!.value;
 
   @override
   void initState() {
     super.initState();
-    if (widget.controller == null) {
+    if (widget().controller == null) {
       _createLocalController();
     }
   }
@@ -330,9 +330,9 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
   @override
   void didUpdateWidget(CupertinoSearchTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller == null && oldWidget.controller != null) {
+    if (widget().controller == null && oldWidget.controller != null) {
       _createLocalController(oldWidget.controller!.value);
-    } else if (widget.controller != null && oldWidget.controller == null) {
+    } else if (widget().controller != null && oldWidget.controller == null) {
       unregisterFromRestoration(_controller!);
       _controller!.dispose();
       _controller = null;
@@ -362,58 +362,58 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
   }
 
   @override
-  String? get restorationId => widget.restorationId;
+  String? get restorationId => widget().restorationId;
 
   void _defaultOnSuffixTap() {
     final bool textChanged = _effectiveController.text.isNotEmpty;
     _effectiveController.clear();
-    if (widget.onChanged != null && textChanged)
-      widget.onChanged!(_effectiveController.text);
+    if (widget().onChanged != null && textChanged)
+      widget().onChanged!(_effectiveController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    final String placeholder = widget.placeholder ??
+    final String placeholder = widget().placeholder ??
         CupertinoLocalizations.of(context).searchTextFieldPlaceholderLabel;
 
-    final TextStyle placeholderStyle = widget.placeholderStyle ??
+    final TextStyle placeholderStyle = widget().placeholderStyle ??
         const TextStyle(color: CupertinoColors.systemGrey);
 
     // The icon size will be scaled by a factor of the accessibility text scale,
     // to follow the behavior of `UISearchTextField`.
     final double scaledIconSize =
-        MediaQuery.textScaleFactorOf(context) * widget.itemSize;
+        MediaQuery.textScaleFactorOf(context) * widget().itemSize;
 
     // If decoration was not provided, create a decoration with the provided
     // background color and border radius.
-    final BoxDecoration decoration = widget.decoration ??
+    final BoxDecoration decoration = widget().decoration ??
         BoxDecoration(
-          color: widget.backgroundColor ?? CupertinoColors.tertiarySystemFill,
-          borderRadius: widget.borderRadius ?? _kDefaultBorderRadius,
+          color: widget().backgroundColor ?? CupertinoColors.tertiarySystemFill,
+          borderRadius: widget().borderRadius ?? _kDefaultBorderRadius,
         );
 
     final IconThemeData iconThemeData = IconThemeData(
-      color: CupertinoDynamicColor.resolve(widget.itemColor, context),
+      color: CupertinoDynamicColor.resolve(widget().itemColor, context),
       size: scaledIconSize,
     );
 
     final Widget prefix = Padding(
-      padding: widget.prefixInsets,
+      padding: widget().prefixInsets,
       child: IconTheme(
         data: iconThemeData,
-        child: widget.prefixIcon,
+        child: widget().prefixIcon,
       ),
     );
 
     final Widget suffix = Padding(
-      padding: widget.suffixInsets,
+      padding: widget().suffixInsets,
       child: CupertinoButton(
-        onPressed: widget.onSuffixTap ?? _defaultOnSuffixTap,
+        onPressed: widget().onSuffixTap ?? _defaultOnSuffixTap,
         minSize: 0,
         padding: EdgeInsets.zero,
         child: IconTheme(
           data: iconThemeData,
-          child: widget.suffixIcon,
+          child: widget().suffixIcon,
         ),
       ),
     );
@@ -421,20 +421,20 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField>
     return CupertinoTextField(
       controller: _effectiveController,
       decoration: decoration,
-      style: widget.style,
+      style: widget().style,
       prefix: prefix,
       suffix: suffix,
-      onTap: widget.onTap,
-      enabled: widget.enabled,
-      suffixMode: widget.suffixMode,
+      onTap: widget().onTap,
+      enabled: widget().enabled,
+      suffixMode: widget().suffixMode,
       placeholder: placeholder,
       placeholderStyle: placeholderStyle,
-      padding: widget.padding,
-      onChanged: widget.onChanged,
-      onSubmitted: widget.onSubmitted,
-      focusNode: widget.focusNode,
-      autofocus: widget.autofocus,
-      autocorrect: widget.autocorrect,
+      padding: widget().padding,
+      onChanged: widget().onChanged,
+      onSubmitted: widget().onSubmitted,
+      focusNode: widget().focusNode,
+      autofocus: widget().autofocus,
+      autocorrect: widget().autocorrect,
       textInputAction: TextInputAction.search,
     );
   }

@@ -223,14 +223,14 @@ class _AnimatedThemeState extends AnimatedWidgetBaseState<AnimatedTheme> {
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data, (dynamic value) => ThemeDataTween(begin: value as ThemeData))! as ThemeDataTween;
+    _data = visitor(_data, widget().data, (dynamic value) => ThemeDataTween(begin: value as ThemeData))! as ThemeDataTween;
   }
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: _data!.evaluate(animation),
-      child: widget.child,
+      child: widget().child,
     );
   }
 

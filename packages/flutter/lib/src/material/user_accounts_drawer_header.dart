@@ -95,7 +95,7 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
   void initState () {
     super.initState();
     _controller = AnimationController(
-      value: widget.isOpen ? 1.0 : 0.0,
+      value: widget().isOpen ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
@@ -119,11 +119,11 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
   void didUpdateWidget (_AccountDetails oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If the state of the arrow did not change, there is no need to trigger the animation
-    if (oldWidget.isOpen == widget.isOpen) {
+    if (oldWidget.isOpen == widget().isOpen) {
       return;
     }
 
-    if (widget.isOpen) {
+    if (widget().isOpen) {
       _controller.forward();
     } else {
       _controller.reverse();
@@ -144,7 +144,7 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
         textDirection: Directionality.of(context),
       ),
       children: <Widget>[
-        if (widget.accountName != null)
+        if (widget().accountName != null)
           LayoutId(
             id: _AccountDetailsLayout.accountName,
             child: Padding(
@@ -152,11 +152,11 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
               child: DefaultTextStyle(
                 style: theme.primaryTextTheme.bodyText1!,
                 overflow: TextOverflow.ellipsis,
-                child: widget.accountName!,
+                child: widget().accountName!,
               ),
             ),
           ),
-        if (widget.accountEmail != null)
+        if (widget().accountEmail != null)
           LayoutId(
             id: _AccountDetailsLayout.accountEmail,
             child: Padding(
@@ -164,17 +164,17 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
               child: DefaultTextStyle(
                 style: theme.primaryTextTheme.bodyText2!,
                 overflow: TextOverflow.ellipsis,
-                child: widget.accountEmail!,
+                child: widget().accountEmail!,
               ),
             ),
           ),
-        if (widget.onTap != null)
+        if (widget().onTap != null)
           LayoutId(
             id: _AccountDetailsLayout.dropdownIcon,
             child: Semantics(
               container: true,
               button: true,
-              onTap: widget.onTap,
+              onTap: widget().onTap,
               child: SizedBox(
                 height: _kAccountDetailsHeight,
                 width: _kAccountDetailsHeight,
@@ -183,8 +183,8 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
                     angle: _animation.value * math.pi,
                     child: Icon(
                       Icons.arrow_drop_down,
-                      color: widget.arrowColor,
-                      semanticLabel: widget.isOpen
+                      color: widget().arrowColor,
+                      semanticLabel: widget().isOpen
                           ? localizations.hideAccountsLabel
                           : localizations.showAccountsLabel,
                     ),
@@ -196,9 +196,9 @@ class _AccountDetailsState extends State<_AccountDetails> with SingleTickerProvi
       ],
     );
 
-    if (widget.onTap != null) {
+    if (widget().onTap != null) {
       accountDetails = InkWell(
-        onTap: widget.onTap,
+        onTap: widget().onTap,
         excludeFromSemantics: true,
         child: accountDetails,
       );
@@ -358,7 +358,7 @@ class _UserAccountsDrawerHeaderState extends State<UserAccountsDrawerHeader> {
     setState(() {
       _isOpen = !_isOpen;
     });
-    widget.onDetailsPressed!();
+    widget().onDetailsPressed!();
   }
 
   @override
@@ -369,10 +369,10 @@ class _UserAccountsDrawerHeaderState extends State<UserAccountsDrawerHeader> {
       container: true,
       label: MaterialLocalizations.of(context).signedInLabel,
       child: DrawerHeader(
-        decoration: widget.decoration ?? BoxDecoration(
+        decoration: widget().decoration ?? BoxDecoration(
           color: Theme.of(context).primaryColor,
         ),
-        margin: widget.margin,
+        margin: widget().margin,
         padding: const EdgeInsetsDirectional.only(top: 16.0, start: 16.0),
         child: SafeArea(
           bottom: false,
@@ -383,19 +383,19 @@ class _UserAccountsDrawerHeaderState extends State<UserAccountsDrawerHeader> {
                 child: Padding(
                   padding: const EdgeInsetsDirectional.only(end: 16.0),
                   child: _AccountPictures(
-                    currentAccountPicture: widget.currentAccountPicture,
-                    otherAccountsPictures: widget.otherAccountsPictures,
-                    currentAccountPictureSize: widget.currentAccountPictureSize,
-                    otherAccountsPicturesSize: widget.otherAccountsPicturesSize,
+                    currentAccountPicture: widget().currentAccountPicture,
+                    otherAccountsPictures: widget().otherAccountsPictures,
+                    currentAccountPictureSize: widget().currentAccountPictureSize,
+                    otherAccountsPicturesSize: widget().otherAccountsPicturesSize,
                   ),
                 ),
               ),
               _AccountDetails(
-                accountName: widget.accountName,
-                accountEmail: widget.accountEmail,
+                accountName: widget().accountName,
+                accountEmail: widget().accountEmail,
                 isOpen: _isOpen,
-                onTap: widget.onDetailsPressed == null ? null : _handleDetailsPressed,
-                arrowColor: widget.arrowColor,
+                onTap: widget().onDetailsPressed == null ? null : _handleDetailsPressed,
+                arrowColor: widget().arrowColor,
               ),
             ],
           ),

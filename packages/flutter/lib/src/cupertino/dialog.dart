@@ -775,7 +775,7 @@ class _CupertinoActionSheetCancelButtonState extends State<_CupertinoActionSheet
           color: CupertinoDynamicColor.resolve(backgroundColor, context),
           borderRadius: const BorderRadius.all(Radius.circular(_kCornerRadius)),
         ),
-        child: widget.child,
+        child: widget().child,
       ),
     );
   }
@@ -1482,23 +1482,23 @@ class _CupertinoAlertActionSectionState
     final double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     final List<Widget> interactiveButtons = <Widget>[];
-    for (int i = 0; i < widget.children.length; i += 1) {
+    for (int i = 0; i < widget().children.length; i += 1) {
       interactiveButtons.add(
         _PressableActionButton(
-          child: widget.children[i],
+          child: widget().children[i],
         ),
       );
     }
 
     return CupertinoScrollbar(
-      controller: widget.scrollController,
+      controller: widget().scrollController,
       child: SingleChildScrollView(
-        controller: widget.scrollController,
+        controller: widget().scrollController,
         child: _CupertinoDialogActionsRenderWidget(
           actionButtons: interactiveButtons,
           dividerThickness: _kDividerThickness / devicePixelRatio,
-          hasCancelButton: widget.hasCancelButton,
-          isActionSheet: widget.isActionSheet,
+          hasCancelButton: widget().hasCancelButton,
+          isActionSheet: widget().isActionSheet,
         ),
       ),
     );
@@ -1543,7 +1543,7 @@ class _PressableActionButtonState extends State<_PressableActionButton> {
           // TODO(mattcarroll): Cancel is currently triggered when user moves
           //  past slop instead of off button: https://github.com/flutter/flutter/issues/19783
           onTapCancel: () => setState(() => _isPressed = false),
-          child: widget.child,
+          child: widget().child,
         ),
       ),
     );

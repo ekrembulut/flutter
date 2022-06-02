@@ -96,7 +96,7 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
           break;
       }
     }
-    _state.widget.onTap?.call();
+    _state.widget().onTap?.call();
   }
 
   @override
@@ -460,7 +460,7 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
 
   FocusNode? _focusNode;
   FocusNode get _effectiveFocusNode =>
-      widget.focusNode ?? (_focusNode ??= FocusNode(skipTraversal: true));
+      widget().focusNode ?? (_focusNode ??= FocusNode(skipTraversal: true));
 
   bool _showSelectionHandles = false;
 
@@ -474,7 +474,7 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
   final GlobalKey<EditableTextState> editableTextKey = GlobalKey<EditableTextState>();
 
   @override
-  bool get selectionEnabled => widget.selectionEnabled;
+  bool get selectionEnabled => widget().selectionEnabled;
   // End of API for TextSelectionGestureDetectorBuilderDelegate.
 
   @override
@@ -482,7 +482,7 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
     super.initState();
     _selectionGestureDetectorBuilder = _SelectableTextSelectionGestureDetectorBuilder(state: this);
     _controller = _TextSpanEditingController(
-        textSpan: widget.textSpan ?? TextSpan(text: widget.data),
+        textSpan: widget().textSpan ?? TextSpan(text: widget().data),
     );
     _controller.addListener(_onControllerChanged);
   }
@@ -490,10 +490,10 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
   @override
   void didUpdateWidget(SelectableText oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data || widget.textSpan != oldWidget.textSpan) {
+    if (widget().data != oldWidget.data || widget().textSpan != oldWidget.textSpan) {
       _controller.removeListener(_onControllerChanged);
       _controller = _TextSpanEditingController(
-          textSpan: widget.textSpan ?? TextSpan(text: widget.data),
+          textSpan: widget().textSpan ?? TextSpan(text: widget().data),
       );
       _controller.addListener(_onControllerChanged);
     }
@@ -533,8 +533,8 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
     }
     // TODO(chunhtai): The selection may be the same. We should remove this
     // check once this is fixed https://github.com/flutter/flutter/issues/76349.
-    if (widget.onSelectionChanged != null && _lastSeenTextSelection != selection) {
-      widget.onSelectionChanged!(selection, cause);
+    if (widget().onSelectionChanged != null && _lastSeenTextSelection != selection) {
+      widget().onSelectionChanged!(selection, cause);
     }
     _lastSeenTextSelection = selection;
 
@@ -591,8 +591,8 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
     assert(debugCheckHasMediaQuery(context));
     assert(debugCheckHasDirectionality(context));
     assert(
-      !(widget.style != null && widget.style!.inherit == false &&
-          (widget.style!.fontSize == null || widget.style!.textBaseline == null)),
+      !(widget().style != null && widget().style!.inherit == false &&
+          (widget().style!.fontSize == null || widget().style!.textBaseline == null)),
       'inherit false style must supply fontSize and textBaseline',
     );
 
@@ -600,13 +600,13 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
     final TextSelectionThemeData selectionTheme = TextSelectionTheme.of(context);
     final FocusNode focusNode = _effectiveFocusNode;
 
-    TextSelectionControls? textSelectionControls =  widget.selectionControls;
+    TextSelectionControls? textSelectionControls =  widget().selectionControls;
     final bool paintCursorAboveText;
     final bool cursorOpacityAnimates;
     Offset? cursorOffset;
-    Color? cursorColor = widget.cursorColor;
+    Color? cursorColor = widget().cursorColor;
     final Color selectionColor;
-    Radius? cursorRadius = widget.cursorRadius;
+    Radius? cursorRadius = widget().cursorRadius;
 
     switch (theme.platform) {
       case TargetPlatform.iOS:
@@ -655,9 +655,9 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
     }
 
     final DefaultTextStyle defaultTextStyle = DefaultTextStyle.of(context);
-    TextStyle? effectiveTextStyle = widget.style;
+    TextStyle? effectiveTextStyle = widget().style;
     if (effectiveTextStyle == null || effectiveTextStyle.inherit)
-      effectiveTextStyle = defaultTextStyle.style.merge(widget.style);
+      effectiveTextStyle = defaultTextStyle.style.merge(widget().style);
     if (MediaQuery.boldTextOverride(context))
       effectiveTextStyle = effectiveTextStyle.merge(const TextStyle(fontWeight: FontWeight.bold));
     final Widget child = RepaintBoundary(
@@ -665,46 +665,46 @@ class _SelectableTextState extends State<SelectableText> implements TextSelectio
         key: editableTextKey,
         style: effectiveTextStyle,
         readOnly: true,
-        textWidthBasis: widget.textWidthBasis ?? defaultTextStyle.textWidthBasis,
-        textHeightBehavior: widget.textHeightBehavior ?? defaultTextStyle.textHeightBehavior,
+        textWidthBasis: widget().textWidthBasis ?? defaultTextStyle.textWidthBasis,
+        textHeightBehavior: widget().textHeightBehavior ?? defaultTextStyle.textHeightBehavior,
         showSelectionHandles: _showSelectionHandles,
-        showCursor: widget.showCursor,
+        showCursor: widget().showCursor,
         controller: _controller,
         focusNode: focusNode,
-        strutStyle: widget.strutStyle ?? const StrutStyle(),
-        textAlign: widget.textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
-        textDirection: widget.textDirection,
-        textScaleFactor: widget.textScaleFactor,
-        autofocus: widget.autofocus,
+        strutStyle: widget().strutStyle ?? const StrutStyle(),
+        textAlign: widget().textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
+        textDirection: widget().textDirection,
+        textScaleFactor: widget().textScaleFactor,
+        autofocus: widget().autofocus,
         forceLine: false,
-        toolbarOptions: widget.toolbarOptions,
-        minLines: widget.minLines,
-        maxLines: widget.maxLines ?? defaultTextStyle.maxLines,
+        toolbarOptions: widget().toolbarOptions,
+        minLines: widget().minLines,
+        maxLines: widget().maxLines ?? defaultTextStyle.maxLines,
         selectionColor: selectionColor,
-        selectionControls: widget.selectionEnabled ? textSelectionControls : null,
+        selectionControls: widget().selectionEnabled ? textSelectionControls : null,
         onSelectionChanged: _handleSelectionChanged,
         onSelectionHandleTapped: _handleSelectionHandleTapped,
         rendererIgnoresPointer: true,
-        cursorWidth: widget.cursorWidth,
-        cursorHeight: widget.cursorHeight,
+        cursorWidth: widget().cursorWidth,
+        cursorHeight: widget().cursorHeight,
         cursorRadius: cursorRadius,
         cursorColor: cursorColor,
-        selectionHeightStyle: widget.selectionHeightStyle,
-        selectionWidthStyle: widget.selectionWidthStyle,
+        selectionHeightStyle: widget().selectionHeightStyle,
+        selectionWidthStyle: widget().selectionWidthStyle,
         cursorOpacityAnimates: cursorOpacityAnimates,
         cursorOffset: cursorOffset,
         paintCursorAboveText: paintCursorAboveText,
         backgroundCursorColor: CupertinoColors.inactiveGray,
-        enableInteractiveSelection: widget.enableInteractiveSelection,
-        dragStartBehavior: widget.dragStartBehavior,
-        scrollPhysics: widget.scrollPhysics,
+        enableInteractiveSelection: widget().enableInteractiveSelection,
+        dragStartBehavior: widget().dragStartBehavior,
+        scrollPhysics: widget().scrollPhysics,
         autofillHints: null,
       ),
     );
 
     return Semantics(
-      label: widget.semanticsLabel,
-      excludeSemantics: widget.semanticsLabel != null,
+      label: widget().semanticsLabel,
+      excludeSemantics: widget().semanticsLabel != null,
       onLongPress: () {
         _effectiveFocusNode.requestFocus();
       },

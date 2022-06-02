@@ -344,8 +344,8 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
 
   /// The plain text message for this tooltip.
   ///
-  /// This value will either come from [widget.message] or [widget.richMessage].
-  String get _tooltipMessage => widget.message ?? widget.richMessage!.toPlainText();
+  /// This value will either come from [widget().message] or [widget().richMessage].
+  String get _tooltipMessage => widget().message ?? widget().richMessage!.toPlainText();
 
   @override
   void initState() {
@@ -493,7 +493,7 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
     if (!_entry!.mounted) {
       final OverlayState overlayState = Overlay.of(
         context,
-        debugRequiredFor: widget,
+        debugRequiredFor: widget(),
       )!;
       overlayState.insert(_entry!);
     }
@@ -548,7 +548,7 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
   void _createNewEntry() {
     final OverlayState overlayState = Overlay.of(
       context,
-      debugRequiredFor: widget,
+      debugRequiredFor: widget(),
     )!;
 
     final RenderBox box = context.findRenderObject()! as RenderBox;
@@ -563,7 +563,7 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
     final Widget overlay = Directionality(
       textDirection: Directionality.of(context),
       child: _TooltipOverlay(
-        richMessage: widget.richMessage ?? TextSpan(text: widget.message),
+        richMessage: widget().richMessage ?? TextSpan(text: widget().message),
         height: _height,
         padding: _padding,
         margin: _margin,
@@ -657,9 +657,9 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
     // the empty black container so just return the wrapped child as is or
     // empty container if child is not specified.
     if (_tooltipMessage.isEmpty) {
-      return widget.child ?? const SizedBox();
+      return widget().child ?? const SizedBox();
     }
-    assert(Overlay.of(context, debugRequiredFor: widget) != null);
+    assert(Overlay.of(context, debugRequiredFor: widget()) != null);
     final ThemeData theme = Theme.of(context);
     final TooltipThemeData tooltipTheme = TooltipTheme.of(context);
     final TextStyle defaultTextStyle;
@@ -684,25 +684,25 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
       );
     }
 
-    _height = widget.height ?? tooltipTheme.height ?? _getDefaultTooltipHeight();
-    _padding = widget.padding ?? tooltipTheme.padding ?? _getDefaultPadding();
-    _margin = widget.margin ?? tooltipTheme.margin ?? _defaultMargin;
-    _verticalOffset = widget.verticalOffset ?? tooltipTheme.verticalOffset ?? _defaultVerticalOffset;
-    _preferBelow = widget.preferBelow ?? tooltipTheme.preferBelow ?? _defaultPreferBelow;
-    _excludeFromSemantics = widget.excludeFromSemantics ?? tooltipTheme.excludeFromSemantics ?? _defaultExcludeFromSemantics;
-    _decoration = widget.decoration ?? tooltipTheme.decoration ?? defaultDecoration;
-    _textStyle = widget.textStyle ?? tooltipTheme.textStyle ?? defaultTextStyle;
-    _waitDuration = widget.waitDuration ?? tooltipTheme.waitDuration ?? _defaultWaitDuration;
-    _showDuration = widget.showDuration ?? tooltipTheme.showDuration ?? _defaultShowDuration;
-    _hoverShowDuration = widget.showDuration ?? tooltipTheme.showDuration ?? _defaultHoverShowDuration;
-    _triggerMode = widget.triggerMode ?? tooltipTheme.triggerMode ?? _defaultTriggerMode;
-    _enableFeedback = widget.enableFeedback ?? tooltipTheme.enableFeedback ?? _defaultEnableFeedback;
+    _height = widget().height ?? tooltipTheme.height ?? _getDefaultTooltipHeight();
+    _padding = widget().padding ?? tooltipTheme.padding ?? _getDefaultPadding();
+    _margin = widget().margin ?? tooltipTheme.margin ?? _defaultMargin;
+    _verticalOffset = widget().verticalOffset ?? tooltipTheme.verticalOffset ?? _defaultVerticalOffset;
+    _preferBelow = widget().preferBelow ?? tooltipTheme.preferBelow ?? _defaultPreferBelow;
+    _excludeFromSemantics = widget().excludeFromSemantics ?? tooltipTheme.excludeFromSemantics ?? _defaultExcludeFromSemantics;
+    _decoration = widget().decoration ?? tooltipTheme.decoration ?? defaultDecoration;
+    _textStyle = widget().textStyle ?? tooltipTheme.textStyle ?? defaultTextStyle;
+    _waitDuration = widget().waitDuration ?? tooltipTheme.waitDuration ?? _defaultWaitDuration;
+    _showDuration = widget().showDuration ?? tooltipTheme.showDuration ?? _defaultShowDuration;
+    _hoverShowDuration = widget().showDuration ?? tooltipTheme.showDuration ?? _defaultHoverShowDuration;
+    _triggerMode = widget().triggerMode ?? tooltipTheme.triggerMode ?? _defaultTriggerMode;
+    _enableFeedback = widget().enableFeedback ?? tooltipTheme.enableFeedback ?? _defaultEnableFeedback;
 
     Widget result = Semantics(
       label: _excludeFromSemantics
           ? null
           : _tooltipMessage,
-      child: widget.child,
+      child: widget().child,
     );
 
     // Only check for gestures if tooltip should be visible.

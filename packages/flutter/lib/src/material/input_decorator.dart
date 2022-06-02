@@ -176,7 +176,7 @@ class _BorderContainerState extends State<_BorderContainer> with TickerProviderS
     super.initState();
     _hoverColorController = AnimationController(
       duration: _kHoverDuration,
-      value: widget.isHovering ? 1.0 : 0.0,
+      value: widget().isHovering ? 1.0 : 0.0,
       vsync: this,
     );
     _controller = AnimationController(
@@ -188,14 +188,14 @@ class _BorderContainerState extends State<_BorderContainer> with TickerProviderS
       curve: _kTransitionCurve,
     );
     _border = _InputBorderTween(
-      begin: widget.border,
-      end: widget.border,
+      begin: widget().border,
+      end: widget().border,
     );
     _hoverAnimation = CurvedAnimation(
       parent: _hoverColorController,
       curve: Curves.linear,
     );
-    _hoverColorTween = ColorTween(begin: Colors.transparent, end: widget.hoverColor);
+    _hoverColorTween = ColorTween(begin: Colors.transparent, end: widget().hoverColor);
   }
 
   @override
@@ -208,20 +208,20 @@ class _BorderContainerState extends State<_BorderContainer> with TickerProviderS
   @override
   void didUpdateWidget(_BorderContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.border != oldWidget.border) {
+    if (widget().border != oldWidget.border) {
       _border = _InputBorderTween(
         begin: oldWidget.border,
-        end: widget.border,
+        end: widget().border,
       );
       _controller
         ..value = 0.0
         ..forward();
     }
-    if (widget.hoverColor != oldWidget.hoverColor) {
-      _hoverColorTween = ColorTween(begin: Colors.transparent, end: widget.hoverColor);
+    if (widget().hoverColor != oldWidget.hoverColor) {
+      _hoverColorTween = ColorTween(begin: Colors.transparent, end: widget().hoverColor);
     }
-    if (widget.isHovering != oldWidget.isHovering) {
-      if (widget.isHovering) {
+    if (widget().isHovering != oldWidget.isHovering) {
+      if (widget().isHovering) {
         _hoverColorController.forward();
       } else {
         _hoverColorController.reverse();
@@ -235,15 +235,15 @@ class _BorderContainerState extends State<_BorderContainer> with TickerProviderS
       foregroundPainter: _InputBorderPainter(
         repaint: Listenable.merge(<Listenable>[
           _borderAnimation,
-          widget.gap,
+          widget().gap,
           _hoverColorController,
         ]),
         borderAnimation: _borderAnimation,
         border: _border,
-        gapAnimation: widget.gapAnimation,
-        gap: widget.gap,
+        gapAnimation: widget().gapAnimation,
+        gap: widget().gap,
         textDirection: Directionality.of(context),
-        fillColor: widget.fillColor,
+        fillColor: widget().fillColor,
         hoverColorTween: _hoverColorTween,
         hoverAnimation: _hoverAnimation,
       ),
@@ -327,10 +327,10 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
       duration: _kTransitionDuration,
       vsync: this,
     );
-    if (widget.errorText != null) {
+    if (widget().errorText != null) {
       _error = _buildError();
       _controller.value = 1.0;
-    } else if (widget.helperText != null) {
+    } else if (widget().helperText != null) {
       _helper = _buildHelper();
     }
     _controller.addListener(_handleChange);
@@ -352,8 +352,8 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
   void didUpdateWidget(_HelperError old) {
     super.didUpdateWidget(old);
 
-    final String? newErrorText = widget.errorText;
-    final String? newHelperText = widget.helperText;
+    final String? newErrorText = widget().errorText;
+    final String? newHelperText = widget().helperText;
     final String? oldErrorText = old.errorText;
     final String? oldHelperText = old.helperText;
 
@@ -374,24 +374,24 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
   }
 
   Widget _buildHelper() {
-    assert(widget.helperText != null);
+    assert(widget().helperText != null);
     return Semantics(
       container: true,
       child: FadeTransition(
         opacity: Tween<double>(begin: 1.0, end: 0.0).animate(_controller),
         child: Text(
-          widget.helperText!,
-          style: widget.helperStyle,
-          textAlign: widget.textAlign,
+          widget().helperText!,
+          style: widget().helperStyle,
+          textAlign: widget().textAlign,
           overflow: TextOverflow.ellipsis,
-          maxLines: widget.helperMaxLines,
+          maxLines: widget().helperMaxLines,
         ),
       ),
     );
   }
 
   Widget _buildError() {
-    assert(widget.errorText != null);
+    assert(widget().errorText != null);
     return Semantics(
       container: true,
       liveRegion: true,
@@ -403,11 +403,11 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
             end: Offset.zero,
           ).evaluate(_controller.view),
           child: Text(
-            widget.errorText!,
-            style: widget.errorStyle,
-            textAlign: widget.textAlign,
+            widget().errorText!,
+            style: widget().errorStyle,
+            textAlign: widget().textAlign,
             overflow: TextOverflow.ellipsis,
-            maxLines: widget.errorMaxLines,
+            maxLines: widget().errorMaxLines,
           ),
         ),
       ),
@@ -418,7 +418,7 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     if (_controller.isDismissed) {
       _error = null;
-      if (widget.helperText != null) {
+      if (widget().helperText != null) {
         return _helper = _buildHelper();
       } else {
         _helper = null;
@@ -428,7 +428,7 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
 
     if (_controller.isCompleted) {
       _helper = null;
-      if (widget.errorText != null) {
+      if (widget().errorText != null) {
         return _error = _buildError();
       } else {
         _error = null;
@@ -436,13 +436,13 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
       }
     }
 
-    if (_helper == null && widget.errorText != null)
+    if (_helper == null && widget().errorText != null)
       return _buildError();
 
-    if (_error == null && widget.helperText != null)
+    if (_error == null && widget().helperText != null)
       return _buildHelper();
 
-    if (widget.errorText != null) {
+    if (widget().errorText != null) {
       return Stack(
         children: <Widget>[
           FadeTransition(
@@ -454,7 +454,7 @@ class _HelperErrorState extends State<_HelperError> with SingleTickerProviderSta
       );
     }
 
-    if (widget.helperText != null) {
+    if (widget().helperText != null) {
       return Stack(
         children: <Widget>[
           _buildHelper(),
@@ -1834,9 +1834,9 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
   void initState() {
     super.initState();
 
-    final bool labelIsInitiallyFloating = widget.decoration.floatingLabelBehavior == FloatingLabelBehavior.always
-        || (widget.decoration.floatingLabelBehavior != FloatingLabelBehavior.never &&
-            widget._labelShouldWithdraw);
+    final bool labelIsInitiallyFloating = widget().decoration.floatingLabelBehavior == FloatingLabelBehavior.always
+        || (widget().decoration.floatingLabelBehavior != FloatingLabelBehavior.never &&
+            widget()._labelShouldWithdraw);
 
     _floatingLabelController = AnimationController(
       duration: _kTransitionDuration,
@@ -1872,16 +1872,16 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 
   InputDecoration? _effectiveDecoration;
   InputDecoration? get decoration {
-    _effectiveDecoration ??= widget.decoration.applyDefaults(
+    _effectiveDecoration ??= widget().decoration.applyDefaults(
       Theme.of(context).inputDecorationTheme,
     );
     return _effectiveDecoration;
   }
 
-  TextAlign? get textAlign => widget.textAlign;
-  bool get isFocused => widget.isFocused;
-  bool get isHovering => widget.isHovering && decoration!.enabled;
-  bool get isEmpty => widget.isEmpty;
+  TextAlign? get textAlign => widget().textAlign;
+  bool get isFocused => widget().isFocused;
+  bool get isHovering => widget().isHovering && decoration!.enabled;
+  bool get isEmpty => widget().isEmpty;
   bool get _floatingLabelEnabled {
     return decoration!.floatingLabelBehavior != FloatingLabelBehavior.never;
   }
@@ -1889,14 +1889,14 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
   @override
   void didUpdateWidget(InputDecorator old) {
     super.didUpdateWidget(old);
-    if (widget.decoration != old.decoration)
+    if (widget().decoration != old.decoration)
       _effectiveDecoration = null;
 
-    final bool floatBehaviorChanged = widget.decoration.floatingLabelBehavior != old.decoration.floatingLabelBehavior;
+    final bool floatBehaviorChanged = widget().decoration.floatingLabelBehavior != old.decoration.floatingLabelBehavior;
 
-    if (widget._labelShouldWithdraw != old._labelShouldWithdraw || floatBehaviorChanged) {
+    if (widget()._labelShouldWithdraw != old._labelShouldWithdraw || floatBehaviorChanged) {
       if (_floatingLabelEnabled
-          && (widget._labelShouldWithdraw || widget.decoration.floatingLabelBehavior == FloatingLabelBehavior.always))
+          && (widget()._labelShouldWithdraw || widget().decoration.floatingLabelBehavior == FloatingLabelBehavior.always))
         _floatingLabelController.forward();
       else
         _floatingLabelController.reverse();
@@ -1995,7 +1995,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
   // floatingLabelBehavior isn't set to always, then the label appears where the
   // hint would.
   bool get _hasInlineLabel {
-    return !widget._labelShouldWithdraw
+    return !widget()._labelShouldWithdraw
         && (decoration!.labelText != null || decoration!.label != null)
         && decoration!.floatingLabelBehavior != FloatingLabelBehavior.always;
   }
@@ -2014,7 +2014,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       ?? MaterialStateProperty.resolveAs(themeData.inputDecorationTheme.labelStyle, materialState);
 
     return themeData.textTheme.subtitle1!
-      .merge(widget.baseStyle)
+      .merge(widget().baseStyle)
       .merge(defaultStyle)
       .merge(style)
       .copyWith(height: 1);
@@ -2031,7 +2031,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       ?? MaterialStateProperty.resolveAs(themeData.inputDecorationTheme.hintStyle, materialState);
 
     return themeData.textTheme.subtitle1!
-      .merge(widget.baseStyle)
+      .merge(widget().baseStyle)
       .merge(defaultStyle)
       .merge(style);
   }
@@ -2050,7 +2050,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       ?? MaterialStateProperty.resolveAs(themeData.inputDecorationTheme.floatingLabelStyle, materialState);
 
     return themeData.textTheme.subtitle1!
-      .merge(widget.baseStyle)
+      .merge(widget().baseStyle)
       .copyWith(height: 1)
       .merge(getFallbackTextStyle())
       .merge(style);
@@ -2157,7 +2157,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
         child: AnimatedDefaultTextStyle(
           duration:_kTransitionDuration,
           curve: _kTransitionCurve,
-          style: widget._labelShouldWithdraw
+          style: widget()._labelShouldWithdraw
             ? _getFloatingLabelStyle(themeData)
             : labelStyle,
           child: decoration!.label ?? Text(
@@ -2171,7 +2171,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 
     final Widget? prefix = decoration!.prefix == null && decoration!.prefixText == null ? null :
       _AffixText(
-        labelIsFloating: widget._labelShouldWithdraw,
+        labelIsFloating: widget()._labelShouldWithdraw,
         text: decoration!.prefixText,
         style: MaterialStateProperty.resolveAs(decoration!.prefixStyle, materialState) ?? hintStyle,
         child: decoration!.prefix,
@@ -2179,7 +2179,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 
     final Widget? suffix = decoration!.suffix == null && decoration!.suffixText == null ? null :
       _AffixText(
-        labelIsFloating: widget._labelShouldWithdraw,
+        labelIsFloating: widget()._labelShouldWithdraw,
         text: decoration!.suffixText,
         style: MaterialStateProperty.resolveAs(decoration!.suffixStyle, materialState) ?? hintStyle,
         child: decoration!.suffix,
@@ -2314,7 +2314,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
         isDense: decoration!.isDense,
         visualDensity: themeData.visualDensity,
         icon: icon,
-        input: widget.child,
+        input: widget().child,
         label: label,
         hint: hint,
         prefix: prefix,
@@ -2327,9 +2327,9 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       ),
       textDirection: textDirection,
       textBaseline: textBaseline,
-      textAlignVertical: widget.textAlignVertical,
+      textAlignVertical: widget().textAlignVertical,
       isFocused: isFocused,
-      expands: widget.expands,
+      expands: widget().expands,
     );
 
     final BoxConstraints? constraints = decoration!.constraints ?? themeData.inputDecorationTheme.constraints;

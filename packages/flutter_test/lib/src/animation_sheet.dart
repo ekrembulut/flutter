@@ -338,12 +338,12 @@ class _AnimationSheetRecorderState extends State<_AnimationSheetRecorder> {
   GlobalKey boundaryKey = GlobalKey();
 
   void _record(Duration duration) {
-    assert(widget.handleRecorded != null);
+    assert(widget().handleRecorded != null);
     final _RenderRootableRepaintBoundary boundary = boundaryKey.currentContext!.findRenderObject()! as _RenderRootableRepaintBoundary;
-    if (widget.allLayers) {
-      widget.handleRecorded!(boundary.allLayersToImage());
+    if (widget().allLayers) {
+      widget().handleRecorded!(boundary.allLayersToImage());
     } else {
-      widget.handleRecorded!(boundary.toImage());
+      widget().handleRecorded!(boundary.toImage());
     }
   }
 
@@ -352,12 +352,12 @@ class _AnimationSheetRecorderState extends State<_AnimationSheetRecorder> {
     return Align(
       alignment: Alignment.topLeft,
       child: SizedBox.fromSize(
-        size: widget.size,
+        size: widget().size,
         child: _RootableRepaintBoundary(
           key: boundaryKey,
           child: _PostFrameCallbacker(
-            callback: widget.handleRecorded == null ? null : _record,
-            child: widget.child,
+            callback: widget().handleRecorded == null ? null : _record,
+            child: widget().child,
           ),
         ),
       ),

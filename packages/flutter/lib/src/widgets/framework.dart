@@ -901,7 +901,7 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
   /// configuration, the framework will update this property to refer to the new
   /// widget and then call [didUpdateWidget], passing the old configuration as
   /// an argument.
-  T get widget => _widget!;
+  T widget() => _widget!;
   T? _widget;
 
   /// The current stage in the lifecycle for this state object.
@@ -956,7 +956,7 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
   ///
   /// Override this method to perform initialization that depends on the
   /// location at which this object was inserted into the tree (i.e., [context])
-  /// or on the widget used to configure this object (i.e., [widget]).
+  /// or on the widget used to configure this object (i.e., [widget()]).
   ///
   /// {@template flutter.widgets.State.initState}
   /// If a [State]'s [build] method depends on an object that can itself
@@ -990,11 +990,11 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
   ///
   /// If the parent widget rebuilds and request that this location in the tree
   /// update to display a new widget with the same [runtimeType] and
-  /// [Widget.key], the framework will update the [widget] property of this
+  /// [Widget.key], the framework will update the [widget()] property of this
   /// [State] object to refer to the new widget and then call this method
   /// with the previous widget as an argument.
   ///
-  /// Override this method to respond when the [widget] changes (e.g., to start
+  /// Override this method to respond when the [widget()] changes (e.g., to start
   /// implicit animations).
   ///
   /// The framework always calls [build] after calling [didUpdateWidget], which
@@ -1318,7 +1318,7 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
   ///
   /// Now when the parent rebuilds `MyButton` with green, the closure created by
   /// the first build still refers to [State] object, which is preserved across
-  /// rebuilds, but the framework has updated that [State] object's [widget]
+  /// rebuilds, but the framework has updated that [State] object's [widget()]
   /// property to refer to the new `MyButton` instance and `${widget.color}`
   /// prints green, as expected.
   ///

@@ -1274,13 +1274,13 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
   // [widget.initialRoute].
   String get _initialRouteName => WidgetsBinding.instance.platformDispatcher.defaultRouteName != Navigator.defaultRouteName
     ? WidgetsBinding.instance.platformDispatcher.defaultRouteName
-    : widget.initialRoute ?? WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    : widget().initialRoute ?? WidgetsBinding.instance.platformDispatcher.defaultRouteName;
 
   @override
   void initState() {
     super.initState();
     _updateRouting();
-    _locale = _resolveLocales(WidgetsBinding.instance.platformDispatcher.locales, widget.supportedLocales);
+    _locale = _resolveLocales(WidgetsBinding.instance.platformDispatcher.locales, widget().supportedLocales);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -1301,10 +1301,10 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     if (_usesRouter) {
       assert(!_usesNavigator);
       _navigator = null;
-      if (oldWidget == null || oldWidget.routeInformationProvider != widget.routeInformationProvider) {
+      if (oldWidget == null || oldWidget.routeInformationProvider != widget().routeInformationProvider) {
         _defaultRouteInformationProvider?.dispose();
         _defaultRouteInformationProvider = null;
-        if (widget.routeInformationProvider == null) {
+        if (widget().routeInformationProvider == null) {
           _defaultRouteInformationProvider = PlatformRouteInformationProvider(
             initialRouteInformation: RouteInformation(
               location: _initialRouteName,
@@ -1316,12 +1316,12 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       assert(!_usesRouter);
       _defaultRouteInformationProvider?.dispose();
       _defaultRouteInformationProvider = null;
-      if (_navigator == null || widget.navigatorKey != oldWidget!.navigatorKey) {
-        _navigator = widget.navigatorKey ?? GlobalObjectKey<NavigatorState>(this);
+      if (_navigator == null || widget().navigatorKey != oldWidget!.navigatorKey) {
+        _navigator = widget().navigatorKey ?? GlobalObjectKey<NavigatorState>(this);
       }
       assert(_navigator != null);
     } else {
-      assert(widget.builder != null);
+      assert(widget().builder != null);
       assert(!_usesRouter);
       assert(!_usesNavigator);
       _navigator = null;
@@ -1332,15 +1332,15 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     assert(_usesNavigator == (_navigator != null));
   }
 
-  bool get _usesRouter => widget.routerDelegate != null;
-  bool get _usesNavigator => widget.home != null
-      || (widget.routes?.isNotEmpty ?? false)
-      || widget.onGenerateRoute != null
-      || widget.onUnknownRoute != null;
+  bool get _usesRouter => widget().routerDelegate != null;
+  bool get _usesNavigator => widget().home != null
+      || (widget().routes?.isNotEmpty ?? false)
+      || widget().onGenerateRoute != null
+      || widget().onUnknownRoute != null;
 
   // ROUTER
 
-  RouteInformationProvider? get _effectiveRouteInformationProvider => widget.routeInformationProvider ?? _defaultRouteInformationProvider;
+  RouteInformationProvider? get _effectiveRouteInformationProvider => widget().routeInformationProvider ?? _defaultRouteInformationProvider;
   PlatformRouteInformationProvider? _defaultRouteInformationProvider;
 
   // NAVIGATOR
@@ -1349,31 +1349,31 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     final String? name = settings.name;
-    final WidgetBuilder? pageContentBuilder = name == Navigator.defaultRouteName && widget.home != null
-        ? (BuildContext context) => widget.home!
-        : widget.routes![name];
+    final WidgetBuilder? pageContentBuilder = name == Navigator.defaultRouteName && widget().home != null
+        ? (BuildContext context) => widget().home!
+        : widget().routes![name];
 
     if (pageContentBuilder != null) {
       assert(
-        widget.pageRouteBuilder != null,
+        widget().pageRouteBuilder != null,
         'The default onGenerateRoute handler for WidgetsApp must have a '
         'pageRouteBuilder set if the home or routes properties are set.',
       );
-      final Route<dynamic> route = widget.pageRouteBuilder!<dynamic>(
+      final Route<dynamic> route = widget().pageRouteBuilder!<dynamic>(
         settings,
         pageContentBuilder,
       );
       assert(route != null, 'The pageRouteBuilder for WidgetsApp must return a valid non-null Route.');
       return route;
     }
-    if (widget.onGenerateRoute != null)
-      return widget.onGenerateRoute!(settings);
+    if (widget().onGenerateRoute != null)
+      return widget().onGenerateRoute!(settings);
     return null;
   }
 
   Route<dynamic> _onUnknownRoute(RouteSettings settings) {
     assert(() {
-      if (widget.onUnknownRoute == null) {
+      if (widget().onUnknownRoute == null) {
         throw FlutterError(
           'Could not find a generator for route $settings in the $runtimeType.\n'
           'Make sure your root app widget has provided a way to generate \n'
@@ -1390,7 +1390,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       }
       return true;
     }());
-    final Route<dynamic>? result = widget.onUnknownRoute!(settings);
+    final Route<dynamic>? result = widget().onUnknownRoute!(settings);
     assert(() {
       if (result == null) {
         throw FlutterError(
@@ -1442,16 +1442,16 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
 
   Locale _resolveLocales(List<Locale>? preferredLocales, Iterable<Locale> supportedLocales) {
     // Attempt to use localeListResolutionCallback.
-    if (widget.localeListResolutionCallback != null) {
-      final Locale? locale = widget.localeListResolutionCallback!(preferredLocales, widget.supportedLocales);
+    if (widget().localeListResolutionCallback != null) {
+      final Locale? locale = widget().localeListResolutionCallback!(preferredLocales, widget().supportedLocales);
       if (locale != null)
         return locale;
     }
     // localeListResolutionCallback failed, falling back to localeResolutionCallback.
-    if (widget.localeResolutionCallback != null) {
-      final Locale? locale = widget.localeResolutionCallback!(
+    if (widget().localeResolutionCallback != null) {
+      final Locale? locale = widget().localeResolutionCallback!(
         preferredLocales != null && preferredLocales.isNotEmpty ? preferredLocales.first : null,
-        widget.supportedLocales,
+        widget().supportedLocales,
       );
       if (locale != null)
         return locale;
@@ -1462,7 +1462,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
 
   @override
   void didChangeLocales(List<Locale>? locales) {
-    final Locale newLocale = _resolveLocales(locales, widget.supportedLocales);
+    final Locale newLocale = _resolveLocales(locales, widget().supportedLocales);
     if (newLocale != _locale) {
       setState(() {
         _locale = newLocale;
@@ -1477,8 +1477,8 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
   // WidgetsLocalizations.delegate.
   Iterable<LocalizationsDelegate<dynamic>> get _localizationsDelegates {
     return <LocalizationsDelegate<dynamic>>[
-      if (widget.localizationsDelegates != null)
-        ...widget.localizationsDelegates!,
+      if (widget().localizationsDelegates != null)
+        ...widget().localizationsDelegates!,
       DefaultWidgetsLocalizations.delegate,
     ];
   }
@@ -1519,7 +1519,7 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
               ErrorSpacer(),
             ],
           ErrorHint(
-            'The declared supported locales for this app are: ${widget.supportedLocales.join(", ")}'
+            'The declared supported locales for this app are: ${widget().supportedLocales.join(", ")}'
           ),
           ErrorSpacer(),
           ErrorDescription(
@@ -1542,9 +1542,9 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       routing = Router<Object>(
         restorationScopeId: 'router',
         routeInformationProvider: _effectiveRouteInformationProvider,
-        routeInformationParser: widget.routeInformationParser,
-        routerDelegate: widget.routerDelegate!,
-        backButtonDispatcher: widget.backButtonDispatcher,
+        routeInformationParser: widget().routeInformationParser,
+        routerDelegate: widget().routerDelegate!,
+        backButtonDispatcher: widget().backButtonDispatcher,
       );
     } else if (_usesNavigator) {
       assert(_navigator != null);
@@ -1553,22 +1553,22 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
         key: _navigator,
         initialRoute: _initialRouteName,
         onGenerateRoute: _onGenerateRoute,
-        onGenerateInitialRoutes: widget.onGenerateInitialRoutes == null
+        onGenerateInitialRoutes: widget().onGenerateInitialRoutes == null
           ? Navigator.defaultGenerateInitialRoutes
           : (NavigatorState navigator, String initialRouteName) {
-            return widget.onGenerateInitialRoutes!(initialRouteName);
+            return widget().onGenerateInitialRoutes!(initialRouteName);
           },
         onUnknownRoute: _onUnknownRoute,
-        observers: widget.navigatorObservers!,
+        observers: widget().navigatorObservers!,
         reportsRouteUpdateToEngine: true,
       );
     }
 
     Widget result;
-    if (widget.builder != null) {
+    if (widget().builder != null) {
       result = Builder(
         builder: (BuildContext context) {
-          return widget.builder!(context, routing);
+          return widget().builder!(context, routing);
         },
       );
     } else {
@@ -1576,9 +1576,9 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       result = routing!;
     }
 
-    if (widget.textStyle != null) {
+    if (widget().textStyle != null) {
       result = DefaultTextStyle(
-        style: widget.textStyle!,
+        style: widget().textStyle!,
         child: result,
       );
     }
@@ -1586,15 +1586,15 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     PerformanceOverlay? performanceOverlay;
     // We need to push a performance overlay if any of the display or checkerboarding
     // options are set.
-    if (widget.showPerformanceOverlay || WidgetsApp.showPerformanceOverlayOverride) {
+    if (widget().showPerformanceOverlay || WidgetsApp.showPerformanceOverlayOverride) {
       performanceOverlay = PerformanceOverlay.allEnabled(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
+        checkerboardRasterCacheImages: widget().checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: widget().checkerboardOffscreenLayers,
       );
-    } else if (widget.checkerboardRasterCacheImages || widget.checkerboardOffscreenLayers) {
+    } else if (widget().checkerboardRasterCacheImages || widget().checkerboardOffscreenLayers) {
       performanceOverlay = PerformanceOverlay(
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
+        checkerboardRasterCacheImages: widget().checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: widget().checkerboardOffscreenLayers,
       );
     }
     if (performanceOverlay != null) {
@@ -1606,20 +1606,20 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       );
     }
 
-    if (widget.showSemanticsDebugger) {
+    if (widget().showSemanticsDebugger) {
       result = SemanticsDebugger(
         child: result,
       );
     }
 
     assert(() {
-      if (widget.debugShowWidgetInspector || WidgetsApp.debugShowWidgetInspectorOverride) {
+      if (widget().debugShowWidgetInspector || WidgetsApp.debugShowWidgetInspectorOverride) {
         result = WidgetInspector(
-          selectButtonBuilder: widget.inspectorSelectButtonBuilder,
+          selectButtonBuilder: widget().inspectorSelectButtonBuilder,
           child: result,
         );
       }
-      if (widget.debugShowCheckedModeBanner && WidgetsApp.debugAllowBannerOverride) {
+      if (widget().debugShowCheckedModeBanner && WidgetsApp.debugAllowBannerOverride) {
         result = CheckedModeBanner(
           child: result,
         );
@@ -1628,31 +1628,31 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     }());
 
     final Widget title;
-    if (widget.onGenerateTitle != null) {
+    if (widget().onGenerateTitle != null) {
       title = Builder(
         // This Builder exists to provide a context below the Localizations widget.
         // The onGenerateTitle callback can refer to Localizations via its context
         // parameter.
         builder: (BuildContext context) {
-          final String title = widget.onGenerateTitle!(context);
+          final String title = widget().onGenerateTitle!(context);
           assert(title != null, 'onGenerateTitle must return a non-null String');
           return Title(
             title: title,
-            color: widget.color.withOpacity(1.0),
+            color: widget().color.withOpacity(1.0),
             child: result,
           );
         },
       );
     } else {
       title = Title(
-        title: widget.title,
-        color: widget.color.withOpacity(1.0),
+        title: widget().title,
+        color: widget().color.withOpacity(1.0),
         child: result,
       );
     }
 
-    final Locale appLocale = widget.locale != null
-      ? _resolveLocales(<Locale>[widget.locale!], widget.supportedLocales)
+    final Locale appLocale = widget().locale != null
+      ? _resolveLocales(<Locale>[widget().locale!], widget().supportedLocales)
       : _locale!;
 
     assert(_debugCheckLocalizations(appLocale));
@@ -1664,23 +1664,23 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
     );
 
     final MediaQueryData? data = MediaQuery.maybeOf(context);
-    if (!widget.useInheritedMediaQuery || data == null) {
+    if (!widget().useInheritedMediaQuery || data == null) {
       child = MediaQuery.fromWindow(
         child: child,
       );
     }
 
     return RootRestorationScope(
-      restorationId: widget.restorationScopeId,
+      restorationId: widget().restorationScopeId,
       child: SharedAppData(
         child: Shortcuts(
           debugLabel: '<Default WidgetsApp Shortcuts>',
-          shortcuts: widget.shortcuts ?? WidgetsApp.defaultShortcuts,
+          shortcuts: widget().shortcuts ?? WidgetsApp.defaultShortcuts,
           // DefaultTextEditingShortcuts is nested inside Shortcuts so that it can
           // fall through to the defaultShortcuts.
           child: DefaultTextEditingShortcuts(
             child: Actions(
-              actions: widget.actions ?? WidgetsApp.defaultActions,
+              actions: widget().actions ?? WidgetsApp.defaultActions,
               child: FocusTraversalGroup(
                 policy: ReadingOrderTraversalPolicy(),
                 child: child,

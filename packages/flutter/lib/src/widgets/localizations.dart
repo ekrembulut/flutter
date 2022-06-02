@@ -448,7 +448,7 @@ class Localizations extends StatefulWidget {
     assert(context != null);
     final _LocalizationsScope? scope = context.dependOnInheritedWidgetOfExactType<_LocalizationsScope>();
     assert(scope != null, 'a Localizations ancestor was not found');
-    return List<LocalizationsDelegate<dynamic>>.of(scope!.localizationsState.widget.delegates);
+    return List<LocalizationsDelegate<dynamic>>.of(scope!.localizationsState.widget().delegates);
   }
 
   /// Returns the localized resources object of the given `type` for the widget
@@ -494,13 +494,13 @@ class _LocalizationsState extends State<Localizations> {
   @override
   void initState() {
     super.initState();
-    load(widget.locale);
+    load(widget().locale);
   }
 
   bool _anyDelegatesShouldReload(Localizations old) {
-    if (widget.delegates.length != old.delegates.length)
+    if (widget().delegates.length != old.delegates.length)
       return true;
-    final List<LocalizationsDelegate<dynamic>> delegates = widget.delegates.toList();
+    final List<LocalizationsDelegate<dynamic>> delegates = widget().delegates.toList();
     final List<LocalizationsDelegate<dynamic>> oldDelegates = old.delegates.toList();
     for (int i = 0; i < delegates.length; i += 1) {
       final LocalizationsDelegate<dynamic> delegate = delegates[i];
@@ -514,15 +514,15 @@ class _LocalizationsState extends State<Localizations> {
   @override
   void didUpdateWidget(Localizations old) {
     super.didUpdateWidget(old);
-    if (widget.locale != old.locale
-        || (widget.delegates == null)
-        || (widget.delegates != null && old.delegates == null)
-        || (widget.delegates != null && _anyDelegatesShouldReload(old)))
-      load(widget.locale);
+    if (widget().locale != old.locale
+        || (widget().delegates == null)
+        || (widget().delegates != null && old.delegates == null)
+        || (widget().delegates != null && _anyDelegatesShouldReload(old)))
+      load(widget().locale);
   }
 
   void load(Locale locale) {
-    final Iterable<LocalizationsDelegate<dynamic>> delegates = widget.delegates;
+    final Iterable<LocalizationsDelegate<dynamic>> delegates = widget().delegates;
     if (delegates == null || delegates.isEmpty) {
       _locale = locale;
       return;
@@ -581,7 +581,7 @@ class _LocalizationsState extends State<Localizations> {
         typeToResources: _typeToResources,
         child: Directionality(
           textDirection: _textDirection,
-          child: widget.child!,
+          child: widget().child!,
         ),
       ),
     );

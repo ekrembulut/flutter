@@ -127,7 +127,7 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
 
 class _PopupMenuDividerState extends State<PopupMenuDivider> {
   @override
-  Widget build(BuildContext context) => Divider(height: widget.height);
+  Widget build(BuildContext context) => Divider(height: widget().height);
 }
 
 // This widget only exists to enable _PopupMenuRoute to save the sizes of
@@ -328,7 +328,7 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
   /// By default, this returns [PopupMenuItem.child]. Override this to put
   /// something else in the menu entry.
   @protected
-  Widget? buildChild() => widget.child;
+  Widget? buildChild() => widget().child;
 
   /// The handler for when the user selects the menu item.
   ///
@@ -338,18 +338,18 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
   /// the menu route.
   @protected
   void handleTap() {
-    widget.onTap?.call();
+    widget().onTap?.call();
 
-    Navigator.pop<T>(context, widget.value);
+    Navigator.pop<T>(context, widget().value);
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final PopupMenuThemeData popupMenuTheme = PopupMenuTheme.of(context);
-    TextStyle style = widget.textStyle ?? popupMenuTheme.textStyle ?? theme.textTheme.subtitle1!;
+    TextStyle style = widget().textStyle ?? popupMenuTheme.textStyle ?? theme.textTheme.subtitle1!;
 
-    if (!widget.enabled)
+    if (!widget().enabled)
       style = style.copyWith(color: theme.disabledColor);
 
     Widget item = AnimatedDefaultTextStyle(
@@ -357,13 +357,13 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
       duration: kThemeChangeDuration,
       child: Container(
         alignment: AlignmentDirectional.centerStart,
-        constraints: BoxConstraints(minHeight: widget.height),
-        padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: _kMenuHorizontalPadding),
+        constraints: BoxConstraints(minHeight: widget().height),
+        padding: widget().padding ?? const EdgeInsets.symmetric(horizontal: _kMenuHorizontalPadding),
         child: buildChild(),
       ),
     );
 
-    if (!widget.enabled) {
+    if (!widget().enabled) {
       final bool isDark = theme.brightness == Brightness.dark;
       item = IconTheme.merge(
         data: IconThemeData(opacity: isDark ? 0.5 : 0.38),
@@ -373,12 +373,12 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 
     return MergeSemantics(
       child: Semantics(
-        enabled: widget.enabled,
+        enabled: widget().enabled,
         button: true,
         child: InkWell(
-          onTap: widget.enabled ? handleTap : null,
-          canRequestFocus: widget.enabled,
-          mouseCursor: _EffectiveMouseCursor(widget.mouseCursor, popupMenuTheme.mouseCursor),
+          onTap: widget().enabled ? handleTap : null,
+          canRequestFocus: widget().enabled,
+          mouseCursor: _EffectiveMouseCursor(widget().mouseCursor, popupMenuTheme.mouseCursor),
           child: item,
         ),
       ),
@@ -506,14 +506,14 @@ class _CheckedPopupMenuItemState<T> extends PopupMenuItemState<T, CheckedPopupMe
   void initState() {
     super.initState();
     _controller = AnimationController(duration: _fadeDuration, vsync: this)
-      ..value = widget.checked ? 1.0 : 0.0
+      ..value = widget().checked ? 1.0 : 0.0
       ..addListener(() => setState(() { /* animation changed */ }));
   }
 
   @override
   void handleTap() {
     // This fades the checkmark in or out when tapped.
-    if (widget.checked)
+    if (widget().checked)
       _controller.reverse();
     else
       _controller.forward();
@@ -523,12 +523,12 @@ class _CheckedPopupMenuItemState<T> extends PopupMenuItemState<T, CheckedPopupMe
   @override
   Widget buildChild() {
     return ListTile(
-      enabled: widget.enabled,
+      enabled: widget().enabled,
       leading: FadeTransition(
         opacity: _opacity,
         child: Icon(_controller.isDismissed ? null : Icons.done),
       ),
-      title: widget.child,
+      title: widget().child,
     );
   }
 }
@@ -1170,12 +1170,12 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
     final RenderBox button = context.findRenderObject()! as RenderBox;
     final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
     final Offset offset;
-    switch (widget.position) {
+    switch (widget().position) {
       case PopupMenuPosition.over:
-        offset = widget.offset;
+        offset = widget().offset;
         break;
       case PopupMenuPosition.under:
-        offset = Offset(0.0, button.size.height - (widget.padding.vertical / 2)) + widget.offset;
+        offset = Offset(0.0, button.size.height - (widget().padding.vertical / 2)) + widget().offset;
         break;
     }
     final RelativeRect position = RelativeRect.fromRect(
@@ -1185,27 +1185,27 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       ),
       Offset.zero & overlay.size,
     );
-    final List<PopupMenuEntry<T>> items = widget.itemBuilder(context);
+    final List<PopupMenuEntry<T>> items = widget().itemBuilder(context);
     // Only show the menu if there is something to show
     if (items.isNotEmpty) {
       showMenu<T?>(
         context: context,
-        elevation: widget.elevation ?? popupMenuTheme.elevation,
+        elevation: widget().elevation ?? popupMenuTheme.elevation,
         items: items,
-        initialValue: widget.initialValue,
+        initialValue: widget().initialValue,
         position: position,
-        shape: widget.shape ?? popupMenuTheme.shape,
-        color: widget.color ?? popupMenuTheme.color,
-        constraints: widget.constraints,
+        shape: widget().shape ?? popupMenuTheme.shape,
+        color: widget().color ?? popupMenuTheme.color,
+        constraints: widget().constraints,
       )
       .then<void>((T? newValue) {
         if (!mounted)
           return null;
         if (newValue == null) {
-          widget.onCanceled?.call();
+          widget().onCanceled?.call();
           return null;
         }
-        widget.onSelected?.call(newValue);
+        widget().onSelected?.call(newValue);
       });
     }
   }
@@ -1214,7 +1214,7 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
     final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
-        return widget.enabled;
+        return widget().enabled;
       case NavigationMode.directional:
         return true;
     }
@@ -1223,31 +1223,31 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
   @override
   Widget build(BuildContext context) {
     final IconThemeData iconTheme = IconTheme.of(context);
-    final bool enableFeedback = widget.enableFeedback
+    final bool enableFeedback = widget().enableFeedback
       ?? PopupMenuTheme.of(context).enableFeedback
       ?? true;
 
     assert(debugCheckHasMaterialLocalizations(context));
 
-    if (widget.child != null)
+    if (widget().child != null)
       return Tooltip(
-        message: widget.tooltip ?? MaterialLocalizations.of(context).showMenuTooltip,
+        message: widget().tooltip ?? MaterialLocalizations.of(context).showMenuTooltip,
         child: InkWell(
-          onTap: widget.enabled ? showButtonMenu : null,
+          onTap: widget().enabled ? showButtonMenu : null,
           canRequestFocus: _canRequestFocus,
-          radius: widget.splashRadius,
+          radius: widget().splashRadius,
           enableFeedback: enableFeedback,
-          child: widget.child,
+          child: widget().child,
         ),
       );
 
     return IconButton(
-      icon: widget.icon ?? Icon(Icons.adaptive.more),
-      padding: widget.padding,
-      splashRadius: widget.splashRadius,
-      iconSize: widget.iconSize ?? iconTheme.size ?? _kDefaultIconSize,
-      tooltip: widget.tooltip ?? MaterialLocalizations.of(context).showMenuTooltip,
-      onPressed: widget.enabled ? showButtonMenu : null,
+      icon: widget().icon ?? Icon(Icons.adaptive.more),
+      padding: widget().padding,
+      splashRadius: widget().splashRadius,
+      iconSize: widget().iconSize ?? iconTheme.size ?? _kDefaultIconSize,
+      tooltip: widget().tooltip ?? MaterialLocalizations.of(context).showMenuTooltip,
+      onPressed: widget().enabled ? showButtonMenu : null,
       enableFeedback: enableFeedback,
     );
   }

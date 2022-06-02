@@ -755,21 +755,21 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
   void initState() {
     super.initState();
     final List<Listenable> animations = <Listenable>[
-      if (widget.route.animation != null) widget.route.animation!,
-      if (widget.route.secondaryAnimation != null) widget.route.secondaryAnimation!,
+      if (widget().route.animation != null) widget().route.animation!,
+      if (widget().route.secondaryAnimation != null) widget().route.secondaryAnimation!,
     ];
     _listenable = Listenable.merge(animations);
-    if (widget.route.isCurrent && _shouldRequestFocus) {
-      widget.route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
+    if (widget().route.isCurrent && _shouldRequestFocus) {
+      widget().route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
     }
   }
 
   @override
   void didUpdateWidget(_ModalScope<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    assert(widget.route == oldWidget.route);
-    if (widget.route.isCurrent && _shouldRequestFocus) {
-      widget.route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
+    assert(widget().route == oldWidget.route);
+    if (widget().route.isCurrent && _shouldRequestFocus) {
+      widget().route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
     }
   }
 
@@ -792,19 +792,19 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
   }
 
   bool get _shouldIgnoreFocusRequest {
-    return widget.route.animation?.status == AnimationStatus.reverse ||
-      (widget.route.navigator?.userGestureInProgress ?? false);
+    return widget().route.animation?.status == AnimationStatus.reverse ||
+      (widget().route.navigator?.userGestureInProgress ?? false);
   }
 
   bool get _shouldRequestFocus {
-    return widget.route.navigator!.widget.requestFocus;
+    return widget().route.navigator!.widget().requestFocus;
   }
 
   // This should be called to wrap any changes to route.isCurrent, route.canPop,
   // and route.offstage.
   void _routeSetState(VoidCallback fn) {
-    if (widget.route.isCurrent && !_shouldIgnoreFocusRequest && _shouldRequestFocus) {
-      widget.route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
+    if (widget().route.isCurrent && !_shouldIgnoreFocusRequest && _shouldRequestFocus) {
+      widget().route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
     }
     setState(fn);
   }
@@ -812,22 +812,22 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: widget.route.restorationScopeId,
+      animation: widget().route.restorationScopeId,
       builder: (BuildContext context, Widget? child) {
         assert(child != null);
         return RestorationScope(
-          restorationId: widget.route.restorationScopeId.value,
+          restorationId: widget().route.restorationScopeId.value,
           child: child!,
         );
       },
       child: _ModalScopeStatus(
-        route: widget.route,
-        isCurrent: widget.route.isCurrent, // _routeSetState is called if this updates
-        canPop: widget.route.canPop, // _routeSetState is called if this updates
+        route: widget().route,
+        isCurrent: widget().route.isCurrent, // _routeSetState is called if this updates
+        canPop: widget().route.canPop, // _routeSetState is called if this updates
         child: Offstage(
-          offstage: widget.route.offstage, // _routeSetState is called if this updates
+          offstage: widget().route.offstage, // _routeSetState is called if this updates
           child: PageStorage(
-            bucket: widget.route._storageBucket, // immutable
+            bucket: widget().route._storageBucket, // immutable
             child: Builder(
               builder: (BuildContext context) {
                 return Actions(
@@ -844,16 +844,16 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
                           child: AnimatedBuilder(
                             animation: _listenable, // immutable
                             builder: (BuildContext context, Widget? child) {
-                              return widget.route.buildTransitions(
+                              return widget().route.buildTransitions(
                                 context,
-                                widget.route.animation!,
-                                widget.route.secondaryAnimation!,
+                                widget().route.animation!,
+                                widget().route.secondaryAnimation!,
                                 // This additional AnimatedBuilder is include because if the
                                 // value of the userGestureInProgressNotifier changes, it's
                                 // only necessary to rebuild the IgnorePointer widget and set
                                 // the focus node's ability to focus.
                                 AnimatedBuilder(
-                                  animation: widget.route.navigator?.userGestureInProgressNotifier ?? ValueNotifier<bool>(false),
+                                  animation: widget().route.navigator?.userGestureInProgressNotifier ?? ValueNotifier<bool>(false),
                                   builder: (BuildContext context, Widget? child) {
                                     final bool ignoreEvents = _shouldIgnoreFocusRequest;
                                     focusScopeNode.canRequestFocus = !ignoreEvents;
@@ -867,13 +867,13 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
                               );
                             },
                             child: _page ??= RepaintBoundary(
-                              key: widget.route._subtreeKey, // immutable
+                              key: widget().route._subtreeKey, // immutable
                               child: Builder(
                                 builder: (BuildContext context) {
-                                  return widget.route.buildPage(
+                                  return widget().route.buildPage(
                                     context,
-                                    widget.route.animation!,
-                                    widget.route.secondaryAnimation!,
+                                    widget().route.animation!,
+                                    widget().route.secondaryAnimation!,
                                   );
                                 },
                               ),
@@ -1151,7 +1151,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T> with LocalHistoryRoute<T
 
   @override
   TickerFuture didPush() {
-    if (_scopeKey.currentState != null && navigator!.widget.requestFocus) {
+    if (_scopeKey.currentState != null && navigator!.widget().requestFocus) {
       navigator!.focusScopeNode.setFirstFocus(_scopeKey.currentState!.focusScopeNode);
     }
     return super.didPush();
@@ -1159,7 +1159,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T> with LocalHistoryRoute<T
 
   @override
   void didAdd() {
-    if (_scopeKey.currentState != null && navigator!.widget.requestFocus) {
+    if (_scopeKey.currentState != null && navigator!.widget().requestFocus) {
       navigator!.focusScopeNode.setFirstFocus(_scopeKey.currentState!.focusScopeNode);
     }
     super.didAdd();

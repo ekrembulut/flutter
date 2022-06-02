@@ -183,7 +183,7 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
   }
 
   void _setTween() {
-    _opacityTween.end = widget.pressedOpacity ?? 1.0;
+    _opacityTween.end = widget().pressedOpacity ?? 1.0;
   }
 
   @override
@@ -230,12 +230,12 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final bool enabled = widget.enabled;
+    final bool enabled = widget().enabled;
     final CupertinoThemeData themeData = CupertinoTheme.of(context);
     final Color primaryColor = themeData.primaryColor;
-    final Color? backgroundColor = widget.color == null
-      ? (widget._filled ? primaryColor : null)
-      : CupertinoDynamicColor.maybeResolve(widget.color, context);
+    final Color? backgroundColor = widget().color == null
+      ? (widget()._filled ? primaryColor : null)
+      : CupertinoDynamicColor.maybeResolve(widget().color, context);
 
     final Color foregroundColor = backgroundColor != null
       ? themeData.primaryContrastingColor
@@ -252,38 +252,38 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
         onTapDown: enabled ? _handleTapDown : null,
         onTapUp: enabled ? _handleTapUp : null,
         onTapCancel: enabled ? _handleTapCancel : null,
-        onTap: widget.onPressed,
+        onTap: widget().onPressed,
         child: Semantics(
           button: true,
           child: ConstrainedBox(
-            constraints: widget.minSize == null
+            constraints: widget().minSize == null
               ? const BoxConstraints()
               : BoxConstraints(
-                  minWidth: widget.minSize!,
-                  minHeight: widget.minSize!,
+                  minWidth: widget().minSize!,
+                  minHeight: widget().minSize!,
                 ),
             child: FadeTransition(
               opacity: _opacityAnimation,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: widget.borderRadius,
+                  borderRadius: widget().borderRadius,
                   color: backgroundColor != null && !enabled
-                    ? CupertinoDynamicColor.resolve(widget.disabledColor, context)
+                    ? CupertinoDynamicColor.resolve(widget().disabledColor, context)
                     : backgroundColor,
                 ),
                 child: Padding(
-                  padding: widget.padding ?? (backgroundColor != null
+                  padding: widget().padding ?? (backgroundColor != null
                     ? _kBackgroundButtonPadding
                     : _kButtonPadding),
                   child: Align(
-                    alignment: widget.alignment,
+                    alignment: widget().alignment,
                     widthFactor: 1.0,
                     heightFactor: 1.0,
                     child: DefaultTextStyle(
                       style: textStyle,
                       child: IconTheme(
                         data: IconThemeData(color: foregroundColor),
-                        child: widget.child,
+                        child: widget().child,
                       ),
                     ),
                   ),

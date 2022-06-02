@@ -835,7 +835,7 @@ class _AppBarState extends State<AppBar> {
 
   @override
   Widget build(BuildContext context) {
-    assert(!widget.primary || debugCheckHasMediaQuery(context));
+    assert(!widget().primary || debugCheckHasMediaQuery(context));
     assert(debugCheckHasMaterialLocalizations(context));
     final ThemeData theme = Theme.of(context);
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
@@ -853,68 +853,68 @@ class _AppBarState extends State<AppBar> {
     final bool canPop = parentRoute?.canPop ?? false;
     final bool useCloseButton = parentRoute is PageRoute<dynamic> && parentRoute.fullscreenDialog;
 
-    final double toolbarHeight = widget.toolbarHeight ?? appBarTheme.toolbarHeight ?? kToolbarHeight;
-    final bool backwardsCompatibility = widget.backwardsCompatibility ?? appBarTheme.backwardsCompatibility ?? false;
+    final double toolbarHeight = widget().toolbarHeight ?? appBarTheme.toolbarHeight ?? kToolbarHeight;
+    final bool backwardsCompatibility = widget().backwardsCompatibility ?? appBarTheme.backwardsCompatibility ?? false;
 
     final Color backgroundColor = backwardsCompatibility
-      ? widget.backgroundColor
+      ? widget().backgroundColor
         ?? appBarTheme.backgroundColor
         ?? theme.primaryColor
       : _resolveColor(
           states,
-          widget.backgroundColor,
+          widget().backgroundColor,
           appBarTheme.backgroundColor,
           defaults.backgroundColor!,
         );
 
-    final Color foregroundColor = widget.foregroundColor
+    final Color foregroundColor = widget().foregroundColor
       ?? appBarTheme.foregroundColor
       ?? defaults.foregroundColor!;
 
-    final double elevation = widget.elevation
+    final double elevation = widget().elevation
       ?? appBarTheme.elevation
       ?? defaults.elevation!;
 
     final double effectiveElevation = states.contains(MaterialState.scrolledUnder)
-      ? widget.scrolledUnderElevation
+      ? widget().scrolledUnderElevation
         ?? appBarTheme.scrolledUnderElevation
         ?? defaults.scrolledUnderElevation
         ?? elevation
       : elevation;
 
     IconThemeData overallIconTheme = backwardsCompatibility
-      ? widget.iconTheme
+      ? widget().iconTheme
         ?? appBarTheme.iconTheme
         ?? theme.primaryIconTheme
-      : widget.iconTheme
+      : widget().iconTheme
         ?? appBarTheme.iconTheme
         ?? defaults.iconTheme!.copyWith(color: foregroundColor);
 
-    IconThemeData actionsIconTheme = widget.actionsIconTheme
+    IconThemeData actionsIconTheme = widget().actionsIconTheme
       ?? appBarTheme.actionsIconTheme
-      ?? widget.iconTheme
+      ?? widget().iconTheme
       ?? appBarTheme.iconTheme
       ?? defaults.actionsIconTheme?.copyWith(color: foregroundColor)
       ?? overallIconTheme;
 
     TextStyle? toolbarTextStyle = backwardsCompatibility
-      ? widget.textTheme?.bodyText2
+      ? widget().textTheme?.bodyText2
         ?? appBarTheme.textTheme?.bodyText2
         ?? theme.primaryTextTheme.bodyText2
-      : widget.toolbarTextStyle
+      : widget().toolbarTextStyle
         ?? appBarTheme.toolbarTextStyle
         ?? defaults.toolbarTextStyle?.copyWith(color: foregroundColor);
 
     TextStyle? titleTextStyle = backwardsCompatibility
-      ? widget.textTheme?.headline6
+      ? widget().textTheme?.headline6
         ?? appBarTheme.textTheme?.headline6
         ?? theme.primaryTextTheme.headline6
-      : widget.titleTextStyle
+      : widget().titleTextStyle
         ?? appBarTheme.titleTextStyle
         ?? defaults.titleTextStyle?.copyWith(color: foregroundColor);
 
-    if (widget.toolbarOpacity != 1.0) {
-      final double opacity = const Interval(0.25, 1.0, curve: Curves.fastOutSlowIn).transform(widget.toolbarOpacity);
+    if (widget().toolbarOpacity != 1.0) {
+      final double opacity = const Interval(0.25, 1.0, curve: Curves.fastOutSlowIn).transform(widget().toolbarOpacity);
       if (titleTextStyle?.color != null)
         titleTextStyle = titleTextStyle!.copyWith(color: titleTextStyle.color!.withOpacity(opacity));
       if (toolbarTextStyle?.color != null)
@@ -927,8 +927,8 @@ class _AppBarState extends State<AppBar> {
       );
     }
 
-    Widget? leading = widget.leading;
-    if (leading == null && widget.automaticallyImplyLeading) {
+    Widget? leading = widget().leading;
+    if (leading == null && widget().automaticallyImplyLeading) {
       if (hasDrawer) {
         leading = IconButton(
           icon: const Icon(Icons.menu),
@@ -943,12 +943,12 @@ class _AppBarState extends State<AppBar> {
     }
     if (leading != null) {
       leading = ConstrainedBox(
-        constraints: BoxConstraints.tightFor(width: widget.leadingWidth ?? _kLeadingWidth),
+        constraints: BoxConstraints.tightFor(width: widget().leadingWidth ?? _kLeadingWidth),
         child: leading,
       );
     }
 
-    Widget? title = widget.title;
+    Widget? title = widget().title;
     if (title != null) {
       bool? namesRoute;
       switch (theme.platform) {
@@ -964,7 +964,7 @@ class _AppBarState extends State<AppBar> {
       }
 
       title = _AppBarTitleBox(child: title);
-      if (!widget.excludeHeaderSemantics) {
+      if (!widget().excludeHeaderSemantics) {
         title = Semantics(
           namesRoute: namesRoute,
           header: true,
@@ -997,11 +997,11 @@ class _AppBarState extends State<AppBar> {
     }
 
     Widget? actions;
-    if (widget.actions != null && widget.actions!.isNotEmpty) {
+    if (widget().actions != null && widget().actions!.isNotEmpty) {
       actions = Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: widget.actions!,
+        children: widget().actions!,
       );
     } else if (hasEndDrawer) {
       actions = IconButton(
@@ -1024,8 +1024,8 @@ class _AppBarState extends State<AppBar> {
       leading: leading,
       middle: title,
       trailing: actions,
-      centerMiddle: widget._getEffectiveCenterTitle(theme),
-      middleSpacing: widget.titleSpacing ?? appBarTheme.titleSpacing ?? NavigationToolbar.kMiddleSpacing,
+      centerMiddle: widget()._getEffectiveCenterTitle(theme),
+      middleSpacing: widget().titleSpacing ?? appBarTheme.titleSpacing ?? NavigationToolbar.kMiddleSpacing,
     );
 
     // If the toolbar is allocated less than toolbarHeight make it
@@ -1042,7 +1042,7 @@ class _AppBarState extends State<AppBar> {
         ),
       ),
     );
-    if (widget.bottom != null) {
+    if (widget().bottom != null) {
       appBar = Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -1052,19 +1052,19 @@ class _AppBarState extends State<AppBar> {
               child: appBar,
             ),
           ),
-          if (widget.bottomOpacity == 1.0)
-            widget.bottom!
+          if (widget().bottomOpacity == 1.0)
+            widget().bottom!
           else
             Opacity(
-              opacity: const Interval(0.25, 1.0, curve: Curves.fastOutSlowIn).transform(widget.bottomOpacity),
-              child: widget.bottom,
+              opacity: const Interval(0.25, 1.0, curve: Curves.fastOutSlowIn).transform(widget().bottomOpacity),
+              child: widget().bottom,
             ),
         ],
       );
     }
 
     // The padding applies to the toolbar and tabbar, not the flexible space.
-    if (widget.primary) {
+    if (widget().primary) {
       appBar = SafeArea(
         bottom: false,
         child: appBar,
@@ -1076,14 +1076,14 @@ class _AppBarState extends State<AppBar> {
       child: appBar,
     );
 
-    if (widget.flexibleSpace != null) {
+    if (widget().flexibleSpace != null) {
       appBar = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
           Semantics(
             sortKey: const OrdinalSortKey(1.0),
             explicitChildNodes: true,
-            child: widget.flexibleSpace,
+            child: widget().flexibleSpace,
           ),
           Semantics(
             sortKey: const OrdinalSortKey(0.0),
@@ -1101,11 +1101,11 @@ class _AppBarState extends State<AppBar> {
 
     final SystemUiOverlayStyle overlayStyle = backwardsCompatibility
       ? _systemOverlayStyleForBrightness(
-          widget.brightness
+          widget().brightness
           ?? appBarTheme.brightness
           ?? ThemeData.estimateBrightnessForColor(backgroundColor),
         )
-      : widget.systemOverlayStyle
+      : widget().systemOverlayStyle
         ?? appBarTheme.systemOverlayStyle
         ?? defaults.systemOverlayStyle
         ?? _systemOverlayStyleForBrightness(ThemeData.estimateBrightnessForColor(backgroundColor));
@@ -1117,13 +1117,13 @@ class _AppBarState extends State<AppBar> {
         child: Material(
           color: backgroundColor,
           elevation: effectiveElevation,
-          shadowColor: widget.shadowColor
+          shadowColor: widget().shadowColor
             ?? appBarTheme.shadowColor
             ?? defaults.shadowColor,
-          surfaceTintColor: widget.surfaceTintColor
+          surfaceTintColor: widget().surfaceTintColor
             ?? appBarTheme.surfaceTintColor
             ?? defaults.surfaceTintColor,
-          shape: widget.shape ?? appBarTheme.shape ?? defaults.shape,
+          shape: widget().shape ?? appBarTheme.shape ?? defaults.shape,
           child: Semantics(
             explicitChildNodes: true,
             child: appBar,
@@ -1773,7 +1773,7 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
   PersistentHeaderShowOnScreenConfiguration? _showOnScreenConfiguration;
 
   void _updateSnapConfiguration() {
-    if (widget.snap && widget.floating) {
+    if (widget().snap && widget().floating) {
       _snapConfiguration = FloatingHeaderSnapConfiguration(
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 200),
@@ -1782,16 +1782,16 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
       _snapConfiguration = null;
     }
 
-    _showOnScreenConfiguration = widget.floating & widget.snap
+    _showOnScreenConfiguration = widget().floating & widget().snap
       ? const PersistentHeaderShowOnScreenConfiguration(minShowOnScreenExtent: double.infinity)
       : null;
   }
 
   void _updateStretchConfiguration() {
-    if (widget.stretch) {
+    if (widget().stretch) {
       _stretchConfiguration = OverScrollHeaderStretchConfiguration(
-        stretchTriggerOffset: widget.stretchTriggerOffset,
-        onStretchTrigger: widget.onStretchTrigger,
+        stretchTriggerOffset: widget().stretchTriggerOffset,
+        onStretchTrigger: widget().onStretchTrigger,
       );
     } else {
       _stretchConfiguration = null;
@@ -1808,65 +1808,65 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
   @override
   void didUpdateWidget(SliverAppBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.snap != oldWidget.snap || widget.floating != oldWidget.floating)
+    if (widget().snap != oldWidget.snap || widget().floating != oldWidget.floating)
       _updateSnapConfiguration();
-    if (widget.stretch != oldWidget.stretch)
+    if (widget().stretch != oldWidget.stretch)
       _updateStretchConfiguration();
   }
 
   @override
   Widget build(BuildContext context) {
-    assert(!widget.primary || debugCheckHasMediaQuery(context));
-    final double bottomHeight = widget.bottom?.preferredSize.height ?? 0.0;
-    final double topPadding = widget.primary ? MediaQuery.of(context).padding.top : 0.0;
-    final double collapsedHeight = (widget.pinned && widget.floating && widget.bottom != null)
-      ? (widget.collapsedHeight ?? 0.0) + bottomHeight + topPadding
-      : (widget.collapsedHeight ?? widget.toolbarHeight) + bottomHeight + topPadding;
+    assert(!widget().primary || debugCheckHasMediaQuery(context));
+    final double bottomHeight = widget().bottom?.preferredSize.height ?? 0.0;
+    final double topPadding = widget().primary ? MediaQuery.of(context).padding.top : 0.0;
+    final double collapsedHeight = (widget().pinned && widget().floating && widget().bottom != null)
+      ? (widget().collapsedHeight ?? 0.0) + bottomHeight + topPadding
+      : (widget().collapsedHeight ?? widget().toolbarHeight) + bottomHeight + topPadding;
 
     return MediaQuery.removePadding(
       context: context,
       removeBottom: true,
       child: SliverPersistentHeader(
-        floating: widget.floating,
-        pinned: widget.pinned,
+        floating: widget().floating,
+        pinned: widget().pinned,
         delegate: _SliverAppBarDelegate(
           vsync: this,
-          leading: widget.leading,
-          automaticallyImplyLeading: widget.automaticallyImplyLeading,
-          title: widget.title,
-          actions: widget.actions,
-          flexibleSpace: widget.flexibleSpace,
-          bottom: widget.bottom,
-          elevation: widget.elevation,
-          scrolledUnderElevation: widget.scrolledUnderElevation,
-          shadowColor: widget.shadowColor,
-          surfaceTintColor: widget.surfaceTintColor,
-          forceElevated: widget.forceElevated,
-          backgroundColor: widget.backgroundColor,
-          foregroundColor: widget.foregroundColor,
-          brightness: widget.brightness,
-          iconTheme: widget.iconTheme,
-          actionsIconTheme: widget.actionsIconTheme,
-          textTheme: widget.textTheme,
-          primary: widget.primary,
-          centerTitle: widget.centerTitle,
-          excludeHeaderSemantics: widget.excludeHeaderSemantics,
-          titleSpacing: widget.titleSpacing,
-          expandedHeight: widget.expandedHeight,
+          leading: widget().leading,
+          automaticallyImplyLeading: widget().automaticallyImplyLeading,
+          title: widget().title,
+          actions: widget().actions,
+          flexibleSpace: widget().flexibleSpace,
+          bottom: widget().bottom,
+          elevation: widget().elevation,
+          scrolledUnderElevation: widget().scrolledUnderElevation,
+          shadowColor: widget().shadowColor,
+          surfaceTintColor: widget().surfaceTintColor,
+          forceElevated: widget().forceElevated,
+          backgroundColor: widget().backgroundColor,
+          foregroundColor: widget().foregroundColor,
+          brightness: widget().brightness,
+          iconTheme: widget().iconTheme,
+          actionsIconTheme: widget().actionsIconTheme,
+          textTheme: widget().textTheme,
+          primary: widget().primary,
+          centerTitle: widget().centerTitle,
+          excludeHeaderSemantics: widget().excludeHeaderSemantics,
+          titleSpacing: widget().titleSpacing,
+          expandedHeight: widget().expandedHeight,
           collapsedHeight: collapsedHeight,
           topPadding: topPadding,
-          floating: widget.floating,
-          pinned: widget.pinned,
-          shape: widget.shape,
+          floating: widget().floating,
+          pinned: widget().pinned,
+          shape: widget().shape,
           snapConfiguration: _snapConfiguration,
           stretchConfiguration: _stretchConfiguration,
           showOnScreenConfiguration: _showOnScreenConfiguration,
-          toolbarHeight: widget.toolbarHeight,
-          leadingWidth: widget.leadingWidth,
-          backwardsCompatibility: widget.backwardsCompatibility,
-          toolbarTextStyle: widget.toolbarTextStyle,
-          titleTextStyle: widget.titleTextStyle,
-          systemOverlayStyle: widget.systemOverlayStyle,
+          toolbarHeight: widget().toolbarHeight,
+          leadingWidth: widget().leadingWidth,
+          backwardsCompatibility: widget().backwardsCompatibility,
+          toolbarTextStyle: widget().toolbarTextStyle,
+          titleTextStyle: widget().titleTextStyle,
+          systemOverlayStyle: widget().systemOverlayStyle,
         ),
       ),
     );

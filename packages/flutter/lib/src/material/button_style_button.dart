@@ -200,7 +200,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
   @override
   void initState() {
     super.initState();
-    setMaterialState(MaterialState.disabled, !widget.enabled);
+    setMaterialState(MaterialState.disabled, !widget().enabled);
   }
 
   @override
@@ -212,7 +212,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
   @override
   void didUpdateWidget(ButtonStyleButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    setMaterialState(MaterialState.disabled, !widget.enabled);
+    setMaterialState(MaterialState.disabled, !widget().enabled);
     // If the button is disabled while a press gesture is currently ongoing,
     // InkWell makes a call to handleHighlightChanged. This causes an exception
     // because it calls setState in the middle of a build. To preempt this, we
@@ -224,9 +224,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle? widgetStyle = widget.style;
-    final ButtonStyle? themeStyle = widget.themeStyleOf(context);
-    final ButtonStyle defaultStyle = widget.defaultStyleOf(context);
+    final ButtonStyle? widgetStyle = widget().style;
+    final ButtonStyle? themeStyle = widget().themeStyleOf(context);
+    final ButtonStyle defaultStyle = widget().defaultStyleOf(context);
     assert(defaultStyle != null);
 
     T? effectiveValue<T>(T? Function(ButtonStyle? style) getProperty) {
@@ -347,24 +347,24 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
         surfaceTintColor: resolvedSurfaceTintColor,
         type: resolvedBackgroundColor == null ? MaterialType.transparency : MaterialType.button,
         animationDuration: resolvedAnimationDuration,
-        clipBehavior: widget.clipBehavior,
+        clipBehavior: widget().clipBehavior,
         child: InkWell(
-          onTap: widget.onPressed,
-          onLongPress: widget.onLongPress,
+          onTap: widget().onPressed,
+          onLongPress: widget().onLongPress,
           onHighlightChanged: updateMaterialState(MaterialState.pressed),
           onHover: updateMaterialState(
             MaterialState.hovered,
-            onChanged: widget.onHover,
+            onChanged: widget().onHover,
           ),
           mouseCursor: resolvedMouseCursor,
           enableFeedback: resolvedEnableFeedback,
-          focusNode: widget.focusNode,
-          canRequestFocus: widget.enabled,
+          focusNode: widget().focusNode,
+          canRequestFocus: widget().enabled,
           onFocusChange: updateMaterialState(
             MaterialState.focused,
-            onChanged: widget.onFocusChange,
+            onChanged: widget().onFocusChange,
           ),
-          autofocus: widget.autofocus,
+          autofocus: widget().autofocus,
           splashFactory: resolvedSplashFactory,
           overlayColor: overlayColor,
           highlightColor: Colors.transparent,
@@ -377,7 +377,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
                 alignment: resolvedAlignment!,
                 widthFactor: 1.0,
                 heightFactor: 1.0,
-                child: widget.child,
+                child: widget().child,
               ),
             ),
           ),
@@ -403,7 +403,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with MaterialStateMixin
     return Semantics(
       container: true,
       button: true,
-      enabled: widget.enabled,
+      enabled: widget().enabled,
       child: _InputPadding(
         minSize: minSize,
         child: result,

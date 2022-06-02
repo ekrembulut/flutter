@@ -169,14 +169,14 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
   @override
   void initState() {
     super.initState();
-    widget.clipboardStatus?.addListener(_onChangedClipboardStatus);
+    widget().clipboardStatus?.addListener(_onChangedClipboardStatus);
   }
 
   @override
   void didUpdateWidget(_TextSelectionControlsToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.clipboardStatus != oldWidget.clipboardStatus) {
-      widget.clipboardStatus?.addListener(_onChangedClipboardStatus);
+    if (widget().clipboardStatus != oldWidget.clipboardStatus) {
+      widget().clipboardStatus?.addListener(_onChangedClipboardStatus);
       oldWidget.clipboardStatus?.removeListener(_onChangedClipboardStatus);
     }
   }
@@ -184,36 +184,36 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
   @override
   void dispose() {
     super.dispose();
-    widget.clipboardStatus?.removeListener(_onChangedClipboardStatus);
+    widget().clipboardStatus?.removeListener(_onChangedClipboardStatus);
   }
 
   @override
   Widget build(BuildContext context) {
     // If there are no buttons to be shown, don't render anything.
-    if (widget.handleCut == null && widget.handleCopy == null
-        && widget.handlePaste == null && widget.handleSelectAll == null) {
+    if (widget().handleCut == null && widget().handleCopy == null
+        && widget().handlePaste == null && widget().handleSelectAll == null) {
       return const SizedBox.shrink();
     }
     // If the paste button is desired, don't render anything until the state of
     // the clipboard is known, since it's used to determine if paste is shown.
-    if (widget.handlePaste != null
-        && widget.clipboardStatus?.value == ClipboardStatus.unknown) {
+    if (widget().handlePaste != null
+        && widget().clipboardStatus?.value == ClipboardStatus.unknown) {
       return const SizedBox.shrink();
     }
 
     // Calculate the positioning of the menu. It is placed above the selection
     // if there is enough room, or otherwise below.
-    final TextSelectionPoint startTextSelectionPoint = widget.endpoints[0];
-    final TextSelectionPoint endTextSelectionPoint = widget.endpoints.length > 1
-      ? widget.endpoints[1]
-      : widget.endpoints[0];
+    final TextSelectionPoint startTextSelectionPoint = widget().endpoints[0];
+    final TextSelectionPoint endTextSelectionPoint = widget().endpoints.length > 1
+      ? widget().endpoints[1]
+      : widget().endpoints[0];
     final Offset anchorAbove = Offset(
-      widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
-      widget.globalEditableRegion.top + startTextSelectionPoint.point.dy - widget.textLineHeight - _kToolbarContentDistance,
+      widget().globalEditableRegion.left + widget().selectionMidpoint.dx,
+      widget().globalEditableRegion.top + startTextSelectionPoint.point.dy - widget().textLineHeight - _kToolbarContentDistance,
     );
     final Offset anchorBelow = Offset(
-      widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
-      widget.globalEditableRegion.top + endTextSelectionPoint.point.dy + _kToolbarContentDistanceBelow,
+      widget().globalEditableRegion.left + widget().selectionMidpoint.dx,
+      widget().globalEditableRegion.top + endTextSelectionPoint.point.dy + _kToolbarContentDistanceBelow,
     );
 
     // Determine which buttons will appear so that the order and total number is
@@ -222,26 +222,26 @@ class _TextSelectionControlsToolbarState extends State<_TextSelectionControlsToo
     assert(debugCheckHasMaterialLocalizations(context));
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     final List<_TextSelectionToolbarItemData> itemDatas = <_TextSelectionToolbarItemData>[
-      if (widget.handleCut != null)
+      if (widget().handleCut != null)
         _TextSelectionToolbarItemData(
           label: localizations.cutButtonLabel,
-          onPressed: widget.handleCut!,
+          onPressed: widget().handleCut!,
         ),
-      if (widget.handleCopy != null)
+      if (widget().handleCopy != null)
         _TextSelectionToolbarItemData(
           label: localizations.copyButtonLabel,
-          onPressed: widget.handleCopy!,
+          onPressed: widget().handleCopy!,
         ),
-      if (widget.handlePaste != null
-          && widget.clipboardStatus?.value == ClipboardStatus.pasteable)
+      if (widget().handlePaste != null
+          && widget().clipboardStatus?.value == ClipboardStatus.pasteable)
         _TextSelectionToolbarItemData(
           label: localizations.pasteButtonLabel,
-          onPressed: widget.handlePaste!,
+          onPressed: widget().handlePaste!,
         ),
-      if (widget.handleSelectAll != null)
+      if (widget().handleSelectAll != null)
         _TextSelectionToolbarItemData(
           label: localizations.selectAllButtonLabel,
-          onPressed: widget.handleSelectAll!,
+          onPressed: widget().handleSelectAll!,
         ),
     ];
 

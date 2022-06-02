@@ -393,8 +393,8 @@ class _HeroState extends State<Hero> {
 
     final bool showPlaceholder = _placeholderSize != null;
 
-    if (showPlaceholder && widget.placeholderBuilder != null) {
-      return widget.placeholderBuilder!(context, _placeholderSize!, widget.child);
+    if (showPlaceholder && widget().placeholderBuilder != null) {
+      return widget().placeholderBuilder!(context, _placeholderSize!, widget().child);
     }
 
     if (showPlaceholder && !_shouldIncludeChild) {
@@ -411,7 +411,7 @@ class _HeroState extends State<Hero> {
         offstage: showPlaceholder,
         child: TickerMode(
           enabled: !showPlaceholder,
-          child: KeyedSubtree(key: _key, child: widget.child),
+          child: KeyedSubtree(key: _key, child: widget().child),
         ),
       ),
     );
@@ -433,7 +433,7 @@ class _HeroFlightManifest {
     required this.shuttleBuilder,
     required this.isUserGestureTransition,
     required this.isDiverted,
-  }) : assert(fromHero.widget.tag == toHero.widget.tag);
+  }) : assert(fromHero.widget().tag == toHero.widget().tag);
 
   final HeroFlightDirection type;
   final OverlayState overlay;
@@ -447,7 +447,7 @@ class _HeroFlightManifest {
   final bool isUserGestureTransition;
   final bool isDiverted;
 
-  Object get tag => fromHero.widget.tag;
+  Object get tag => fromHero.widget().tag;
 
   Animation<double> get animation {
     return CurvedAnimation(
@@ -458,7 +458,7 @@ class _HeroFlightManifest {
   }
 
   Tween<Rect?> createHeroRectTween({ required Rect? begin, required Rect? end }) {
-    final CreateRectTween? createRectTween = toHero.widget.createRectTween ?? this.createRectTween;
+    final CreateRectTween? createRectTween = toHero.widget().createRectTween ?? this.createRectTween;
     return createRectTween?.call(begin, end) ?? RectTween(begin: begin, end: end);
   }
 
@@ -945,8 +945,8 @@ class HeroController extends NavigatorObserver {
             fromHero: fromHero,
             toHero: toHero,
             createRectTween: createRectTween,
-            shuttleBuilder: toHero.widget.flightShuttleBuilder
-                          ?? fromHero.widget.flightShuttleBuilder
+            shuttleBuilder: toHero.widget().flightShuttleBuilder
+                          ?? fromHero.widget().flightShuttleBuilder
                           ?? _defaultHeroFlightShuttleBuilder,
             isUserGestureTransition: isUserGestureTransition,
             isDiverted: existingFlight != null,

@@ -414,27 +414,27 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     enableController = AnimationController(
       duration: enableAnimationDuration,
       vsync: this,
-      value: widget.onChanged != null ? 1.0 : 0.0,
+      value: widget().onChanged != null ? 1.0 : 0.0,
     );
     startPositionController = AnimationController(
       duration: Duration.zero,
       vsync: this,
-      value: _unlerp(widget.values.start),
+      value: _unlerp(widget().values.start),
     );
     endPositionController = AnimationController(
       duration: Duration.zero,
       vsync: this,
-      value: _unlerp(widget.values.end),
+      value: _unlerp(widget().values.end),
     );
   }
 
   @override
   void didUpdateWidget(RangeSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.onChanged == widget.onChanged)
+    if (oldWidget.onChanged == widget().onChanged)
       return;
     final bool wasEnabled = oldWidget.onChanged != null;
-    final bool isEnabled = widget.onChanged != null;
+    final bool isEnabled = widget().onChanged != null;
     if (wasEnabled != isEnabled) {
       if (isEnabled) {
         enableController.forward();
@@ -460,26 +460,26 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   }
 
   void _handleChanged(RangeValues values) {
-    assert(widget.onChanged != null);
+    assert(widget().onChanged != null);
     final RangeValues lerpValues = _lerpRangeValues(values);
-    if (lerpValues != widget.values) {
-      widget.onChanged!(lerpValues);
+    if (lerpValues != widget().values) {
+      widget().onChanged!(lerpValues);
     }
   }
 
   void _handleDragStart(RangeValues values) {
-    assert(widget.onChangeStart != null);
-    widget.onChangeStart!(_lerpRangeValues(values));
+    assert(widget().onChangeStart != null);
+    widget().onChangeStart!(_lerpRangeValues(values));
   }
 
   void _handleDragEnd(RangeValues values) {
-    assert(widget.onChangeEnd != null);
-    widget.onChangeEnd!(_lerpRangeValues(values));
+    assert(widget().onChangeEnd != null);
+    widget().onChangeEnd!(_lerpRangeValues(values));
   }
 
   // Returns a number between min and max, proportional to value, which must
   // be between 0.0 and 1.0.
-  double _lerp(double value) => ui.lerpDouble(widget.min, widget.max, value)!;
+  double _lerp(double value) => ui.lerpDouble(widget().min, widget().max, value)!;
 
   // Returns a new range value with the start and end lerped.
   RangeValues _lerpRangeValues(RangeValues values) {
@@ -488,9 +488,9 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
 
   // Returns a number between 0.0 and 1.0, given a value between min and max.
   double _unlerp(double value) {
-    assert(value <= widget.max);
-    assert(value >= widget.min);
-    return widget.max > widget.min ? (value - widget.min) / (widget.max - widget.min) : 0.0;
+    assert(value <= widget().max);
+    assert(value >= widget().min);
+    return widget().max > widget().min ? (value - widget().min) / (widget().max - widget().min) : 0.0;
   }
 
   // Returns a new range value with the start and end unlerped.
@@ -579,23 +579,23 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     if (valueIndicatorShape is RectangularRangeSliderValueIndicatorShape) {
       valueIndicatorColor = sliderTheme.valueIndicatorColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(0.60), theme.colorScheme.surface.withOpacity(0.90));
     } else {
-      valueIndicatorColor = widget.activeColor ?? sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary;
+      valueIndicatorColor = widget().activeColor ?? sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary;
     }
 
     sliderTheme = sliderTheme.copyWith(
       trackHeight: sliderTheme.trackHeight ?? defaultTrackHeight,
-      activeTrackColor: widget.activeColor ?? sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
-      inactiveTrackColor: widget.inactiveColor ?? sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
+      activeTrackColor: widget().activeColor ?? sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
+      inactiveTrackColor: widget().inactiveColor ?? sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
       disabledActiveTrackColor: sliderTheme.disabledActiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.32),
       disabledInactiveTrackColor: sliderTheme.disabledInactiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
-      activeTickMarkColor: widget.inactiveColor ?? sliderTheme.activeTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.54),
-      inactiveTickMarkColor: widget.activeColor ?? sliderTheme.inactiveTickMarkColor ?? theme.colorScheme.primary.withOpacity(0.54),
+      activeTickMarkColor: widget().inactiveColor ?? sliderTheme.activeTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.54),
+      inactiveTickMarkColor: widget().activeColor ?? sliderTheme.inactiveTickMarkColor ?? theme.colorScheme.primary.withOpacity(0.54),
       disabledActiveTickMarkColor: sliderTheme.disabledActiveTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.12),
       disabledInactiveTickMarkColor: sliderTheme.disabledInactiveTickMarkColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
-      thumbColor: widget.activeColor ?? sliderTheme.thumbColor ?? theme.colorScheme.primary,
+      thumbColor: widget().activeColor ?? sliderTheme.thumbColor ?? theme.colorScheme.primary,
       overlappingShapeStrokeColor: sliderTheme.overlappingShapeStrokeColor ?? theme.colorScheme.surface,
       disabledThumbColor: sliderTheme.disabledThumbColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withOpacity(.38), theme.colorScheme.surface),
-      overlayColor: widget.activeColor?.withOpacity(0.12) ?? sliderTheme.overlayColor ?? theme.colorScheme.primary.withOpacity(0.12),
+      overlayColor: widget().activeColor?.withOpacity(0.12) ?? sliderTheme.overlayColor ?? theme.colorScheme.primary.withOpacity(0.12),
       valueIndicatorColor: valueIndicatorColor,
       rangeTrackShape: sliderTheme.rangeTrackShape ?? defaultTrackShape,
       rangeTickMarkShape: sliderTheme.rangeTickMarkShape ?? defaultTickMarkShape,
@@ -618,17 +618,17 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     return CompositedTransformTarget(
       link: _layerLink,
       child: _RangeSliderRenderObjectWidget(
-        values: _unlerpRangeValues(widget.values),
-        divisions: widget.divisions,
-        labels: widget.labels,
+        values: _unlerpRangeValues(widget().values),
+        divisions: widget().divisions,
+        labels: widget().labels,
         sliderTheme: sliderTheme,
         textScaleFactor: MediaQuery.of(context).textScaleFactor,
         screenSize: _screenSize(),
-        onChanged: (widget.onChanged != null) && (widget.max > widget.min) ? _handleChanged : null,
-        onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
-        onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+        onChanged: (widget().onChanged != null) && (widget().max > widget().min) ? _handleChanged : null,
+        onChangeStart: widget().onChangeStart != null ? _handleDragStart : null,
+        onChangeEnd: widget().onChangeEnd != null ? _handleDragEnd : null,
         state: this,
-        semanticFormatterCallback: widget.semanticFormatterCallback,
+        semanticFormatterCallback: widget().semanticFormatterCallback,
       ),
     );
   }

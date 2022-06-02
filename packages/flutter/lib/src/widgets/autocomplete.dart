@@ -300,13 +300,13 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
   // Called when _textEditingController changes.
   Future<void> _onChangedField() async {
     final TextEditingValue value = _textEditingController.value;
-    final Iterable<T> options = await widget.optionsBuilder(
+    final Iterable<T> options = await widget().optionsBuilder(
       value,
     );
     _options = options;
     _updateHighlight(_highlightedOptionIndex.value);
     if (_selection != null
-        && value.text != widget.displayStringForOption(_selection!)) {
+        && value.text != widget().displayStringForOption(_selection!)) {
       _selection = null;
     }
 
@@ -342,14 +342,14 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
       return;
     }
     _selection = nextSelection;
-    final String selectionString = widget.displayStringForOption(nextSelection);
+    final String selectionString = widget().displayStringForOption(nextSelection);
     _textEditingController.value = TextEditingValue(
       selection: TextSelection.collapsed(offset: selectionString.length),
       text: selectionString,
     );
     _updateActions();
     _updateOverlay();
-    widget.onSelected?.call(_selection!);
+    widget().onSelected?.call(_selection!);
   }
 
   void _updateHighlight(int newIndex) {
@@ -426,7 +426,7 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
               highlightIndexNotifier: _highlightedOptionIndex,
               child: Builder(
                 builder: (BuildContext context) {
-                  return widget.optionsViewBuilder(context, _select, _options);
+                  return widget().optionsViewBuilder(context, _select, _options);
                 }
               )
             ),
@@ -483,9 +483,9 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
   @override
   void initState() {
     super.initState();
-    _textEditingController = widget.textEditingController ?? TextEditingController.fromValue(widget.initialValue);
+    _textEditingController = widget().textEditingController ?? TextEditingController.fromValue(widget().initialValue);
     _textEditingController.addListener(_onChangedField);
-    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode = widget().focusNode ?? FocusNode();
     _focusNode.addListener(_onChangedFocus);
     _previousOptionAction = _AutocompleteCallbackAction<AutocompletePreviousOptionIntent>(onInvoke: _highlightPreviousOption);
     _nextOptionAction = _AutocompleteCallbackAction<AutocompleteNextOptionIntent>(onInvoke: _highlightNextOption);
@@ -504,9 +504,9 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
     super.didUpdateWidget(oldWidget);
     _updateTextEditingController(
       oldWidget.textEditingController,
-      widget.textEditingController,
+      widget().textEditingController,
     );
-    _updateFocusNode(oldWidget.focusNode, widget.focusNode);
+    _updateFocusNode(oldWidget.focusNode, widget().focusNode);
     _updateActions();
     _updateOverlay();
   }
@@ -514,11 +514,11 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
   @override
   void dispose() {
     _textEditingController.removeListener(_onChangedField);
-    if (widget.textEditingController == null) {
+    if (widget().textEditingController == null) {
       _textEditingController.dispose();
     }
     _focusNode.removeListener(_onChangedFocus);
-    if (widget.focusNode == null) {
+    if (widget().focusNode == null) {
       _focusNode.dispose();
     }
     _floatingOptions?.remove();
@@ -536,9 +536,9 @@ class _RawAutocompleteState<T extends Object> extends State<RawAutocomplete<T>> 
           actions: _actionMap,
           child: CompositedTransformTarget(
             link: _optionsLayerLink,
-            child: widget.fieldViewBuilder == null
+            child: widget().fieldViewBuilder == null
               ? const SizedBox.shrink()
-              : widget.fieldViewBuilder!(
+              : widget().fieldViewBuilder!(
                   context,
                   _textEditingController,
                   _focusNode,

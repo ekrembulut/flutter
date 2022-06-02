@@ -282,17 +282,17 @@ class _InkState extends State<Ink> {
     // use the RenderBox of the Padding widget.
     if (_ink == null) {
       _ink = InkDecoration(
-        decoration: widget.decoration,
+        decoration: widget().decoration,
         configuration: createLocalImageConfiguration(context),
         controller: Material.of(context)!,
         referenceBox: _boxKey.currentContext!.findRenderObject()! as RenderBox,
         onRemoved: _handleRemoved,
       );
     } else {
-      _ink!.decoration = widget.decoration;
+      _ink!.decoration = widget().decoration;
       _ink!.configuration = createLocalImageConfiguration(context);
     }
-    return widget.child ?? Container();
+    return widget().child ?? Container();
   }
 
   @override
@@ -300,13 +300,13 @@ class _InkState extends State<Ink> {
     assert(debugCheckHasMaterial(context));
     Widget result = Padding(
       key: _boxKey,
-      padding: widget._paddingIncludingDecoration,
+      padding: widget()._paddingIncludingDecoration,
       child: Builder(builder: _build),
     );
-    if (widget.width != null || widget.height != null) {
+    if (widget().width != null || widget().height != null) {
       result = SizedBox(
-        width: widget.width,
-        height: widget.height,
+        width: widget().width,
+        height: widget().height,
         child: result,
       );
     }

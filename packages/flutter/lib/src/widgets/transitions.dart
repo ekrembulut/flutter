@@ -106,21 +106,21 @@ class _AnimatedState extends State<AnimatedWidget> {
   @override
   void initState() {
     super.initState();
-    widget.listenable.addListener(_handleChange);
+    widget().listenable.addListener(_handleChange);
   }
 
   @override
   void didUpdateWidget(AnimatedWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.listenable != oldWidget.listenable) {
+    if (widget().listenable != oldWidget.listenable) {
       oldWidget.listenable.removeListener(_handleChange);
-      widget.listenable.addListener(_handleChange);
+      widget().listenable.addListener(_handleChange);
     }
   }
 
   @override
   void dispose() {
-    widget.listenable.removeListener(_handleChange);
+    widget().listenable.removeListener(_handleChange);
     super.dispose();
   }
 
@@ -131,7 +131,7 @@ class _AnimatedState extends State<AnimatedWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.build(context);
+  Widget build(BuildContext context) => widget().build(context);
 }
 
 /// Animates the position of a widget relative to its normal position.

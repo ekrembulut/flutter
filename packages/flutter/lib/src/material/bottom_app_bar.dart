@@ -129,29 +129,29 @@ class _BottomAppBarState extends State<BottomAppBar> {
   @override
   Widget build(BuildContext context) {
     final BottomAppBarTheme babTheme = BottomAppBarTheme.of(context);
-    final NotchedShape? notchedShape = widget.shape ?? babTheme.shape;
+    final NotchedShape? notchedShape = widget().shape ?? babTheme.shape;
     final CustomClipper<Path> clipper = notchedShape != null
       ? _BottomAppBarClipper(
           geometry: geometryListenable,
           shape: notchedShape,
           materialKey: materialKey,
-          notchMargin: widget.notchMargin,
+          notchMargin: widget().notchMargin,
         )
       : const ShapeBorderClipper(shape: RoundedRectangleBorder());
-    final double elevation = widget.elevation ?? babTheme.elevation ?? _defaultElevation;
-    final Color color = widget.color ?? babTheme.color ?? Theme.of(context).bottomAppBarColor;
+    final double elevation = widget().elevation ?? babTheme.elevation ?? _defaultElevation;
+    final Color color = widget().color ?? babTheme.color ?? Theme.of(context).bottomAppBarColor;
     final Color effectiveColor = ElevationOverlay.applyOverlay(context, color, elevation);
     return PhysicalShape(
       clipper: clipper,
       elevation: elevation,
       color: effectiveColor,
-      clipBehavior: widget.clipBehavior,
+      clipBehavior: widget().clipBehavior,
       child: Material(
         key: materialKey,
         type: MaterialType.transparency,
-        child: widget.child == null
+        child: widget().child == null
           ? null
-          : SafeArea(child: widget.child!),
+          : SafeArea(child: widget().child!),
       ),
     );
   }
